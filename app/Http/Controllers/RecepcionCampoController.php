@@ -32,7 +32,7 @@ class RecepcionCampoController extends Controller
     /**
      * Almacenar el costal con el peso neto calculado por el frontend
      */
-    public function store(Request $request)
+    public function store(Request $request, Sesion $sesion)
     {
         try {
             $data = $request->validate([

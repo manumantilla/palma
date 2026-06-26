@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('contenedores', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('sesion_id')->constrained('sesiones_cosecha')->onDelete('cascade');
+            $table->uuid('id')->primary();
+            $table->uuid('sesion_id');
+            $table->foreign('sesion_id')->references('id')->on('sesiones_cosecha')->onDelete('cascade');
             $table->foreignId('cliente_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('orden_pedido_id')->nullable()->constrained('ordenes_cosecha')->onDelete('set null');
             $table->enum('estado',['abierta','cerrada','despachada'])->default('abierta');
@@ -47,6 +48,10 @@ return new class extends Migration
             $table->decimal('kilos_acumulados', 12, 2)->default(0);
             $table->decimal('peso_tara', 8, 2)->default(0);     // tara del contenedor/pallete
             $table->decimal('peso_total', 12, 2)->default(0);   // kilos_acumulados + peso_tara
+            // METADATOS DE SINCRONIZACIÓN
+            $table->timestamp('client_updated_at')->nullable();
+            $table->timestamp('synced_at')->nullable();
+                    
             $table->timestamps();
         });
     }

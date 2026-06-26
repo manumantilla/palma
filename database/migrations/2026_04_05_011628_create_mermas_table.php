@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('mermas', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignId('recepcion_campo_id')->nullable()->constrained('recepciones_campo')->onDelete('set null');
             $table->foreignId('contenedor_id')->nullable()->constrained('contenedores')->onDelete('set null');
             $table->date('fecha_registro');
@@ -29,6 +29,9 @@ return new class extends Migration
             $table->decimal('costo_estimado', 10, 2)->nullable();
             $table->string('destino_final')->nullable();         // basura, abono, donación...
             $table->text('comentarios')->nullable();
+            // METADATOS DE SINCRONIZACIÓN
+            $table->timestamp('client_updated_at')->nullable();
+            $table->timestamp('synced_at')->nullable();
             $table->timestamps();
         });
     }

@@ -6,16 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         Schema::create('sesiones_cosecha', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignId('orden_cosecha_id')->constrained('ordenes_cosecha')->onDelete('cascade');
-            $table->foreignId('evento_id')->constrained('eventos_campo')->onDelete('cascade');
-            // $table->foreignId('evento_campo_id')->constrained('eventos_campo')->unique();
+            $table->foreignId('evento_campo_id')->constrained('eventos_campo')->onDelete('cascade');
             $table->foreignId('responsable_id')->constrained('users')->onDelete('restrict');
             $table->date('fecha');
             $table->enum('estado', ['abierta', 'cerrada'])->default('abierta');
@@ -24,6 +21,9 @@ return new class extends Migration
             $table->time('hora_inicio')->nullable();
             $table->time('hora_fin')->nullable();
             $table->decimal('total_recolectado_kg', 12,2)->default(0);
+            // METADATOS DE SINCRONIZACIÓN
+            $table->timestamp('client_updated_at')->nullable(); // Para saber cuándo se editó en el celular
+            $table->timestamp('synced_at')->nullable();
             $table->timestamps();
         });
     }

@@ -26,18 +26,22 @@ class OrdenCosechaController extends Controller
     /**
      * Mostrar el formulario para crear una nueva orden.
      */
-    public function create()
-    {
-        // Traemos catálogos básicos para los selects del formulario
-        $clientes = User::orderBy('name')->get(); 
-        $responsables = User::orderBy('name')->get();
-        $ciclos = CicloProductivo::orderBy('nombre')->get();
-        $lotes = Lote::orderBy('nombre')->get();
-        $zonas = LoteZonaManejo::orderBy('nombre')->get();
 
-        return view('ordenes_cosecha.create', compact('clientes', 'responsables', 'ciclos', 'lotes', 'zonas'));
-    }
 
+public function create(CicloProductivo $ciclo)
+{
+    $clientes = User::orderBy('name')->get(); 
+    $responsables = User::orderBy('name')->get();
+    $lote = $ciclo->lote_id;
+    // 2. Evaluamos si el lote existe para evitar el error "Property of non-object"
+    // y añadimos ->get() para traer la lista de zonas reales a la vista
+    $zonas = $lote 
+        ? LoteZonaManejo::where('lote_id', $lote->id)->get() 
+        : collect(); // Si no hay lote, mandamos una colección vacía para que la vista no falle
+
+    // NOTA: Quité 'ciclos' del compact ya que pasas '$ciclo' individualmente
+    return view('ordenes_cosecha.create', compact('ciclo', 'clientes', 'responsables', 'lote', 'zonas'));
+}
     /**
      * Guardar una orden de cosecha en la base de datos.
      */

@@ -14,7 +14,10 @@ Route::get('/', function () {
 use App\Http\Controllers\CultivoController;
 Route::resource('cultivos', CultivoController::class);
 
-    Route::get('/ciclos/{ciclo}/grafo', [ArbolApiController::class, 'index'])->name('grafo');
+use App\Http\Controllers\SesionCosechaController;
+Route::resource('sesiones-cosecha', SesionCosechaController::class);
+
+Route::get('/ciclos/{ciclo}/grafo', [ArbolApiController::class, 'index'])->name('grafo');
 use App\Http\Controllers\FenologiaEtapaController;
 Route::resource('fenologia-etapas', FenologiaEtapaController::class)->except(['index', 'show']);
 
@@ -82,8 +85,8 @@ Route::resource('lotes-insumo', LoteInsumoController::class);
 use App\Http\Controllers\LoteController;
 
 use App\Http\Controllers\OrdenCosechaController;
-Route::resource('ordenes-cosecha', OrdenCosechaController::class)->except('create');
-Route::get('/ordenes-cosecha/crear/{lote}', [OrdenCosechaController::class, 'create'])->name('ordenes-cosecha.create');  
+Route::resource('ordenes_cosecha', OrdenCosechaController::class)->except('create');
+Route::get('/ordenes-cosecha/crear/{lote}', [OrdenCosechaController::class, 'create'])->name('ordenes_cosecha.create');  
 
 
 Route::middleware(['auth:sanctum', config('jetstream::auth_session'), 'verified'])->group(function () {
@@ -124,10 +127,6 @@ Route::get('/ciclos/{ciclo}/nuevo-evento', [EventoController::class, 'createConC
 Route::post('/ciclos/{ciclo}/evento', [EventoController::class, 'storeWithCultivo'])->name('eventos_campo.store_cultivo');
 
 
-
-use App\Http\Controllers\OrdenCosechaController;
-
-Route::resource('ordenes_cosecha', OrdenCosechaController::class);
 
 use App\Http\Controllers\ArbolGrafoController;
 
