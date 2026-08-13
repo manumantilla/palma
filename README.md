@@ -1,43 +1,39 @@
-# 🚜 Sistema Integrado de Trazabilidad Postcosecha
+# 🚜 Sistema AgTech Integrado de Trazabilidad y Georreferenciación Postcosecha
 
-![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Laravel 13](https://img.shields.io/badge/Laravel_13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![PostGIS](https://img.shields.io/badge/PostGIS-002E62?style=for-the-badge&logo=qgis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Python](https://img.shields.io/badge/Python_Microservices-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
 ## 📋 Descripción del Proyecto
-Este proyecto es una plataforma de software diseñada para gestionar y auditar la trazabilidad de la fruta desde su recepción en campo hasta su clasificación en planta de empaque. El sistema permite registrar movimientos, asignar lotes a tolvas/contenedores y documentar mermas con rigor agronómico, garantizando la consistencia del inventario mediante transacciones de base de datos.
+Plataforma AgTech distribuida para la gestión, auditoría y trazabilidad geográfica de fruta desde su origen en lote hasta su procesamiento y clasificación en planta de empaque. 
 
-Este sistema está preparado para entornos agroindustriales con conectividad intermitente, implementando sincronización diferida y borrados lógicos para auditorías.
+El sistema combina el poder transaccional de **Laravel 13**, análisis espacial con **PostgreSQL + PostGIS**, procesamiento distribuido con **microservicios en Python**, todo orquestado bajo contenedores **Docker**.
 
-## ✨ Módulos Principales
-- **Recepción de Campo:** Registro de lotes que ingresan de las fincas, con control de saldos y kilos disponibles.
-- **Gestión de Contenedores:** Administración del ciclo de vida de tolvas y bins (apertura, llenado y cierre).
-- **Movimientos de Clasificación:** Motor transaccional que asigna fruta de la recepción a los contenedores, actualizando inventarios en tiempo real.
-- **Registro de Mermas:** Control estricto de pérdidas por motivos mecánicos, fitosanitarios o deshidratación, manteniendo la cuadratura de kilos.
+## 🏗️ Arquitectura del Sistema
+El ecosistema está compuesto por los siguientes módulos y servicios:
 
-## 🛠️ Tecnologías y Arquitectura
-- **Framework:** Laravel 11 (PHP 8.2+)
-- **Base de Datos:** MySQL / MariaDB (Estructura normalizada con UUIDs)
-- **Frontend:** Blade Templates con TailwindCSS
-- **Patrones Aplicados:** 
-  - MVC (Model-View-Controller)
-  - Query Scopes para reportes gerenciales
-  - Database Transactions (ACID) para consistencia de inventarios
-  - Soft Deletes (Borrado lógico) para protección de datos
+- **Core Monolith (Laravel 13):** Gestión de reglas de negocio, recepciones, contenedores, mermas, autenticación y API REST.
+- **Microservicios de Análisis (Python):** Servicios independientes dedicados a procesamiento pesado de datos agrícolas, métricas predictivas y analítica.
+- **Base de Datos Espacial (PostgreSQL + PostGIS):** Almacenamiento normalizado con soporte para polígonos geoespaciales (coordenadas de fincas, lotes y trazabilidad física).
+- **Entorno de Contenedores (Docker & Docker Compose):** Aislamiento de entornos de desarrollo y producción de todos los microservicios.
+
+## ✨ Características Técnicas Clave
+- **Trazabilidad de Masa y Espacio:** Vinculación de kilos asignados y mermas a lotes georreferenciados.
+- **Integridad ACID:** Uso estricto de `DB::transaction` para prevenir descuadres en inventarios de fruta.
+- **Auditoría Completa:** Implementación de *Soft Deletes* y logs estructurados para eventos de modificación o merma.
+- **Sincronización Off-Grid:** Preparado para sincronización diferida (`synced_at`, `client_updated_at`) desde dispositivos de campo.
 
 ## ⚙️ Requisitos Previos
-Para ejecutar este proyecto en un entorno local, necesitas tener instalado:
-- [PHP >= 8.2](https://www.php.net/)
-- [Composer](https://getcomposer.org/)
-- [Node.js y npm](https://nodejs.org/)
-- Servidor local de base de datos (XAMPP, Laragon, o Docker/Laravel Sail)
+- [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/)
+- [Git](https://git-scm.com/)
 
-## 🚀 Instalación y Despliegue
+*(No requieres instalar PHP, Python o PostgreSQL localmente, todo corre dentro del entorno Dockerized).*
 
-Sigue estos pasos para levantar el entorno de desarrollo:
+## 🚀 Instalación y Despliegue con Docker
 
 1. **Clonar el repositorio**
    ```bash
-   git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)
+   git clone [https://github.com/manumantilla/palma.git](https://github.com/tu-usuario/tu-repositorio.git)
    cd tu-repositorio
