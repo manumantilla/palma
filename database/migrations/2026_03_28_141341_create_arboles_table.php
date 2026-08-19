@@ -48,6 +48,26 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Schema::create('arboles_red_vecindad', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('arbol_origen_id')->constrained('arboles')->cascadeOnDelete();
+        //     $table->foreignId('arbol_destino_id')->constrained('arboles')->cascadeOnDelete();
+            
+        //     // Distancia métrica exacta en el terreno (calculada por PostGIS ST_DistanceSphere/ST_DistanceSpheroid)
+        //     $table->decimal('distancia_metros', 6, 2);
+            
+        //     // Peso de transmisión (Beta en modelos SIR/SEIR)
+        //     // Cambia según el viento, pendiente del suelo o proximidad física
+        //     $table->decimal('probabilidad_contagio_base', 5, 4)->default(0.0500); // 0.0000 a 1.0000
+            
+        //     $table->enum('tipo_contacto', ['misma_fila', 'fila_contigua', 'viento_predominante', 'mecanico_herramienta']);
+        //     $table->timestamps();
+
+        //     // Índices de altísima velocidad para la carga de grafos en Python
+        //     $table->unique(['arbol_origen_id', 'arbol_destino_id']);
+        //     $table->index(['arbol_origen_id', 'distancia_metros']);
+        // });
+
         DB::statement('CREATE INDEX arboles_coordenada_spatial_index ON arboles USING gist (coordenada_precision);');
 
         // 2. TABLA AUXILIAR: MÉTRICAS ALOMÉTRICAS Y AGRICULTURA DE PRECISIÓN (Drones / IoT)

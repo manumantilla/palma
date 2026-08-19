@@ -1,232 +1,352 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Registrar Consumo de Insumos (Kardex) - Evento #' . $evento->id) }}
-        </h2>
-    </x-slot>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="consumoInsumosApp()">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <!-- Header / Banner Agrícola -->
+    <div class="mb-8 bg-gradient-to-r from-emerald-800 to-teal-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center space-x-2 text-emerald-200 text-sm font-medium mb-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span>Evento de Campo: <strong class="text-white">{{ $evento->tipoEvento->nombre ?? 'N/A' }}</strong></span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Aplicación y Salida de Insumos (Kardex) 🌱</h1>
+                <p class="text-emerald-100 text-sm mt-1">Asigna los lotes de inventario correspondientes y calcula el costo operativo de la labor.</p>
+            </div>
             
-            @if(session('error'))
-                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow">
-                    <span class="font-bold">¡Error!</span> {{ session('error') }}
-                </div>
-            @endif
-
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                
-                <div class="mb-8 p-4 bg-gray-50 border border-gray-200 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <span class="text-xs font-bold uppercase text-gray-500">Fecha Programada</span>
-                        <p class="text-gray-800 font-medium">{{ \Carbon\Carbon::parse($evento->fecha_programada)->format('d/m/Y') }}</p>
-                    </div>
-                    <div>
-                        <span class="text-xs font-bold uppercase text-gray-500">Ubicación</span>
-                        <p class="text-gray-800 font-medium">
-                            Lote: {{ $evento->lote->nombre_lote ?? 'N/A' }} 
-                            {{ $evento->zona ? ' - Zona: '.$evento->zona->nombre_zona : '' }}
-                        </p>
-                    </div>
-                    <div>
-                        <span class="text-xs font-bold uppercase text-gray-500">Estado Actual</span>
-                        <span class="px-2 py-1 text-xs font-bold rounded bg-yellow-100 text-yellow-800">
-                            {{ $evento->estado }}
-                        </span>
-                    </div>
-                </div>
-
-                <form action="{{ route('eventos_insumos.store', $evento->id) }}" method="POST" id="form-insumos">
-                    @csrf
-
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-gray-700">Insumos Aplicados en la Labor</h3>
-                        <button type="button" onclick="agregarInsumo()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-semibold flex items-center gap-1">
-                            ➕ Añadir Insumo
-                        </button>
-                    </div>
-
-                    <div id="contenedor-insumos" class="space-y-6">
-                        </div>
-
-                    <div class="mt-8 pt-6 border-t flex justify-end gap-4">
-                        <a href="{{ route('eventos_campo.show', $evento->id) }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                            Cancelar
-                        </a>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 shadow">
-                            Confirmar y Descontar Inventario
-                        </button>
-                    </div>
-                </form>
+            <!-- Resumen Total General Flotante -->
+            <div class="bg-emerald-950/60 backdrop-blur border border-emerald-500/30 rounded-xl p-4 text-right min-w-[200px]">
+                <span class="block text-xs text-emerald-300 font-medium uppercase tracking-wider">Costo Estimado Evento</span>
+                <span class="text-2xl font-black text-emerald-300" x-text="formatCurrency(costoTotalGeneral)">$0.00</span>
             </div>
         </div>
     </div>
 
-    <script>
-        // Inyectamos el catálogo de insumos y sus lotes de inventario desde Laravel
-        const catalogoInsumos = @json($insumosConLotes);
-        let contadorInsumos = 0;
+    <!-- Errores de Validación -->
+    @if ($errors->any())
+        <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-sm">
+            <div class="flex items-center mb-2">
+                <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <h3 class="text-sm font-bold text-red-800">Se encontraron errores en la solicitud:</h3>
+            </div>
+            <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        // Agregar una nueva estructura de Insumo al contenedor
-        function agregarInsumo() {
-            const contenedor = document.getElementById('contenedor-insumos');
-            const idInsumo = contadorInsumos;
+    <form action="{{ route('eventos_campo.insumos.store', $evento->id) }}" method="POST">
+        @csrf
+
+        <div class="space-y-6">
             
-            let opcionesInsumos = `<option value="">-- Seleccione un Insumo --</option>`;
-            catalogoInsumos.forEach(insumo => {
-                opcionesInsumos += `<option value="${insumo.id}">${insumo.nombre}</option>`;
-            });
-
-            const htmlInsumo = `
-                <div class="p-5 border border-gray-200 rounded-xl bg-gray-50 shadow-sm relative" id="bloque-insumo-${idInsumo}">
-                    <button type="button" onclick="eliminarBloque('bloque-insumo-${idInsumo}')" class="absolute top-4 right-4 text-red-500 hover:text-red-700 font-bold text-sm">
-                        ✕ Eliminar Insumo
-                    </button>
+            <!-- Contenedor Dinámico de Insumos -->
+            <template x-for="(insumoRow, iIndex) in insumosAgregados" :key="iIndex">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-200 hover:shadow-md">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Insumo *</label>
-                            <select name="insumos[${idInsumo}][insumo_id]" class="w-full border-gray-300 rounded-md shadow-sm text-sm" required onchange="cargarLotesInsumo(this, ${idInsumo})">
-                                ${opcionesInsumos}
-                            </select>
+                    <!-- Cabeza del Insumo -->
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center space-x-3">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold text-sm" x-text="iIndex + 1"></span>
+                            <h2 class="text-base font-bold text-slate-800" x-text="insumoRow.insumo_id ? getInsumoNombre(insumoRow.insumo_id) : 'Nuevo Insumo a Aplicar'"></h2>
                         </div>
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Método Aplicación *</label>
-                            <select name="insumos[${idInsumo}][metodo_aplicacion]" class="w-full border-gray-300 rounded-md shadow-sm text-sm" required>
-                                <option value="terrestre">Terrestre</option>
-                                <option value="foliar">Foliar</option>
-                                <option value="dron">Dron</option>
-                                <option value="fertirriego">Fertirriego</option>
-                                <option value="drench">Drench</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Unidad Medida *</label>
-                            <select name="insumos[${idInsumo}][unidad_medida]" class="w-full border-gray-300 rounded-md shadow-sm text-sm" required>
-                                <option value="kg">Kilogramos (kg)</option>
-                                <option value="litros">Litros</option>
-                                <option value="unidades">Unidades</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Área Aplicada (Hectáreas)</label>
-                            <input type="number" step="0.01" name="insumos[${idInsumo}][area_aplicada]" class="w-full border-gray-300 rounded-md shadow-sm text-sm" placeholder="Ej: 2.5">
-                        </div>
+                        <button type="button" @click="removeInsumo(iIndex)" class="inline-flex items-center text-xs font-semibold text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            Quitar Insumo
+                        </button>
                     </div>
 
-                    <div class="mt-4 p-4 bg-white border border-dashed rounded-lg">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-blue-700 uppercase">Salida de Lotes de Inventario (Kardex)</span>
-                            <button type="button" onclick="agregarLoteFila(${idInsumo})" class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 font-semibold">
-                                + Asignar Lote Físico
-                            </button>
+                    <div class="p-6 space-y-6">
+                        <!-- Campos Principales del Insumo -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            
+                            <!-- Seleccionar Insumo -->
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Insumo Catálogo *</label>
+                                <select :name="`insumos[${iIndex}][insumo_id]`" 
+                                        x-model="insumoRow.insumo_id" 
+                                        @change="onInsumoChange(iIndex)" 
+                                        class="w-full rounded-xl border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm shadow-sm" required>
+                                    <option value="">-- Seleccionar Insumo --</option>
+                                    <template x-for="item in catálogoInsumos" :key="item.id">
+                                        <option :value="item.id" x-text="item.nombre"></option>
+                                    </template>
+                                </select>
+                            </div>
+
+                            <!-- Método de Aplicación -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Método Aplicación *</label>
+                                <select :name="`insumos[${iIndex}][metodo_aplicacion]`" 
+                                        x-model="insumoRow.metodo_aplicacion" 
+                                        class="w-full rounded-xl border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm shadow-sm" required>
+                                    <option value="terrestre">Terrestre</option>
+                                    <option value="foliar">Foliar</option>
+                                    <option value="dron">Dron</option>
+                                    <option value="fertirriego">Fertirriego</option>
+                                    <option value="drench">Drench</option>
+                                </select>
+                            </div>
+
+                            <!-- Unidad de Medida -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Unidad Medida *</label>
+                                <select :name="`insumos[${iIndex}][unidad_medida]`" 
+                                        x-model="insumoRow.unidad_medida" 
+                                        class="w-full rounded-xl border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm shadow-sm" required>
+                                    <option value="kg">Kilogramos (kg)</option>
+                                    <option value="litros">Litros (L)</option>
+                                    <option value="unidades">Unidades (Und)</option>
+                                </select>
+                            </div>
+
+                            <!-- Área Aplicada -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Área Aplicada (Ha)</label>
+                                <input type="number" step="0.01" min="0" 
+                                       :name="`insumos[${iIndex}][area_aplicada]`" 
+                                       x-model="insumoRow.area_aplicada" 
+                                       placeholder="Ej: 2.5" 
+                                       class="w-full rounded-xl border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm shadow-sm">
+                            </div>
+
+                            <!-- Observaciones -->
+                            <div class="md:col-span-3">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Observaciones</label>
+                                <input type="text" 
+                                       :name="`insumos[${iIndex}][observaciones]`" 
+                                       x-model="insumoRow.observaciones" 
+                                       placeholder="Notas sobre dosis, clima o mezcla..." 
+                                       class="w-full rounded-xl border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm shadow-sm">
+                            </div>
                         </div>
-                        <div id="contenedor-lotes-${idInsumo}" class="space-y-2">
-                            <p class="text-xs text-gray-400 italic text-center py-2 instruction-lote">Selecciona primero un insumo para ver sus lotes disponibles.</p>
+
+                        <!-- Sección de Selección de Lotes (Kardex) -->
+                        <div class="border-t border-slate-100 pt-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xs font-extrabold text-slate-500 uppercase tracking-wider flex items-center">
+                                    <svg class="w-4 h-4 mr-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                    Desglose de Lotes Usados (Kardex)
+                                </h3>
+                                <button type="button" @click="addLote(iIndex)" 
+                                        :disabled="!insumoRow.insumo_id || getLotesDisponibles(insumoRow.insumo_id).length === 0"
+                                        class="inline-flex items-center text-xs font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg disabled:opacity-50 transition-colors">
+                                    + Agregar Lote
+                                </button>
+                            </div>
+
+                            <!-- Tabla de Lotes -->
+                            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                                <table class="w-full text-left border-collapse text-sm">
+                                    <thead>
+                                        <tr class="bg-slate-100 text-slate-600 text-xs uppercase font-bold border-b border-slate-200">
+                                            <th class="py-2.5 px-4">Lote / Código</th>
+                                            <th class="py-2.5 px-4">Stock Disponible</th>
+                                            <th class="py-2.5 px-4">Costo Unit.</th>
+                                            <th class="py-2.5 px-4 w-40">Cantidad Extraer *</th>
+                                            <th class="py-2.5 px-4 text-right">Subtotal</th>
+                                            <th class="py-2.5 px-4 text-center w-12"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        <template x-for="(loteRow, lIndex) in insumoRow.lotes" :key="lIndex">
+                                            <tr class="hover:bg-slate-50/80">
+                                                <!-- Dropdown Lotes -->
+                                                <td class="py-2.5 px-4">
+                                                    <select :name="`insumos[${iIndex}][lotes][${lIndex}][lote_insumo_id]`" 
+                                                            x-model="loteRow.lote_insumo_id" 
+                                                            @change="onLoteChange(iIndex, lIndex)" 
+                                                            class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-xs shadow-sm" required>
+                                                        <option value="">-- Lote --</option>
+                                                        <template x-for="lote in getLotesDisponibles(insumoRow.insumo_id)" :key="lote.id">
+                                                            <option :value="lote.id" x-text="`${lote.codigo_lote} (Disp: ${lote.cantidad_actual})`"></option>
+                                                        </template>
+                                                    </select>
+                                                </td>
+
+                                                <!-- Stock Disponible -->
+                                                <td class="py-2.5 px-4 text-slate-600 text-xs font-semibold">
+                                                    <span x-text="loteRow.stock_max ? loteRow.stock_max : '-'"></span>
+                                                </td>
+
+                                                <!-- Costo Unitario -->
+                                                <td class="py-2.5 px-4 text-slate-600 text-xs">
+                                                    <span x-text="loteRow.costo_unitario ? formatCurrency(loteRow.costo_unitario) : '$0.00'"></span>
+                                                </td>
+
+                                                <!-- Cantidad Extraer -->
+                                                <td class="py-2.5 px-4">
+                                                    <input type="number" step="0.01" min="0.01" :max="loteRow.stock_max"
+                                                           :name="`insumos[${iIndex}][lotes][${lIndex}][cantidad]`" 
+                                                           x-model.number="loteRow.cantidad" 
+                                                           placeholder="0.00" 
+                                                           class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-xs shadow-sm" required>
+                                                </td>
+
+                                                <!-- Subtotal calculado del lote -->
+                                                <td class="py-2.5 px-4 text-right font-bold text-slate-700 text-xs">
+                                                    <span x-text="formatCurrency((loteRow.cantidad || 0) * (loteRow.costo_unitario || 0))"></span>
+                                                </td>
+
+                                                <!-- Eliminar Fila Lote -->
+                                                <td class="py-2.5 px-4 text-center">
+                                                    <button type="button" @click="removeLote(iIndex, lIndex)" class="text-slate-400 hover:text-red-500 transition-colors">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </template>
+
+                                        <!-- Estado Vacío Lotes -->
+                                        <tr x-show="insumoRow.lotes.length === 0">
+                                            <td colspan="6" class="py-4 text-center text-xs text-slate-400 italic">
+                                                Selecciona un insumo y presiona "+ Agregar Lote" para extraer stock.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Totales por Insumo -->
+                            <div class="mt-3 flex justify-end space-x-6 text-xs font-bold text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <div>Total Cantidad Insumo: <span class="text-emerald-700 font-extrabold" x-text="calcularTotalCantidadInsumo(insumoRow)"></span></div>
+                                <div>Subtotal Insumo: <span class="text-emerald-700 font-extrabold" x-text="formatCurrency(calcularSubtotalInsumo(insumoRow))"></span></div>
+                            </div>
                         </div>
+
                     </div>
                 </div>
-            `;
-            
-            contenedor.insertAdjacentHTML('beforeend', htmlInsumo);
-            contadorInsumos++;
-        }
+            </template>
 
-        // Carga y filtra los lotes correspondientes al insumo seleccionado
-        function cargarLotesInsumo(selectElement, idInsumo) {
-            const insumoId = selectElement.value;
-            const contenedorLotes = document.getElementById(`contenedor-lotes-${idInsumo}`);
-            contenedorLotes.innerHTML = ''; // Limpiar campo
+            <!-- Botón Agregar Nuevo Insumo -->
+            <div class="text-center py-4">
+                <button type="button" @click="addInsumo()" class="inline-flex items-center px-5 py-2.5 border-2 border-dashed border-emerald-600 text-emerald-800 hover:bg-emerald-50 rounded-2xl font-bold text-sm transition-colors shadow-sm">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Añadir Otro Insumo a la Labor
+                </button>
+            </div>
 
-            if (!insumoId) {
-                contenedorLotes.innerHTML = '<p class="text-xs text-gray-400 italic text-center py-2">Selecciona primero un insumo para ver sus lotes disponibles.</p>';
-                return;
+        </div>
+
+        <!-- Botones Acción Final -->
+        <div class="mt-8 flex items-center justify-end space-x-4 border-t border-slate-200 pt-6">
+            <a href="{{ route('eventos_campo.show', $evento->id) }}" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold hover:bg-slate-100 text-sm transition-colors">
+                Cancelar
+            </a>
+            <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Guardar y Descontar Kardex
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lógica interactiva Alpine.js -->
+<script>
+    function consumoInsumosApp() {
+        return {
+            catálogoInsumos: @json($insumosConLotes),
+            insumosAgregados: [],
+
+            init() {
+                // Iniciar con un item de insumo por defecto
+                this.addInsumo();
+            },
+
+            addInsumo() {
+                this.insumosAgregados.push({
+                    insumo_id: '',
+                    metodo_aplicacion: 'terrestre',
+                    unidad_medida: 'kg',
+                    area_aplicada: '',
+                    observaciones: '',
+                    lotes: []
+                });
+            },
+
+            removeInsumo(index) {
+                this.insumosAgregados.splice(index, 1);
+            },
+
+            onInsumoChange(iIndex) {
+                // Al cambiar el insumo resetear sus lotes asociados
+                this.insumosAgregados[iIndex].lotes = [];
+                // Agregar automáticamente el primer lote disponible si existe
+                this.addLote(iIndex);
+            },
+
+            getInsumoNombre(insumoId) {
+                const found = this.catálogoInsumos.find(i => i.id == insumoId);
+                return found ? found.nombre : 'Insumo';
+            },
+
+            getLotesDisponibles(insumoId) {
+                if (!insumoId) return [];
+                const insumo = this.catálogoInsumos.find(i => i.id == insumoId);
+                return insumo && insumo.lotes ? insumo.lotes : [];
+            },
+
+            addLote(iIndex) {
+                const insumoId = this.insumosAgregados[iIndex].insumo_id;
+                const lotesDisp = this.getLotesDisponibles(insumoId);
+                
+                if (lotesDisp.length === 0) return;
+
+                this.insumosAgregados[iIndex].lotes.push({
+                    lote_insumo_id: '',
+                    cantidad: '',
+                    costo_unitario: 0,
+                    stock_max: 0
+                });
+            },
+
+            removeLote(iIndex, lIndex) {
+                this.insumosAgregados[iIndex].lotes.splice(lIndex, 1);
+            },
+
+            onLoteChange(iIndex, lIndex) {
+                const loteId = this.insumosAgregados[iIndex].lotes[lIndex].lote_insumo_id;
+                const insumoId = this.insumosAgregados[iIndex].insumo_id;
+                const lotesDisp = this.getLotesDisponibles(insumoId);
+                
+                const loteEncontrado = lotesDisp.find(l => l.id == loteId);
+
+                if (loteEncontrado) {
+                    // Mapeo con el campo corregido `cantidad_actual`
+                    this.insumosAgregados[iIndex].lotes[lIndex].costo_unitario = parseFloat(loteEncontrado.costo_unitario) || 0;
+                    this.insumosAgregados[iIndex].lotes[lIndex].stock_max = parseFloat(loteEncontrado.cantidad_actual) || 0;
+                } else {
+                    this.insumosAgregados[iIndex].lotes[lIndex].costo_unitario = 0;
+                    this.insumosAgregados[iIndex].lotes[lIndex].stock_max = 0;
+                }
+            },
+
+            calcularSubtotalInsumo(insumoRow) {
+                return insumoRow.lotes.reduce((sum, l) => {
+                    return sum + ((parseFloat(l.cantidad) || 0) * (parseFloat(l.costo_unitario) || 0));
+                }, 0);
+            },
+
+            calcularTotalCantidadInsumo(insumoRow) {
+                const total = insumoRow.lotes.reduce((sum, l) => sum + (parseFloat(l.cantidad) || 0), 0);
+                return total.toFixed(2);
+            },
+
+            get costoTotalGeneral() {
+                return this.insumosAgregados.reduce((sum, insumoRow) => {
+                    return sum + this.calcularSubtotalInsumo(insumoRow);
+                }, 0);
+            },
+
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('es-CO', {
+                    style: 'currency',
+                    currency: 'COP',
+                    minimumFractionDigits: 2
+                }).format(amount || 0);
             }
-
-            const insumoSeleccionado = catalogoInsumos.find(i => i.id == insumoId);
-            
-            if (!insumoSeleccionado || insumoSeleccionado.lotes_insumos.length === 0) {
-                contenedorLotes.innerHTML = '<p class="text-xs text-red-500 italic text-center py-2">⚠️ No hay lotes de este insumo con stock en el almacén.</p>';
-                return;
-            }
-
-            // Al seleccionar el insumo, añadimos automáticamente la primera fila de lote para agilizar el flujo
-            agregarLoteFila(idInsumo, insumoSeleccionado.lotes_insumos);
         }
-
-        // Añadir una sub-fila de asignación de lote físico
-        function agregarLoteFila(idInsumo, lotesDisponibles = null) {
-            const contenedorLotes = document.getElementById(`contenedor-lotes-${idInsumo}`);
-            
-            // Remover texto instructivo si existe
-            const instruccion = contenedorLotes.querySelector('.instruction-lote');
-            if (instruccion) instruccion.remove();
-
-            if (!lotesDisponibles) {
-                const selectInsumoId = document.getElementsByName(`insumos[${idInsumo}][insumo_id]`)[0].value;
-                const insumo = catalogoInsumos.find(i => i.id == selectInsumoId);
-                lotesDisponibles = insumo ? insumo.lotes_insumos : [];
-            }
-
-            if (lotesDisponibles.length === 0) return;
-
-            let opcionesLotes = '';
-            lotesDisponibles.forEach(l => {
-                opcionesLotes += `<option value="${l.id}" data-stock="${l.stock}">Lote: ${l.codigo_lote} (Disponible: ${l.stock})</option>`;
-            });
-
-            const idLoteFila = Date.now() + Math.floor(Math.random() * 100);
-            const htmlLote = `
-                <div class="flex items-center gap-4 bg-gray-50 p-2 rounded border" id="fila-lote-${idLoteFila}">
-                    <div class="flex-1">
-                        <select name="insumos[${idInsumo}][lotes][${idLoteFila}][lote_insumo_id]" class="w-full border-gray-300 rounded-md text-xs shadow-sm" required onchange="validarStockMaximo(this)">
-                            ${opcionesLotes}
-                        </select>
-                    </div>
-                    <div class="w-1/3">
-                        <input type="number" step="0.01" min="0.01" name="insumos[${idInsumo}][lotes][${idLoteFila}][amount]" 
-                               placeholder="Cantidad a usar" class="w-full border-gray-300 rounded-md text-xs shadow-sm cantidad-lote-input" required oninput="validarStockMaximo(this)">
-                    </div>
-                    <button type="button" onclick="eliminarBloque('fila-lote-${idLoteFila}')" class="text-red-500 hover:text-red-700 text-sm font-bold">
-                        🗑️
-                    </button>
-                </div>
-            `;
-            contenedorLotes.insertAdjacentHTML('beforeend', htmlLote);
-        }
-
-        // Validar en tiempo real que el operario no digite más de lo que posee el lote en el Kardex
-        function validarStockMaximo(element) {
-            const fila = element.closest('.flex');
-            const selectLote = fila.querySelector('select');
-            const inputCantidad = fila.querySelector('.cantidad-lote-input');
-            
-            if(!selectLote.value || !inputCantidad.value) return;
-
-            const opcionSeleccionada = selectLote.options[selectLote.selectedIndex];
-            const stockDisponible = parseFloat(opcionSeleccionada.getAttribute('data-stock'));
-            const cantidadIngresada = parseFloat(inputCantidad.value);
-
-            if (cantidadIngresada > stockDisponible) {
-                inputCantidad.classList.add('border-red-500', 'bg-red-50');
-                inputCantidad.setCustomValidity(`¡Error! El stock máximo de este lote es de ${stockDisponible}`);
-                inputCantidad.reportValidity();
-            } else {
-                inputCantidad.classList.remove('border-red-500', 'bg-red-50');
-                inputCantidad.setCustomValidity('');
-            }
-        }
-
-        function eliminarBloque(id) {
-            document.getElementById(id).remove();
-        }
-
-        // Inicializar con una fila vacía al cargar la vista
-        document.addEventListener("DOMContentLoaded", function() {
-            agregarInsumo();
-        });
-    </script>
+    }
+</script>
 </x-app-layout>

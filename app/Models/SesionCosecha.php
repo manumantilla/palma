@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Illuminate\Database\Eloquent\Concerns\HasUuids; 
 class SesionCosecha extends Model
 {
     use HasFactory;
-
+    use HasUuids;
+    public $incrementing = false; 
     // Forzamos el nombre exacto de tu tabla
     protected $table = 'sesiones_cosecha';
 
@@ -36,6 +37,23 @@ class SesionCosecha extends Model
     | RELACIONES (Relationships)
     |--------------------------------------------------------------------------
     */
+    public function cicloProductivo()
+    {
+        return $this->hasOneThrough(
+            CicloProductivo::class,
+            SesionCosecha::class,
+            'id',
+            'id',
+            'sesion_cosecha_id',
+            'orden_cosecha_id'
+        );
+    }
+
+    // Manera mas limpia 
+    // public function getCicloProductivoAttribute()
+    // {
+    //     return $this->sesionCosecha?->ordenCosecha?->cicloProductivo;
+    // }
 
     public function ordenCosecha(): BelongsTo
     {

@@ -16,11 +16,11 @@ class EventoInsumoController extends Controller
     {
         // Traemos los insumos que tienen stock disponible en el Kardex (lotes_insumos)
         // Agrupamos o listamos los lotes de insumos activos con su stock > 0
-        $insumosConLotes = Insumo::whereHas('lotesInsumos', function($query) {
-                $query->where('stock', '>', 0);
+        $insumosConLotes = Insumo::whereHas('lotes', function($query) {
+                $query->where('cantidad_actual', '>', 0);
             })
-            ->with(['lotesInsumos' => function($query) {
-                $query->where('stock', '>', 0)->select('id', 'insumo_id', 'codigo_lote', 'stock', 'costo_unitario');
+            ->with(['lotes' => function($query) {
+                $query->where('cantidad_actual', '>', 0)->select('id', 'insumo_id', 'codigo_lote', 'cantidad_actual', 'costo_unitario');
             }])
             ->get();
 
@@ -55,6 +55,7 @@ class EventoInsumoController extends Controller
                 // 1. Calcular el costo total sumando (cantidad * costo_unitario del lote)
                 $costoTotalInsumo = 0;
                 $cantidadTotalInsumo = 0;
+                $costoTotalEvento = 0;
 
                 // Verificación previa de stock disponible en los lotes solicitados
                 foreach ($insumoData['lotes'] as $loteReq) {
@@ -96,14 +97,38 @@ class EventoInsumoController extends Controller
                         'evento_insumo_id' => $eventoInsumoId,
                         'lote_insumo_id'   => $loteReq['lote_insumo_id'],
                         'cantidad'         => $loteReq['cantidad'],
-                        'created_at'       => now(),
-                        'updated_at'       => now(),
+                        'area_aplicada'    => $esPorArbol ? null : ($insumoData['area_aplicada'] ?? null),
                     ]);
 
                     // DISMINUIR EL KARDEX FÍSICO
                     DB::table('lotes_insumos')
                         ->where('id', $loteReq['lote_insumo_id'])
                         ->decrement('stock', $loteReq['cantidad']);
+
+                    //Crear el gastable
+                    $gasto = $evento->gastos()->create([
+                        'ciclo_productivo_id' => $evento->ciclo_productivo_id,
+                        'categoria' => 'insumos',
+                        'naturaleza' => 'costo_produccion',
+                        'numero_soporte' => null,
+                        'comprobante_archivo' => null,
+                        'metodop_pago' => null,
+                        'concepto' => 'Consumo de insumos en evento: ' . $evento,
+                        'monto' => $loteReq['cantidad'] * $loteInventario->costo_unitario,
+                        'fecha' => now(),
+                        'descripcion' => 'Consumo de insumos en evento: ' . $evento . ' - Insumo ID: ' . $insumoData['insumo_id'] . ' - Lote ID: ' . $loteReq['lote_insumo_id'],
+                    ]);
+
+                    //Guardar el movimiento
+                    MovimientoStock::create([
+                        'lote_insumo_id' => $loteReq['lote_insumo_id'],
+                        'tipo_movimiento' => 'salida_aplicacion',
+                        'cantidad' => $loteReq['cantidad'],
+                        'movimientoable_id' => $gasto->id,
+                        'movimientoable_type' => get_class($gasto),
+                        'stock_resultante' => $loteInventario->stock - $loteReq['cantidad'],
+                        'observacion' => 'Salida de insumo por evento de campo: ' . $evento->tipoEvento->nombre,
+                    ]);
                 }
             }
 

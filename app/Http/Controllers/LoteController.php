@@ -7,6 +7,8 @@ use App\Models\Lote;
 use App\Models\LoteZonaManejo;
 use App\Models\LoteAnaliticaSuelo;
 use App\Models\LoteSistemaRiego;
+use App\Models\Arbol;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,12 +17,95 @@ class LoteController extends Controller
     /**
      * Listado de todos los lotes.
      */
-    public function index()
-    {
-        // Carga ansiosa para optimizar consultas de la Finca madre
-        $lotes = Lote::with('finca')->orderBy('nombre_lote')->get();
-        return view('lotes_gis.index', compact('lotes'));
+
+public function index(Request $request)
+{
+    $query = Lote::with(['finca', 'ultimaAnaliticaSuelo']);
+
+    // Filtro por finca
+    if ($request->filled('finca_id')) {
+        $query->where('finca_id', $request->finca_id);
     }
+
+    // Búsqueda por nombre (like)
+    if ($request->filled('nombre_lote')) {
+        $query->where('nombre_lote', 'like', '%' . $request->nombre_lote . '%');
+    }
+
+    // Búsqueda por código (like)
+    if ($request->filled('codigo_lote')) {
+        $query->where('codigo_lote', 'like', '%' . $request->codigo_lote . '%');
+    }
+
+    // Rango de área declarada
+    if ($request->filled('area_min')) {
+        $query->where('area_hectareas_declaradas', '>=', $request->area_min);
+    }
+    if ($request->filled('area_max')) {
+        $query->where('area_hectareas_declaradas', '<=', $request->area_max);
+    }
+
+    // Rango de altitud
+    if ($request->filled('altitud_min')) {
+        $query->where('altitud_mediana_msnm', '>=', $request->altitud_min);
+    }
+    if ($request->filled('altitud_max')) {
+        $query->where('altitud_mediana_msnm', '<=', $request->altitud_max);
+    }
+
+    // Rango de pendiente
+    if ($request->filled('pendiente_min')) {
+        $query->where('pendiente_promedio_porcentaje', '>=', $request->pendiente_min);
+    }
+    if ($request->filled('pendiente_max')) {
+        $query->where('pendiente_promedio_porcentaje', '<=', $request->pendiente_max);
+    }
+
+    // Tipo de suelo (exacto)
+    if ($request->filled('tipo_suelo')) {
+        $query->where('tipo_suelo', $request->tipo_suelo);
+    }
+
+    // Rango de pH
+    if ($request->filled('ph_min')) {
+        $query->where('ph_suelo', '>=', $request->ph_min);
+    }
+    if ($request->filled('ph_max')) {
+        $query->where('ph_suelo', '<=', $request->ph_max);
+    }
+
+    // Tiene riego instalado (boolean)
+    if ($request->filled('tiene_riego_instalado')) {
+        $query->where('tiene_riego_instalado', $request->tiene_riego_instalado);
+    }
+
+    // Fuente de agua (like)
+    if ($request->filled('fuente_agua')) {
+        $query->where('fuente_agua', 'like', '%' . $request->fuente_agua . '%');
+    }
+
+    // Tenencia (exacto)
+    if ($request->filled('tenencia')) {
+        $query->where('tenencia', $request->tenencia);
+    }
+
+    // Activo (boolean)
+    if ($request->filled('activo')) {
+        $query->where('activo', $request->activo);
+    }
+
+    // Ordenar por nombre por defecto
+    $query->orderBy('nombre_lote');
+
+    $lotes = $query->paginate(15)->withQueryString();
+
+    // Datos para los selects dinámicos
+    $fincas = Finca::orderBy('nombre')->pluck('nombre', 'id');
+    $tiposSuelo = Lote::distinct()->pluck('tipo_suelo')->filter()->values();
+    $tenencias = Lote::distinct()->pluck('tenencia')->filter()->values();
+
+    return view('lotes_gis.index', compact('lotes', 'fincas', 'tiposSuelo', 'tenencias'));
+}
 
     /**
      * Formulario de creación del Lote Maestro.
@@ -182,5 +267,26 @@ class LoteController extends Controller
         $riego->save();
 
         return back()->with('success', 'Especificaciones del sistema hidráulico añadidas.');
+    }
+
+    public function mapa()
+    {
+        // Extraemos los datos básicos y decodificamos el punto PostGIS
+        $arboles = Arbol::select(
+                'id',
+                'codigo_unico',
+                'fila_indice',
+                'posicion_indice',
+                'estado_vital',
+                'etapa_biologica',
+                // PostGIS: ST_Y es Latitud, ST_X es Longitud
+                DB::raw('ST_Y(coordenada_precision::geometry) as lat'),
+                DB::raw('ST_X(coordenada_precision::geometry) as lng')
+            )
+            ->whereNotNull('coordenada_precision') // Solo árboles con GPS
+            ->get();
+
+        // Enviamos la colección a la vista
+        return view('lotes_gis.mapa', compact('arboles'));
     }
 }

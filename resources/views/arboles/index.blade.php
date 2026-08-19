@@ -96,7 +96,9 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Posición (Fila/Pos)</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Variedad</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado / Etapa</th>
-                                <th scope="col" class="relative px-6 py-3"><span class="sr-only">Acciones</span></th>
+                                
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+               
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -124,7 +126,7 @@
                                         <div class="text-sm text-gray-500 mt-1">{{ $arbol->etapa_biologica }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3">Ver</a>
+                                        <a href="{{route('arboles.show', $arbol->id)}}" class="text-indigo-600 hover:text-indigo-900 mr-3">Ver</a>
                                         <a href="#" class="text-yellow-600 hover:text-yellow-900">Editar</a>
                                     </td>
                                 </tr>

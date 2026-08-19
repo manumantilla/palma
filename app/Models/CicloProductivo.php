@@ -40,7 +40,7 @@ class CicloProductivo extends Model
 
     // --- RELACIONES CORRECCIONALES ---
 
-    public function lote(): BelongsTo
+    public function lote()
     {
         return $this->belongsTo(Lote::class, 'lote_id');
     }
@@ -55,6 +55,7 @@ class CicloProductivo extends Model
         return $this->belongsTo(Proveedor::class, 'proveedor_material_vegetal_id');
     }
 
+    
     public function agronomo()
     {
         return $this->belongsTo(User::class, 'agronomo_responsable_id');

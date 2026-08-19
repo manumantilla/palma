@@ -17,28 +17,34 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: tiger; Type: SCHEMA; Schema: -; Owner: -
+-- Name: tiger; Type: SCHEMA; Schema: -; Owner: sail
 --
 
 CREATE SCHEMA tiger;
 
 
+ALTER SCHEMA tiger OWNER TO sail;
+
 --
--- Name: tiger_data; Type: SCHEMA; Schema: -; Owner: -
+-- Name: tiger_data; Type: SCHEMA; Schema: -; Owner: sail
 --
 
 CREATE SCHEMA tiger_data;
 
 
+ALTER SCHEMA tiger_data OWNER TO sail;
+
 --
--- Name: topology; Type: SCHEMA; Schema: -; Owner: -
+-- Name: topology; Type: SCHEMA; Schema: -; Owner: sail
 --
 
 CREATE SCHEMA topology;
 
 
+ALTER SCHEMA topology OWNER TO sail;
+
 --
--- Name: SCHEMA topology; Type: COMMENT; Schema: -; Owner: -
+-- Name: SCHEMA topology; Type: COMMENT; Schema: -; Owner: sail
 --
 
 COMMENT ON SCHEMA topology IS 'PostGIS Topology schema';
@@ -52,7 +58,7 @@ CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION fuzzystrmatch; Type: COMMENT; Schema: -; Owner: -
+-- Name: EXTENSION fuzzystrmatch; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION fuzzystrmatch IS 'determine similarities and distance between strings';
@@ -66,7 +72,7 @@ CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: -
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry and geography spatial types and functions';
@@ -80,7 +86,7 @@ CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder WITH SCHEMA tiger;
 
 
 --
--- Name: EXTENSION postgis_tiger_geocoder; Type: COMMENT; Schema: -; Owner: -
+-- Name: EXTENSION postgis_tiger_geocoder; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION postgis_tiger_geocoder IS 'PostGIS tiger geocoder and reverse geocoder';
@@ -94,7 +100,7 @@ CREATE EXTENSION IF NOT EXISTS postgis_topology WITH SCHEMA topology;
 
 
 --
--- Name: EXTENSION postgis_topology; Type: COMMENT; Schema: -; Owner: -
+-- Name: EXTENSION postgis_topology; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions';
@@ -105,7 +111,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: arboles; Type: TABLE; Schema: public; Owner: -
+-- Name: arboles; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.arboles (
@@ -141,8 +147,10 @@ CREATE TABLE public.arboles (
 );
 
 
+ALTER TABLE public.arboles OWNER TO sail;
+
 --
--- Name: arboles_historial_fitosanitario; Type: TABLE; Schema: public; Owner: -
+-- Name: arboles_historial_fitosanitario; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.arboles_historial_fitosanitario (
@@ -165,8 +173,10 @@ CREATE TABLE public.arboles_historial_fitosanitario (
 );
 
 
+ALTER TABLE public.arboles_historial_fitosanitario OWNER TO sail;
+
 --
--- Name: arboles_historial_fitosanitario_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: arboles_historial_fitosanitario_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.arboles_historial_fitosanitario_id_seq
@@ -177,15 +187,17 @@ CREATE SEQUENCE public.arboles_historial_fitosanitario_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.arboles_historial_fitosanitario_id_seq OWNER TO sail;
+
 --
--- Name: arboles_historial_fitosanitario_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: arboles_historial_fitosanitario_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.arboles_historial_fitosanitario_id_seq OWNED BY public.arboles_historial_fitosanitario.id;
 
 
 --
--- Name: arboles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: arboles_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.arboles_id_seq
@@ -196,15 +208,17 @@ CREATE SEQUENCE public.arboles_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.arboles_id_seq OWNER TO sail;
+
 --
--- Name: arboles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: arboles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.arboles_id_seq OWNED BY public.arboles.id;
 
 
 --
--- Name: arboles_metricas_historicas; Type: TABLE; Schema: public; Owner: -
+-- Name: arboles_metricas_historicas; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.arboles_metricas_historicas (
@@ -225,8 +239,10 @@ CREATE TABLE public.arboles_metricas_historicas (
 );
 
 
+ALTER TABLE public.arboles_metricas_historicas OWNER TO sail;
+
 --
--- Name: arboles_metricas_historicas_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: arboles_metricas_historicas_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.arboles_metricas_historicas_id_seq
@@ -237,15 +253,17 @@ CREATE SEQUENCE public.arboles_metricas_historicas_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.arboles_metricas_historicas_id_seq OWNER TO sail;
+
 --
--- Name: arboles_metricas_historicas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: arboles_metricas_historicas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.arboles_metricas_historicas_id_seq OWNED BY public.arboles_metricas_historicas.id;
 
 
 --
--- Name: bitacoras; Type: TABLE; Schema: public; Owner: -
+-- Name: bitacoras; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.bitacoras (
@@ -267,8 +285,10 @@ CREATE TABLE public.bitacoras (
 );
 
 
+ALTER TABLE public.bitacoras OWNER TO sail;
+
 --
--- Name: bitacoras_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: bitacoras_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.bitacoras_id_seq
@@ -279,15 +299,17 @@ CREATE SEQUENCE public.bitacoras_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.bitacoras_id_seq OWNER TO sail;
+
 --
--- Name: bitacoras_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: bitacoras_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.bitacoras_id_seq OWNED BY public.bitacoras.id;
 
 
 --
--- Name: cache; Type: TABLE; Schema: public; Owner: -
+-- Name: cache; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.cache (
@@ -297,8 +319,10 @@ CREATE TABLE public.cache (
 );
 
 
+ALTER TABLE public.cache OWNER TO sail;
+
 --
--- Name: cache_locks; Type: TABLE; Schema: public; Owner: -
+-- Name: cache_locks; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.cache_locks (
@@ -308,8 +332,10 @@ CREATE TABLE public.cache_locks (
 );
 
 
+ALTER TABLE public.cache_locks OWNER TO sail;
+
 --
--- Name: carta_porte; Type: TABLE; Schema: public; Owner: -
+-- Name: carta_porte; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.carta_porte (
@@ -346,8 +372,10 @@ CREATE TABLE public.carta_porte (
 );
 
 
+ALTER TABLE public.carta_porte OWNER TO sail;
+
 --
--- Name: carta_porte_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: carta_porte_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.carta_porte_id_seq
@@ -358,15 +386,17 @@ CREATE SEQUENCE public.carta_porte_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.carta_porte_id_seq OWNER TO sail;
+
 --
--- Name: carta_porte_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: carta_porte_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.carta_porte_id_seq OWNED BY public.carta_porte.id;
 
 
 --
--- Name: categorias_insumo; Type: TABLE; Schema: public; Owner: -
+-- Name: categorias_insumo; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.categorias_insumo (
@@ -379,8 +409,10 @@ CREATE TABLE public.categorias_insumo (
 );
 
 
+ALTER TABLE public.categorias_insumo OWNER TO sail;
+
 --
--- Name: categorias_insumo_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: categorias_insumo_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.categorias_insumo_id_seq
@@ -391,15 +423,17 @@ CREATE SEQUENCE public.categorias_insumo_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.categorias_insumo_id_seq OWNER TO sail;
+
 --
--- Name: categorias_insumo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: categorias_insumo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.categorias_insumo_id_seq OWNED BY public.categorias_insumo.id;
 
 
 --
--- Name: ciclos_productivos; Type: TABLE; Schema: public; Owner: -
+-- Name: ciclos_productivos; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.ciclos_productivos (
@@ -434,8 +468,10 @@ CREATE TABLE public.ciclos_productivos (
 );
 
 
+ALTER TABLE public.ciclos_productivos OWNER TO sail;
+
 --
--- Name: ciclos_productivos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: ciclos_productivos_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.ciclos_productivos_id_seq
@@ -446,15 +482,17 @@ CREATE SEQUENCE public.ciclos_productivos_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.ciclos_productivos_id_seq OWNER TO sail;
+
 --
--- Name: ciclos_productivos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: ciclos_productivos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.ciclos_productivos_id_seq OWNED BY public.ciclos_productivos.id;
 
 
 --
--- Name: clientes; Type: TABLE; Schema: public; Owner: -
+-- Name: clientes; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.clientes (
@@ -487,8 +525,10 @@ CREATE TABLE public.clientes (
 );
 
 
+ALTER TABLE public.clientes OWNER TO sail;
+
 --
--- Name: clientes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: clientes_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.clientes_id_seq
@@ -499,15 +539,59 @@ CREATE SEQUENCE public.clientes_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.clientes_id_seq OWNER TO sail;
+
 --
--- Name: clientes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: clientes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.clientes_id_seq OWNED BY public.clientes.id;
 
 
 --
--- Name: compra_items; Type: TABLE; Schema: public; Owner: -
+-- Name: componentes_riego; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.componentes_riego (
+    id bigint NOT NULL,
+    sistema_riego_id bigint NOT NULL,
+    tipo_componente character varying(255) NOT NULL,
+    nombre_identificador character varying(100) NOT NULL,
+    diametro_pulgadas character varying(20),
+    presion_trabajo_psi numeric(6,2),
+    caudal_estimado_litros_minuto numeric(8,2),
+    activo boolean DEFAULT true NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT componentes_riego_tipo_componente_check CHECK (((tipo_componente)::text = ANY ((ARRAY['manguera'::character varying, 'bomba'::character varying, 'valvula_paso'::character varying, 'valvula_solenoide'::character varying, 'filtro'::character varying, 'manometro'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.componentes_riego OWNER TO sail;
+
+--
+-- Name: componentes_riego_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.componentes_riego_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.componentes_riego_id_seq OWNER TO sail;
+
+--
+-- Name: componentes_riego_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.componentes_riego_id_seq OWNED BY public.componentes_riego.id;
+
+
+--
+-- Name: compra_items; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.compra_items (
@@ -523,8 +607,10 @@ CREATE TABLE public.compra_items (
 );
 
 
+ALTER TABLE public.compra_items OWNER TO sail;
+
 --
--- Name: compra_items_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: compra_items_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.compra_items_id_seq
@@ -535,15 +621,17 @@ CREATE SEQUENCE public.compra_items_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.compra_items_id_seq OWNER TO sail;
+
 --
--- Name: compra_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: compra_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.compra_items_id_seq OWNED BY public.compra_items.id;
 
 
 --
--- Name: compras; Type: TABLE; Schema: public; Owner: -
+-- Name: compras; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.compras (
@@ -577,8 +665,10 @@ CREATE TABLE public.compras (
 );
 
 
+ALTER TABLE public.compras OWNER TO sail;
+
 --
--- Name: compras_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: compras_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.compras_id_seq
@@ -589,15 +679,17 @@ CREATE SEQUENCE public.compras_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.compras_id_seq OWNER TO sail;
+
 --
--- Name: compras_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: compras_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.compras_id_seq OWNED BY public.compras.id;
 
 
 --
--- Name: compras_pagos; Type: TABLE; Schema: public; Owner: -
+-- Name: compras_pagos; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.compras_pagos (
@@ -614,8 +706,10 @@ CREATE TABLE public.compras_pagos (
 );
 
 
+ALTER TABLE public.compras_pagos OWNER TO sail;
+
 --
--- Name: compras_pagos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: compras_pagos_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.compras_pagos_id_seq
@@ -626,20 +720,22 @@ CREATE SEQUENCE public.compras_pagos_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.compras_pagos_id_seq OWNER TO sail;
+
 --
--- Name: compras_pagos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: compras_pagos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.compras_pagos_id_seq OWNED BY public.compras_pagos.id;
 
 
 --
--- Name: contenedores; Type: TABLE; Schema: public; Owner: -
+-- Name: contenedores; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.contenedores (
-    id bigint NOT NULL,
-    sesion_id bigint NOT NULL,
+    id uuid NOT NULL,
+    sesion_id uuid NOT NULL,
     cliente_id bigint,
     orden_pedido_id bigint,
     estado character varying(255) DEFAULT 'abierta'::character varying NOT NULL,
@@ -651,6 +747,8 @@ CREATE TABLE public.contenedores (
     kilos_acumulados numeric(12,2) DEFAULT '0'::numeric NOT NULL,
     peso_tara numeric(8,2) DEFAULT '0'::numeric NOT NULL,
     peso_total numeric(12,2) DEFAULT '0'::numeric NOT NULL,
+    client_updated_at timestamp(0) without time zone,
+    synced_at timestamp(0) without time zone,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
     CONSTRAINT contenedores_calibre_talla_check CHECK (((calibre_talla)::text = ANY ((ARRAY['pequeño'::character varying, 'mediano'::character varying, 'grande'::character varying, 'jumbo'::character varying])::text[]))),
@@ -660,27 +758,10 @@ CREATE TABLE public.contenedores (
 );
 
 
---
--- Name: contenedores_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.contenedores_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
+ALTER TABLE public.contenedores OWNER TO sail;
 
 --
--- Name: contenedores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.contenedores_id_seq OWNED BY public.contenedores.id;
-
-
---
--- Name: cultivos; Type: TABLE; Schema: public; Owner: -
+-- Name: cultivos; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.cultivos (
@@ -694,8 +775,10 @@ CREATE TABLE public.cultivos (
 );
 
 
+ALTER TABLE public.cultivos OWNER TO sail;
+
 --
--- Name: cultivos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: cultivos_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.cultivos_id_seq
@@ -706,21 +789,24 @@ CREATE SEQUENCE public.cultivos_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.cultivos_id_seq OWNER TO sail;
+
 --
--- Name: cultivos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: cultivos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.cultivos_id_seq OWNED BY public.cultivos.id;
 
 
 --
--- Name: despacho_items; Type: TABLE; Schema: public; Owner: -
+-- Name: despacho_items; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.despacho_items (
     id bigint NOT NULL,
     despacho_id bigint NOT NULL,
-    contenedor_id bigint,
+    contenedor_id uuid,
+    ciclo_productivo_id bigint,
     variedad character varying(255),
     calidad character varying(255),
     tipo_empaque character varying(255) NOT NULL,
@@ -730,6 +816,9 @@ CREATE TABLE public.despacho_items (
     tara_total numeric(8,2) DEFAULT '0'::numeric NOT NULL,
     peso_neto_total numeric(12,2) GENERATED ALWAYS AS ((peso_bruto_total - tara_total)) STORED NOT NULL,
     precio_unitario_kg numeric(10,2),
+    precio_liquidado_kg numeric(10,2),
+    descuento_kg numeric(8,2) DEFAULT '0'::numeric NOT NULL,
+    motivo_descuento text,
     descripcion text,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
@@ -738,8 +827,10 @@ CREATE TABLE public.despacho_items (
 );
 
 
+ALTER TABLE public.despacho_items OWNER TO sail;
+
 --
--- Name: despacho_items_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: despacho_items_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.despacho_items_id_seq
@@ -750,22 +841,22 @@ CREATE SEQUENCE public.despacho_items_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.despacho_items_id_seq OWNER TO sail;
+
 --
--- Name: despacho_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: despacho_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.despacho_items_id_seq OWNED BY public.despacho_items.id;
 
 
 --
--- Name: despachos; Type: TABLE; Schema: public; Owner: -
+-- Name: despachos; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.despachos (
     id bigint NOT NULL,
     numero_remision character varying(255) NOT NULL,
-    ciclo_productivo_id bigint,
-    lote_id bigint NOT NULL,
     tipo_destino character varying(255) NOT NULL,
     nombre_destino character varying(255) NOT NULL,
     ciudad_destino character varying(255),
@@ -774,6 +865,7 @@ CREATE TABLE public.despachos (
     comisionista_id bigint,
     fecha_despacho timestamp(0) without time zone NOT NULL,
     fecha_estimada_llegada timestamp(0) without time zone,
+    fecha_liquidado timestamp(0) without time zone,
     estado character varying(255) DEFAULT 'preparando'::character varying NOT NULL,
     modalidad_precio character varying(255) DEFAULT 'precio_mercado'::character varying NOT NULL,
     precio_referencia_kg numeric(10,2),
@@ -786,8 +878,10 @@ CREATE TABLE public.despachos (
 );
 
 
+ALTER TABLE public.despachos OWNER TO sail;
+
 --
--- Name: despachos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: despachos_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.despachos_id_seq
@@ -798,27 +892,104 @@ CREATE SEQUENCE public.despachos_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.despachos_id_seq OWNER TO sail;
+
 --
--- Name: despachos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: despachos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.despachos_id_seq OWNED BY public.despachos.id;
 
 
 --
--- Name: evento_insumos; Type: TABLE; Schema: public; Owner: -
+-- Name: evento_arbol; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.evento_arbol (
+    id bigint NOT NULL,
+    evento_campo_id bigint NOT NULL,
+    arbol_id bigint NOT NULL,
+    novedad_arbol character varying(255) DEFAULT 'ninguna'::character varying NOT NULL,
+    nota_individual text,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT evento_arbol_novedad_arbol_check CHECK (((novedad_arbol)::text = ANY ((ARRAY['ninguna'::character varying, 'enfermo'::character varying, 'muerto'::character varying, 'no_aplicó'::character varying, 'reemplazo'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.evento_arbol OWNER TO sail;
+
+--
+-- Name: evento_arbol_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.evento_arbol_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.evento_arbol_id_seq OWNER TO sail;
+
+--
+-- Name: evento_arbol_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.evento_arbol_id_seq OWNED BY public.evento_arbol.id;
+
+
+--
+-- Name: evento_insumo_lotes; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.evento_insumo_lotes (
+    id bigint NOT NULL,
+    evento_insumo_id bigint NOT NULL,
+    lote_insumo_id bigint NOT NULL,
+    cantidad numeric(12,2) NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.evento_insumo_lotes OWNER TO sail;
+
+--
+-- Name: evento_insumo_lotes_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.evento_insumo_lotes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.evento_insumo_lotes_id_seq OWNER TO sail;
+
+--
+-- Name: evento_insumo_lotes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.evento_insumo_lotes_id_seq OWNED BY public.evento_insumo_lotes.id;
+
+
+--
+-- Name: evento_insumos; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.evento_insumos (
     id bigint NOT NULL,
     evento_campo_id bigint NOT NULL,
     insumo_id bigint NOT NULL,
-    movimiento_inventario_id bigint,
-    fecha_labor date NOT NULL,
     cantidad numeric(12,2) NOT NULL,
     area_aplicada numeric(10,2),
-    metodo_aplicacion character varying(255) NOT NULL,
+    metodo_aplicacion character varying(255) DEFAULT 'terrestre'::character varying NOT NULL,
     unidad_medida character varying(255) NOT NULL,
+    costo_total numeric(12,2),
     observaciones text,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
@@ -827,8 +998,10 @@ CREATE TABLE public.evento_insumos (
 );
 
 
+ALTER TABLE public.evento_insumos OWNER TO sail;
+
 --
--- Name: evento_insumos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: evento_insumos_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.evento_insumos_id_seq
@@ -839,20 +1012,23 @@ CREATE SEQUENCE public.evento_insumos_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.evento_insumos_id_seq OWNER TO sail;
+
 --
--- Name: evento_insumos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: evento_insumos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.evento_insumos_id_seq OWNED BY public.evento_insumos.id;
 
 
 --
--- Name: evento_mano_obra; Type: TABLE; Schema: public; Owner: -
+-- Name: evento_mano_obra; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.evento_mano_obra (
     id bigint NOT NULL,
     evento_campo_id bigint NOT NULL,
+    sesion_id uuid,
     ciclo_id bigint,
     tipo_labor character varying(255) NOT NULL,
     trabajador_id bigint,
@@ -866,8 +1042,10 @@ CREATE TABLE public.evento_mano_obra (
 );
 
 
+ALTER TABLE public.evento_mano_obra OWNER TO sail;
+
 --
--- Name: evento_mano_obra_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: evento_mano_obra_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.evento_mano_obra_id_seq
@@ -878,25 +1056,110 @@ CREATE SEQUENCE public.evento_mano_obra_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.evento_mano_obra_id_seq OWNER TO sail;
+
 --
--- Name: evento_mano_obra_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: evento_mano_obra_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.evento_mano_obra_id_seq OWNED BY public.evento_mano_obra.id;
 
 
 --
--- Name: eventos_campo; Type: TABLE; Schema: public; Owner: -
+-- Name: evento_maquinaria; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.evento_maquinaria (
+    id bigint NOT NULL,
+    evento_id bigint NOT NULL,
+    maquina_id bigint NOT NULL,
+    trabajador_id bigint NOT NULL,
+    estado character varying(255) DEFAULT 'planificada'::character varying NOT NULL,
+    horometro_inicial numeric(12,2),
+    horometro_final numeric(12,2),
+    horas_trabajadas numeric(12,2),
+    tipo_combustible character varying(255) NOT NULL,
+    litros_consumidos numeric(12,2),
+    costo_total numeric(12,2) DEFAULT '0'::numeric NOT NULL,
+    observaciones text,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT evento_maquinaria_estado_check CHECK (((estado)::text = ANY ((ARRAY['planificada'::character varying, 'en_ejecucion'::character varying, 'terminada'::character varying, 'cancelada'::character varying])::text[]))),
+    CONSTRAINT evento_maquinaria_tipo_combustible_check CHECK (((tipo_combustible)::text = ANY ((ARRAY['acpm'::character varying, 'gasolina'::character varying, 'mecanico'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.evento_maquinaria OWNER TO sail;
+
+--
+-- Name: evento_maquinaria_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.evento_maquinaria_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.evento_maquinaria_id_seq OWNER TO sail;
+
+--
+-- Name: evento_maquinaria_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.evento_maquinaria_id_seq OWNED BY public.evento_maquinaria.id;
+
+
+--
+-- Name: evento_riego_componentes; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.evento_riego_componentes (
+    id bigint NOT NULL,
+    evento_riego_id bigint NOT NULL,
+    componente_id bigint NOT NULL,
+    estaba_activo boolean DEFAULT true NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.evento_riego_componentes OWNER TO sail;
+
+--
+-- Name: evento_riego_componentes_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.evento_riego_componentes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.evento_riego_componentes_id_seq OWNER TO sail;
+
+--
+-- Name: evento_riego_componentes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.evento_riego_componentes_id_seq OWNED BY public.evento_riego_componentes.id;
+
+
+--
+-- Name: eventos_campo; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.eventos_campo (
     id bigint NOT NULL,
     ciclo_productivo_id bigint,
-    arbol_id bigint,
     lote_id bigint,
+    zona_id bigint,
     hora_inicio time(0) without time zone,
     hora_fin time(0) without time zone,
-    costo_unitario numeric(12,4),
     tipo_evento_id bigint NOT NULL,
     fecha_programada timestamp(0) without time zone NOT NULL,
     fecha_ejecucion timestamp(0) without time zone,
@@ -904,14 +1167,17 @@ CREATE TABLE public.eventos_campo (
     longitud numeric(11,8),
     estado character varying(255) DEFAULT 'Pendiente'::character varying NOT NULL,
     observaciones text,
+    deleted_at timestamp(0) without time zone,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
     CONSTRAINT eventos_campo_estado_check CHECK (((estado)::text = ANY ((ARRAY['Pendiente'::character varying, 'En Proceso'::character varying, 'Completado'::character varying, 'Cancelado'::character varying])::text[])))
 );
 
 
+ALTER TABLE public.eventos_campo OWNER TO sail;
+
 --
--- Name: eventos_campo_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: eventos_campo_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.eventos_campo_id_seq
@@ -922,15 +1188,61 @@ CREATE SEQUENCE public.eventos_campo_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.eventos_campo_id_seq OWNER TO sail;
+
 --
--- Name: eventos_campo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: eventos_campo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.eventos_campo_id_seq OWNED BY public.eventos_campo.id;
 
 
 --
--- Name: failed_jobs; Type: TABLE; Schema: public; Owner: -
+-- Name: eventos_riego; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.eventos_riego (
+    id bigint NOT NULL,
+    sistema_riego_id bigint NOT NULL,
+    responsable_id bigint NOT NULL,
+    fecha_hora_inicio timestamp(0) without time zone NOT NULL,
+    fecha_hora_fin timestamp(0) without time zone,
+    duracion_total_minutos integer,
+    presion_promedio_psi numeric(6,2),
+    caudal_estimado_litros_minuto numeric(8,2) NOT NULL,
+    volumen_estimado_litros numeric(12,2) DEFAULT '0'::numeric NOT NULL,
+    estado character varying(255) DEFAULT 'en_progreso'::character varying NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT eventos_riego_estado_check CHECK (((estado)::text = ANY ((ARRAY['en_progreso'::character varying, 'finalizado'::character varying, 'cancelado'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.eventos_riego OWNER TO sail;
+
+--
+-- Name: eventos_riego_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.eventos_riego_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.eventos_riego_id_seq OWNER TO sail;
+
+--
+-- Name: eventos_riego_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.eventos_riego_id_seq OWNED BY public.eventos_riego.id;
+
+
+--
+-- Name: failed_jobs; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.failed_jobs (
@@ -944,8 +1256,10 @@ CREATE TABLE public.failed_jobs (
 );
 
 
+ALTER TABLE public.failed_jobs OWNER TO sail;
+
 --
--- Name: failed_jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: failed_jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.failed_jobs_id_seq
@@ -956,15 +1270,17 @@ CREATE SEQUENCE public.failed_jobs_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.failed_jobs_id_seq OWNER TO sail;
+
 --
--- Name: failed_jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: failed_jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.failed_jobs_id_seq OWNED BY public.failed_jobs.id;
 
 
 --
--- Name: fenologia_etapas; Type: TABLE; Schema: public; Owner: -
+-- Name: fenologia_etapas; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.fenologia_etapas (
@@ -980,8 +1296,10 @@ CREATE TABLE public.fenologia_etapas (
 );
 
 
+ALTER TABLE public.fenologia_etapas OWNER TO sail;
+
 --
--- Name: fenologia_etapas_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: fenologia_etapas_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.fenologia_etapas_id_seq
@@ -992,15 +1310,17 @@ CREATE SEQUENCE public.fenologia_etapas_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.fenologia_etapas_id_seq OWNER TO sail;
+
 --
--- Name: fenologia_etapas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: fenologia_etapas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.fenologia_etapas_id_seq OWNED BY public.fenologia_etapas.id;
 
 
 --
--- Name: fincas; Type: TABLE; Schema: public; Owner: -
+-- Name: fincas; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.fincas (
@@ -1012,8 +1332,10 @@ CREATE TABLE public.fincas (
 );
 
 
+ALTER TABLE public.fincas OWNER TO sail;
+
 --
--- Name: fincas_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: fincas_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.fincas_id_seq
@@ -1024,23 +1346,26 @@ CREATE SEQUENCE public.fincas_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.fincas_id_seq OWNER TO sail;
+
 --
--- Name: fincas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: fincas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.fincas_id_seq OWNED BY public.fincas.id;
 
 
 --
--- Name: gastos; Type: TABLE; Schema: public; Owner: -
+-- Name: gastos; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.gastos (
     id bigint NOT NULL,
     gastable_type character varying(255) NOT NULL,
     gastable_id bigint NOT NULL,
-    ciclo_producto_id bigint,
+    ciclo_productivo_id bigint,
     categoria character varying(255) DEFAULT 'otros'::character varying NOT NULL,
+    naturaleza character varying(255) DEFAULT 'gasto_operacional'::character varying NOT NULL,
     numero_soporte character varying(255),
     comprobante_archivo character varying(255),
     metodo_pago character varying(255),
@@ -1052,12 +1377,15 @@ CREATE TABLE public.gastos (
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
     CONSTRAINT gastos_categoria_check CHECK (((categoria)::text = ANY ((ARRAY['insumos'::character varying, 'mano_obra'::character varying, 'maquinaria'::character varying, 'transporte'::character varying, 'servicios_publicos'::character varying, 'arriendos'::character varying, 'mantenimiento'::character varying, 'administrativos'::character varying, 'impuestos'::character varying, 'seguros'::character varying, 'otros'::character varying])::text[]))),
-    CONSTRAINT gastos_metodo_pago_check CHECK (((metodo_pago)::text = ANY ((ARRAY['efectivo'::character varying, 'transferencia'::character varying, 'tarjeta'::character varying])::text[])))
+    CONSTRAINT gastos_metodo_pago_check CHECK (((metodo_pago)::text = ANY ((ARRAY['efectivo'::character varying, 'transferencia'::character varying, 'tarjeta'::character varying])::text[]))),
+    CONSTRAINT gastos_naturaleza_check CHECK (((naturaleza)::text = ANY ((ARRAY['costo_produccion'::character varying, 'gasto_operacional'::character varying, 'gasto_financiero'::character varying, 'inversion'::character varying])::text[])))
 );
 
 
+ALTER TABLE public.gastos OWNER TO sail;
+
 --
--- Name: gastos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: gastos_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.gastos_id_seq
@@ -1068,15 +1396,17 @@ CREATE SEQUENCE public.gastos_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.gastos_id_seq OWNER TO sail;
+
 --
--- Name: gastos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: gastos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.gastos_id_seq OWNED BY public.gastos.id;
 
 
 --
--- Name: insumo_componentes; Type: TABLE; Schema: public; Owner: -
+-- Name: insumo_componentes; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.insumo_componentes (
@@ -1092,8 +1422,10 @@ CREATE TABLE public.insumo_componentes (
 );
 
 
+ALTER TABLE public.insumo_componentes OWNER TO sail;
+
 --
--- Name: insumo_componentes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: insumo_componentes_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.insumo_componentes_id_seq
@@ -1104,15 +1436,17 @@ CREATE SEQUENCE public.insumo_componentes_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.insumo_componentes_id_seq OWNER TO sail;
+
 --
--- Name: insumo_componentes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: insumo_componentes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.insumo_componentes_id_seq OWNED BY public.insumo_componentes.id;
 
 
 --
--- Name: insumos; Type: TABLE; Schema: public; Owner: -
+-- Name: insumos; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.insumos (
@@ -1145,8 +1479,10 @@ CREATE TABLE public.insumos (
 );
 
 
+ALTER TABLE public.insumos OWNER TO sail;
+
 --
--- Name: insumos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: insumos_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.insumos_id_seq
@@ -1157,15 +1493,17 @@ CREATE SEQUENCE public.insumos_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.insumos_id_seq OWNER TO sail;
+
 --
--- Name: insumos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: insumos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.insumos_id_seq OWNED BY public.insumos.id;
 
 
 --
--- Name: job_batches; Type: TABLE; Schema: public; Owner: -
+-- Name: job_batches; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.job_batches (
@@ -1182,8 +1520,10 @@ CREATE TABLE public.job_batches (
 );
 
 
+ALTER TABLE public.job_batches OWNER TO sail;
+
 --
--- Name: jobs; Type: TABLE; Schema: public; Owner: -
+-- Name: jobs; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.jobs (
@@ -1197,8 +1537,10 @@ CREATE TABLE public.jobs (
 );
 
 
+ALTER TABLE public.jobs OWNER TO sail;
+
 --
--- Name: jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.jobs_id_seq
@@ -1209,15 +1551,17 @@ CREATE SEQUENCE public.jobs_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.jobs_id_seq OWNER TO sail;
+
 --
--- Name: jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.jobs_id_seq OWNED BY public.jobs.id;
 
 
 --
--- Name: labores_plantilla; Type: TABLE; Schema: public; Owner: -
+-- Name: labores_plantilla; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.labores_plantilla (
@@ -1239,8 +1583,10 @@ CREATE TABLE public.labores_plantilla (
 );
 
 
+ALTER TABLE public.labores_plantilla OWNER TO sail;
+
 --
--- Name: labores_plantilla_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: labores_plantilla_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.labores_plantilla_id_seq
@@ -1251,15 +1597,57 @@ CREATE SEQUENCE public.labores_plantilla_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.labores_plantilla_id_seq OWNER TO sail;
+
 --
--- Name: labores_plantilla_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: labores_plantilla_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.labores_plantilla_id_seq OWNED BY public.labores_plantilla.id;
 
 
 --
--- Name: liquidaciones_despacho; Type: TABLE; Schema: public; Owner: -
+-- Name: lecturas_sensores_tanque; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.lecturas_sensores_tanque (
+    id bigint NOT NULL,
+    tanque_id bigint NOT NULL,
+    lectura_distancia_cm numeric(6,2),
+    porcentaje_volumen numeric(5,2) NOT NULL,
+    calculo_litros_actuales numeric(12,2) NOT NULL,
+    fecha_hora_lectura timestamp(0) without time zone NOT NULL,
+    dispositivo_mac character varying(50),
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.lecturas_sensores_tanque OWNER TO sail;
+
+--
+-- Name: lecturas_sensores_tanque_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.lecturas_sensores_tanque_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.lecturas_sensores_tanque_id_seq OWNER TO sail;
+
+--
+-- Name: lecturas_sensores_tanque_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.lecturas_sensores_tanque_id_seq OWNED BY public.lecturas_sensores_tanque.id;
+
+
+--
+-- Name: liquidaciones_despacho; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.liquidaciones_despacho (
@@ -1278,6 +1666,7 @@ CREATE TABLE public.liquidaciones_despacho (
     valor_neto_item numeric(15,2) NOT NULL,
     estado_pago character varying(255) DEFAULT 'pendiente'::character varying NOT NULL,
     valor_pagado numeric(15,2) DEFAULT '0'::numeric NOT NULL,
+    saldo_pendiente numeric(15,2) DEFAULT '0'::numeric NOT NULL,
     fecha_pago timestamp(0) without time zone,
     medio_pago character varying(255),
     observaciones text,
@@ -1288,8 +1677,10 @@ CREATE TABLE public.liquidaciones_despacho (
 );
 
 
+ALTER TABLE public.liquidaciones_despacho OWNER TO sail;
+
 --
--- Name: liquidaciones_despacho_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: liquidaciones_despacho_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.liquidaciones_despacho_id_seq
@@ -1300,15 +1691,17 @@ CREATE SEQUENCE public.liquidaciones_despacho_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.liquidaciones_despacho_id_seq OWNER TO sail;
+
 --
--- Name: liquidaciones_despacho_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: liquidaciones_despacho_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.liquidaciones_despacho_id_seq OWNED BY public.liquidaciones_despacho.id;
 
 
 --
--- Name: lotes; Type: TABLE; Schema: public; Owner: -
+-- Name: lotes; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.lotes (
@@ -1339,8 +1732,10 @@ CREATE TABLE public.lotes (
 );
 
 
+ALTER TABLE public.lotes OWNER TO sail;
+
 --
--- Name: lotes_analiticas_suelo; Type: TABLE; Schema: public; Owner: -
+-- Name: lotes_analiticas_suelo; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.lotes_analiticas_suelo (
@@ -1363,8 +1758,10 @@ CREATE TABLE public.lotes_analiticas_suelo (
 );
 
 
+ALTER TABLE public.lotes_analiticas_suelo OWNER TO sail;
+
 --
--- Name: lotes_analiticas_suelo_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: lotes_analiticas_suelo_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.lotes_analiticas_suelo_id_seq
@@ -1375,15 +1772,17 @@ CREATE SEQUENCE public.lotes_analiticas_suelo_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.lotes_analiticas_suelo_id_seq OWNER TO sail;
+
 --
--- Name: lotes_analiticas_suelo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: lotes_analiticas_suelo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.lotes_analiticas_suelo_id_seq OWNED BY public.lotes_analiticas_suelo.id;
 
 
 --
--- Name: lotes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: lotes_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.lotes_id_seq
@@ -1394,15 +1793,17 @@ CREATE SEQUENCE public.lotes_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.lotes_id_seq OWNER TO sail;
+
 --
--- Name: lotes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: lotes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.lotes_id_seq OWNED BY public.lotes.id;
 
 
 --
--- Name: lotes_insumos; Type: TABLE; Schema: public; Owner: -
+-- Name: lotes_insumos; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.lotes_insumos (
@@ -1424,8 +1825,10 @@ CREATE TABLE public.lotes_insumos (
 );
 
 
+ALTER TABLE public.lotes_insumos OWNER TO sail;
+
 --
--- Name: lotes_insumos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: lotes_insumos_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.lotes_insumos_id_seq
@@ -1436,15 +1839,17 @@ CREATE SEQUENCE public.lotes_insumos_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.lotes_insumos_id_seq OWNER TO sail;
+
 --
--- Name: lotes_insumos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: lotes_insumos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.lotes_insumos_id_seq OWNED BY public.lotes_insumos.id;
 
 
 --
--- Name: lotes_sistemas_riego; Type: TABLE; Schema: public; Owner: -
+-- Name: lotes_sistemas_riego; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.lotes_sistemas_riego (
@@ -1466,8 +1871,10 @@ CREATE TABLE public.lotes_sistemas_riego (
 );
 
 
+ALTER TABLE public.lotes_sistemas_riego OWNER TO sail;
+
 --
--- Name: lotes_sistemas_riego_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: lotes_sistemas_riego_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.lotes_sistemas_riego_id_seq
@@ -1478,15 +1885,17 @@ CREATE SEQUENCE public.lotes_sistemas_riego_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.lotes_sistemas_riego_id_seq OWNER TO sail;
+
 --
--- Name: lotes_sistemas_riego_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: lotes_sistemas_riego_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.lotes_sistemas_riego_id_seq OWNED BY public.lotes_sistemas_riego.id;
 
 
 --
--- Name: lotes_zonas_manejo; Type: TABLE; Schema: public; Owner: -
+-- Name: lotes_zonas_manejo; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.lotes_zonas_manejo (
@@ -1501,8 +1910,10 @@ CREATE TABLE public.lotes_zonas_manejo (
 );
 
 
+ALTER TABLE public.lotes_zonas_manejo OWNER TO sail;
+
 --
--- Name: lotes_zonas_manejo_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: lotes_zonas_manejo_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.lotes_zonas_manejo_id_seq
@@ -1513,38 +1924,40 @@ CREATE SEQUENCE public.lotes_zonas_manejo_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.lotes_zonas_manejo_id_seq OWNER TO sail;
+
 --
--- Name: lotes_zonas_manejo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: lotes_zonas_manejo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.lotes_zonas_manejo_id_seq OWNED BY public.lotes_zonas_manejo.id;
 
 
 --
--- Name: mermas; Type: TABLE; Schema: public; Owner: -
+-- Name: mantenimientos_maquinaria; Type: TABLE; Schema: public; Owner: sail
 --
 
-CREATE TABLE public.mermas (
+CREATE TABLE public.mantenimientos_maquinaria (
     id bigint NOT NULL,
-    recepcion_campo_id bigint,
-    contenedor_id bigint,
-    fecha_registro date NOT NULL,
-    kilos_merma numeric(10,2) NOT NULL,
-    motivo character varying(255) NOT NULL,
-    costo_estimado numeric(10,2),
-    destino_final character varying(255),
-    comentarios text,
+    maquina_id bigint NOT NULL,
+    tipo_mantenimiento character varying(255) NOT NULL,
+    fecha date NOT NULL,
+    descripcion_trabajo text NOT NULL,
+    costo_mano_obra_mecanico numeric(12,2) NOT NULL,
+    costo_materiales numeric(12,2) NOT NULL,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
-    CONSTRAINT mermas_motivo_check CHECK (((motivo)::text = ANY ((ARRAY['daño'::character varying, 'perdida'::character varying, 'robo'::character varying, 'deshidratacion'::character varying, 'consumo_interno'::character varying, 'error'::character varying, 'otro'::character varying])::text[])))
+    CONSTRAINT mantenimientos_maquinaria_tipo_mantenimiento_check CHECK (((tipo_mantenimiento)::text = ANY ((ARRAY['preventivo'::character varying, 'correctivo'::character varying, 'calibracion'::character varying])::text[])))
 );
 
 
+ALTER TABLE public.mantenimientos_maquinaria OWNER TO sail;
+
 --
--- Name: mermas_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: mantenimientos_maquinaria_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
-CREATE SEQUENCE public.mermas_id_seq
+CREATE SEQUENCE public.mantenimientos_maquinaria_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1552,15 +1965,96 @@ CREATE SEQUENCE public.mermas_id_seq
     CACHE 1;
 
 
---
--- Name: mermas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.mermas_id_seq OWNED BY public.mermas.id;
-
+ALTER TABLE public.mantenimientos_maquinaria_id_seq OWNER TO sail;
 
 --
--- Name: migrations; Type: TABLE; Schema: public; Owner: -
+-- Name: mantenimientos_maquinaria_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.mantenimientos_maquinaria_id_seq OWNED BY public.mantenimientos_maquinaria.id;
+
+
+--
+-- Name: maquinaria; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.maquinaria (
+    id bigint NOT NULL,
+    codigo_interno character varying(255) NOT NULL,
+    nombre character varying(255) NOT NULL,
+    tipo_maquinaria_id bigint NOT NULL,
+    marca character varying(255) NOT NULL,
+    modelo character varying(255),
+    placa character varying(255),
+    serial character varying(255),
+    fecha_compra date,
+    valor_compra numeric(15,2),
+    vida_util_anios integer,
+    fuente_energia character varying(255) NOT NULL,
+    capacidad_tanque numeric(8,2),
+    consumo_hora numeric(8,2),
+    horometro_actual integer DEFAULT 0 NOT NULL,
+    kilometraje integer,
+    estado character varying(255) DEFAULT 'activo'::character varying NOT NULL,
+    responsable_id bigint,
+    observaciones text,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    deleted_at timestamp(0) without time zone,
+    CONSTRAINT maquinaria_estado_check CHECK (((estado)::text = ANY ((ARRAY['activo'::character varying, 'mantenimiento'::character varying, 'averiado'::character varying, 'alquilado'::character varying, 'vendido'::character varying, 'retirado'::character varying])::text[]))),
+    CONSTRAINT maquinaria_fuente_energia_check CHECK (((fuente_energia)::text = ANY ((ARRAY['diesel'::character varying, 'gasolina'::character varying, 'electrica'::character varying, 'manual'::character varying, 'hibrida'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.maquinaria OWNER TO sail;
+
+--
+-- Name: maquinaria_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.maquinaria_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.maquinaria_id_seq OWNER TO sail;
+
+--
+-- Name: maquinaria_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.maquinaria_id_seq OWNED BY public.maquinaria.id;
+
+
+--
+-- Name: mermas; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.mermas (
+    id uuid NOT NULL,
+    recepcion_campo_id uuid,
+    contenedor_id uuid,
+    fecha_registro date NOT NULL,
+    kilos_merma numeric(10,2) NOT NULL,
+    motivo character varying(255) NOT NULL,
+    costo_estimado numeric(10,2),
+    destino_final character varying(255),
+    comentarios text,
+    client_updated_at timestamp(0) without time zone,
+    synced_at timestamp(0) without time zone,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT mermas_motivo_check CHECK (((motivo)::text = ANY ((ARRAY['daño'::character varying, 'perdida'::character varying, 'robo'::character varying, 'deshidratacion'::character varying, 'consumo_interno'::character varying, 'error'::character varying, 'otro'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.mermas OWNER TO sail;
+
+--
+-- Name: migrations; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.migrations (
@@ -1570,8 +2064,10 @@ CREATE TABLE public.migrations (
 );
 
 
+ALTER TABLE public.migrations OWNER TO sail;
+
 --
--- Name: migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.migrations_id_seq
@@ -1583,49 +2079,36 @@ CREATE SEQUENCE public.migrations_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.migrations_id_seq OWNER TO sail;
+
 --
--- Name: migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.migrations_id_seq OWNED BY public.migrations.id;
 
 
 --
--- Name: movimientos_clasificacion; Type: TABLE; Schema: public; Owner: -
+-- Name: movimientos_clasificacion; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.movimientos_clasificacion (
-    id bigint NOT NULL,
-    recepcion_campo_id bigint NOT NULL,
-    contenedor_id bigint NOT NULL,
+    id uuid NOT NULL,
+    recepcion_campo_id uuid NOT NULL,
+    contenedor_id uuid NOT NULL,
     kilos_asignados numeric(10,2) NOT NULL,
     observaciones text,
+    client_updated_at timestamp(0) without time zone,
+    synced_at timestamp(0) without time zone,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone
 );
 
 
---
--- Name: movimientos_clasificacion_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.movimientos_clasificacion_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
+ALTER TABLE public.movimientos_clasificacion OWNER TO sail;
 
 --
--- Name: movimientos_clasificacion_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.movimientos_clasificacion_id_seq OWNED BY public.movimientos_clasificacion.id;
-
-
---
--- Name: movimientos_stock; Type: TABLE; Schema: public; Owner: -
+-- Name: movimientos_stock; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.movimientos_stock (
@@ -1644,8 +2127,10 @@ CREATE TABLE public.movimientos_stock (
 );
 
 
+ALTER TABLE public.movimientos_stock OWNER TO sail;
+
 --
--- Name: movimientos_stock_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: movimientos_stock_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.movimientos_stock_id_seq
@@ -1656,29 +2141,32 @@ CREATE SEQUENCE public.movimientos_stock_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.movimientos_stock_id_seq OWNER TO sail;
+
 --
--- Name: movimientos_stock_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: movimientos_stock_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.movimientos_stock_id_seq OWNED BY public.movimientos_stock.id;
 
 
 --
--- Name: ordenes_cosecha; Type: TABLE; Schema: public; Owner: -
+-- Name: ordenes_cosecha; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.ordenes_cosecha (
     id bigint NOT NULL,
     cliente_id bigint NOT NULL,
     ciclo_productivo_id bigint NOT NULL,
-    lote_cultivo_id bigint NOT NULL,
+    lote_cultivo_id bigint,
+    lote_zona_id bigint,
     fecha_programada date NOT NULL,
-    responsable character varying(255),
-    kilos_solicitados numeric(12,2),
+    fecha_entrega date NOT NULL,
+    responsable_id bigint,
+    cantidad_solicitada_kg numeric(12,2),
     variedad_requerida character varying(255),
     cantidad_planificada_kg numeric(12,2),
     cantidad_recolectada_kg numeric(12,2) DEFAULT '0'::numeric NOT NULL,
-    precio_unitario numeric(12,2),
     fecha_inicio date,
     fecha_fin date,
     estado character varying(255) DEFAULT 'borrador'::character varying NOT NULL,
@@ -1689,8 +2177,10 @@ CREATE TABLE public.ordenes_cosecha (
 );
 
 
+ALTER TABLE public.ordenes_cosecha OWNER TO sail;
+
 --
--- Name: ordenes_cosecha_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: ordenes_cosecha_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.ordenes_cosecha_id_seq
@@ -1701,15 +2191,61 @@ CREATE SEQUENCE public.ordenes_cosecha_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.ordenes_cosecha_id_seq OWNER TO sail;
+
 --
--- Name: ordenes_cosecha_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: ordenes_cosecha_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.ordenes_cosecha_id_seq OWNED BY public.ordenes_cosecha.id;
 
 
 --
--- Name: password_reset_tokens; Type: TABLE; Schema: public; Owner: -
+-- Name: pagos_liquidacion; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.pagos_liquidacion (
+    id bigint NOT NULL,
+    liquidacion_id bigint,
+    despacho_id bigint NOT NULL,
+    valor_pagado numeric(15,2) NOT NULL,
+    fecha_pago timestamp(0) without time zone NOT NULL,
+    medio_pago character varying(255) NOT NULL,
+    referencia_pago character varying(255),
+    banco_origen character varying(255),
+    registrado_por bigint,
+    observaciones text,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT pagos_liquidacion_medio_pago_check CHECK (((medio_pago)::text = ANY ((ARRAY['efectivo'::character varying, 'transferencia'::character varying, 'cheque'::character varying, 'otro'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.pagos_liquidacion OWNER TO sail;
+
+--
+-- Name: pagos_liquidacion_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.pagos_liquidacion_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.pagos_liquidacion_id_seq OWNER TO sail;
+
+--
+-- Name: pagos_liquidacion_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.pagos_liquidacion_id_seq OWNED BY public.pagos_liquidacion.id;
+
+
+--
+-- Name: password_reset_tokens; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.password_reset_tokens (
@@ -1719,8 +2255,10 @@ CREATE TABLE public.password_reset_tokens (
 );
 
 
+ALTER TABLE public.password_reset_tokens OWNER TO sail;
+
 --
--- Name: personal_access_tokens; Type: TABLE; Schema: public; Owner: -
+-- Name: personal_access_tokens; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.personal_access_tokens (
@@ -1737,8 +2275,10 @@ CREATE TABLE public.personal_access_tokens (
 );
 
 
+ALTER TABLE public.personal_access_tokens OWNER TO sail;
+
 --
--- Name: personal_access_tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: personal_access_tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.personal_access_tokens_id_seq
@@ -1749,15 +2289,17 @@ CREATE SEQUENCE public.personal_access_tokens_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.personal_access_tokens_id_seq OWNER TO sail;
+
 --
--- Name: personal_access_tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: personal_access_tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.personal_access_tokens_id_seq OWNED BY public.personal_access_tokens.id;
 
 
 --
--- Name: proveedores; Type: TABLE; Schema: public; Owner: -
+-- Name: proveedores; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.proveedores (
@@ -1775,8 +2317,10 @@ CREATE TABLE public.proveedores (
 );
 
 
+ALTER TABLE public.proveedores OWNER TO sail;
+
 --
--- Name: proveedores_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: proveedores_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.proveedores_id_seq
@@ -1787,21 +2331,23 @@ CREATE SEQUENCE public.proveedores_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.proveedores_id_seq OWNER TO sail;
+
 --
--- Name: proveedores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: proveedores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.proveedores_id_seq OWNED BY public.proveedores.id;
 
 
 --
--- Name: recepciones_campo; Type: TABLE; Schema: public; Owner: -
+-- Name: recepciones_campo; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.recepciones_campo (
-    id bigint NOT NULL,
-    sesion_id bigint NOT NULL,
-    lote_origen_id bigint NOT NULL,
+    id uuid NOT NULL,
+    sesion_cosecha_id uuid NOT NULL,
+    lote_zona_id bigint,
     trabajador_id bigint NOT NULL,
     arbol_id bigint,
     peso_bruto numeric(10,2) NOT NULL,
@@ -1812,33 +2358,18 @@ CREATE TABLE public.recepciones_campo (
     costal_codigo character varying(255),
     numero_corte integer,
     estado_clasificacion character varying(255) DEFAULT 'pendiente'::character varying NOT NULL,
+    client_updated_at timestamp(0) without time zone,
+    synced_at timestamp(0) without time zone,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
     CONSTRAINT recepciones_campo_estado_clasificacion_check CHECK (((estado_clasificacion)::text = ANY ((ARRAY['pendiente'::character varying, 'en_proceso'::character varying, 'clasificado'::character varying])::text[])))
 );
 
 
---
--- Name: recepciones_campo_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.recepciones_campo_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
+ALTER TABLE public.recepciones_campo OWNER TO sail;
 
 --
--- Name: recepciones_campo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.recepciones_campo_id_seq OWNED BY public.recepciones_campo.id;
-
-
---
--- Name: recepciones_destino; Type: TABLE; Schema: public; Owner: -
+-- Name: recepciones_destino; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.recepciones_destino (
@@ -1859,8 +2390,10 @@ CREATE TABLE public.recepciones_destino (
 );
 
 
+ALTER TABLE public.recepciones_destino OWNER TO sail;
+
 --
--- Name: recepciones_destino_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: recepciones_destino_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.recepciones_destino_id_seq
@@ -1871,19 +2404,21 @@ CREATE SEQUENCE public.recepciones_destino_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.recepciones_destino_id_seq OWNER TO sail;
+
 --
--- Name: recepciones_destino_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: recepciones_destino_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.recepciones_destino_id_seq OWNED BY public.recepciones_destino.id;
 
 
 --
--- Name: sesiones_cosecha; Type: TABLE; Schema: public; Owner: -
+-- Name: sesiones_cosecha; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.sesiones_cosecha (
-    id bigint NOT NULL,
+    id uuid NOT NULL,
     orden_cosecha_id bigint NOT NULL,
     evento_campo_id bigint NOT NULL,
     responsable_id bigint NOT NULL,
@@ -1894,33 +2429,18 @@ CREATE TABLE public.sesiones_cosecha (
     hora_inicio time(0) without time zone,
     hora_fin time(0) without time zone,
     total_recolectado_kg numeric(12,2) DEFAULT '0'::numeric NOT NULL,
+    client_updated_at timestamp(0) without time zone,
+    synced_at timestamp(0) without time zone,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
     CONSTRAINT sesiones_cosecha_estado_check CHECK (((estado)::text = ANY ((ARRAY['abierta'::character varying, 'cerrada'::character varying])::text[])))
 );
 
 
---
--- Name: sesiones_cosecha_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.sesiones_cosecha_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
+ALTER TABLE public.sesiones_cosecha OWNER TO sail;
 
 --
--- Name: sesiones_cosecha_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.sesiones_cosecha_id_seq OWNED BY public.sesiones_cosecha.id;
-
-
---
--- Name: sessions; Type: TABLE; Schema: public; Owner: -
+-- Name: sessions; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.sessions (
@@ -1933,8 +2453,50 @@ CREATE TABLE public.sessions (
 );
 
 
+ALTER TABLE public.sessions OWNER TO sail;
+
 --
--- Name: stock_insumos; Type: TABLE; Schema: public; Owner: -
+-- Name: sistemas_riego; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.sistemas_riego (
+    id bigint NOT NULL,
+    tanque_id bigint NOT NULL,
+    lote_id bigint,
+    nombre_sistema character varying(100) NOT NULL,
+    tipo_riego character varying(255) NOT NULL,
+    activo boolean DEFAULT true NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    CONSTRAINT sistemas_riego_tipo_riego_check CHECK (((tipo_riego)::text = ANY ((ARRAY['goteo'::character varying, 'microaspersion'::character varying, 'aspersion'::character varying, 'pivot_central'::character varying, 'gravedad'::character varying, 'subterraneo'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.sistemas_riego OWNER TO sail;
+
+--
+-- Name: sistemas_riego_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.sistemas_riego_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sistemas_riego_id_seq OWNER TO sail;
+
+--
+-- Name: sistemas_riego_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.sistemas_riego_id_seq OWNED BY public.sistemas_riego.id;
+
+
+--
+-- Name: stock_insumos; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.stock_insumos (
@@ -1947,8 +2509,10 @@ CREATE TABLE public.stock_insumos (
 );
 
 
+ALTER TABLE public.stock_insumos OWNER TO sail;
+
 --
--- Name: stock_insumos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: stock_insumos_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.stock_insumos_id_seq
@@ -1959,15 +2523,57 @@ CREATE SEQUENCE public.stock_insumos_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.stock_insumos_id_seq OWNER TO sail;
+
 --
--- Name: stock_insumos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: stock_insumos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.stock_insumos_id_seq OWNED BY public.stock_insumos.id;
 
 
 --
--- Name: team_invitations; Type: TABLE; Schema: public; Owner: -
+-- Name: tanques; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.tanques (
+    id bigint NOT NULL,
+    nombre character varying(255) NOT NULL,
+    capacidad_litros numeric(15,2) NOT NULL,
+    lote_id bigint,
+    nivel_actual_litros numeric(12,2) DEFAULT '0'::numeric NOT NULL,
+    tiene_sensor_iot boolean DEFAULT false NOT NULL,
+    activo boolean DEFAULT true NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.tanques OWNER TO sail;
+
+--
+-- Name: tanques_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.tanques_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tanques_id_seq OWNER TO sail;
+
+--
+-- Name: tanques_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.tanques_id_seq OWNED BY public.tanques.id;
+
+
+--
+-- Name: team_invitations; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.team_invitations (
@@ -1980,8 +2586,10 @@ CREATE TABLE public.team_invitations (
 );
 
 
+ALTER TABLE public.team_invitations OWNER TO sail;
+
 --
--- Name: team_invitations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: team_invitations_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.team_invitations_id_seq
@@ -1992,15 +2600,17 @@ CREATE SEQUENCE public.team_invitations_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.team_invitations_id_seq OWNER TO sail;
+
 --
--- Name: team_invitations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: team_invitations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.team_invitations_id_seq OWNED BY public.team_invitations.id;
 
 
 --
--- Name: team_user; Type: TABLE; Schema: public; Owner: -
+-- Name: team_user; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.team_user (
@@ -2013,8 +2623,10 @@ CREATE TABLE public.team_user (
 );
 
 
+ALTER TABLE public.team_user OWNER TO sail;
+
 --
--- Name: team_user_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: team_user_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.team_user_id_seq
@@ -2025,15 +2637,17 @@ CREATE SEQUENCE public.team_user_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.team_user_id_seq OWNER TO sail;
+
 --
--- Name: team_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: team_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.team_user_id_seq OWNED BY public.team_user.id;
 
 
 --
--- Name: teams; Type: TABLE; Schema: public; Owner: -
+-- Name: teams; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.teams (
@@ -2046,8 +2660,10 @@ CREATE TABLE public.teams (
 );
 
 
+ALTER TABLE public.teams OWNER TO sail;
+
 --
--- Name: teams_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: teams_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.teams_id_seq
@@ -2058,15 +2674,53 @@ CREATE SEQUENCE public.teams_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.teams_id_seq OWNER TO sail;
+
 --
--- Name: teams_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: teams_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.teams_id_seq OWNED BY public.teams.id;
 
 
 --
--- Name: tipos_evento; Type: TABLE; Schema: public; Owner: -
+-- Name: tipo_maquinaria; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.tipo_maquinaria (
+    id bigint NOT NULL,
+    nombre character varying(255) NOT NULL,
+    descripcion character varying(255) NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.tipo_maquinaria OWNER TO sail;
+
+--
+-- Name: tipo_maquinaria_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.tipo_maquinaria_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tipo_maquinaria_id_seq OWNER TO sail;
+
+--
+-- Name: tipo_maquinaria_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.tipo_maquinaria_id_seq OWNED BY public.tipo_maquinaria.id;
+
+
+--
+-- Name: tipos_evento; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.tipos_evento (
@@ -2088,8 +2742,10 @@ CREATE TABLE public.tipos_evento (
 );
 
 
+ALTER TABLE public.tipos_evento OWNER TO sail;
+
 --
--- Name: tipos_evento_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: tipos_evento_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.tipos_evento_id_seq
@@ -2100,15 +2756,17 @@ CREATE SEQUENCE public.tipos_evento_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.tipos_evento_id_seq OWNER TO sail;
+
 --
--- Name: tipos_evento_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: tipos_evento_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.tipos_evento_id_seq OWNED BY public.tipos_evento.id;
 
 
 --
--- Name: trabajadores; Type: TABLE; Schema: public; Owner: -
+-- Name: trabajadores; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.trabajadores (
@@ -2143,8 +2801,10 @@ CREATE TABLE public.trabajadores (
 );
 
 
+ALTER TABLE public.trabajadores OWNER TO sail;
+
 --
--- Name: trabajadores_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: trabajadores_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.trabajadores_id_seq
@@ -2155,15 +2815,17 @@ CREATE SEQUENCE public.trabajadores_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.trabajadores_id_seq OWNER TO sail;
+
 --
--- Name: trabajadores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: trabajadores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.trabajadores_id_seq OWNED BY public.trabajadores.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: -
+-- Name: users; Type: TABLE; Schema: public; Owner: sail
 --
 
 CREATE TABLE public.users (
@@ -2183,8 +2845,10 @@ CREATE TABLE public.users (
 );
 
 
+ALTER TABLE public.users OWNER TO sail;
+
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
 --
 
 CREATE SEQUENCE public.users_id_seq
@@ -2195,358 +2859,466 @@ CREATE SEQUENCE public.users_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.users_id_seq OWNER TO sail;
+
 --
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
 --
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- Name: arboles id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: validaciones_riego; Type: TABLE; Schema: public; Owner: sail
+--
+
+CREATE TABLE public.validaciones_riego (
+    id bigint NOT NULL,
+    evento_riego_id bigint NOT NULL,
+    tanque_id bigint NOT NULL,
+    nivel_tanque_antes_litros numeric(12,2) NOT NULL,
+    nivel_tanque_despues_litros numeric(12,2) NOT NULL,
+    volumen_real_consumido_litros numeric(12,2) NOT NULL,
+    volumen_estimado_litros numeric(12,2) NOT NULL,
+    diferencia_litros numeric(12,2) NOT NULL,
+    porcentaje_error numeric(5,2) NOT NULL,
+    observaciones_auditoria text,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.validaciones_riego OWNER TO sail;
+
+--
+-- Name: validaciones_riego_id_seq; Type: SEQUENCE; Schema: public; Owner: sail
+--
+
+CREATE SEQUENCE public.validaciones_riego_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.validaciones_riego_id_seq OWNER TO sail;
+
+--
+-- Name: validaciones_riego_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sail
+--
+
+ALTER SEQUENCE public.validaciones_riego_id_seq OWNED BY public.validaciones_riego.id;
+
+
+--
+-- Name: arboles id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles ALTER COLUMN id SET DEFAULT nextval('public.arboles_id_seq'::regclass);
 
 
 --
--- Name: arboles_historial_fitosanitario id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: arboles_historial_fitosanitario id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles_historial_fitosanitario ALTER COLUMN id SET DEFAULT nextval('public.arboles_historial_fitosanitario_id_seq'::regclass);
 
 
 --
--- Name: arboles_metricas_historicas id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: arboles_metricas_historicas id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles_metricas_historicas ALTER COLUMN id SET DEFAULT nextval('public.arboles_metricas_historicas_id_seq'::regclass);
 
 
 --
--- Name: bitacoras id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: bitacoras id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.bitacoras ALTER COLUMN id SET DEFAULT nextval('public.bitacoras_id_seq'::regclass);
 
 
 --
--- Name: carta_porte id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: carta_porte id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.carta_porte ALTER COLUMN id SET DEFAULT nextval('public.carta_porte_id_seq'::regclass);
 
 
 --
--- Name: categorias_insumo id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: categorias_insumo id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.categorias_insumo ALTER COLUMN id SET DEFAULT nextval('public.categorias_insumo_id_seq'::regclass);
 
 
 --
--- Name: ciclos_productivos id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: ciclos_productivos id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ciclos_productivos ALTER COLUMN id SET DEFAULT nextval('public.ciclos_productivos_id_seq'::regclass);
 
 
 --
--- Name: clientes id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: clientes id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.clientes ALTER COLUMN id SET DEFAULT nextval('public.clientes_id_seq'::regclass);
 
 
 --
--- Name: compra_items id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: componentes_riego id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.componentes_riego ALTER COLUMN id SET DEFAULT nextval('public.componentes_riego_id_seq'::regclass);
+
+
+--
+-- Name: compra_items id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compra_items ALTER COLUMN id SET DEFAULT nextval('public.compra_items_id_seq'::regclass);
 
 
 --
--- Name: compras id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: compras id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compras ALTER COLUMN id SET DEFAULT nextval('public.compras_id_seq'::regclass);
 
 
 --
--- Name: compras_pagos id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: compras_pagos id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compras_pagos ALTER COLUMN id SET DEFAULT nextval('public.compras_pagos_id_seq'::regclass);
 
 
 --
--- Name: contenedores id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.contenedores ALTER COLUMN id SET DEFAULT nextval('public.contenedores_id_seq'::regclass);
-
-
---
--- Name: cultivos id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: cultivos id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.cultivos ALTER COLUMN id SET DEFAULT nextval('public.cultivos_id_seq'::regclass);
 
 
 --
--- Name: despacho_items id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: despacho_items id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.despacho_items ALTER COLUMN id SET DEFAULT nextval('public.despacho_items_id_seq'::regclass);
 
 
 --
--- Name: despachos id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: despachos id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.despachos ALTER COLUMN id SET DEFAULT nextval('public.despachos_id_seq'::regclass);
 
 
 --
--- Name: evento_insumos id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: evento_arbol id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_arbol ALTER COLUMN id SET DEFAULT nextval('public.evento_arbol_id_seq'::regclass);
+
+
+--
+-- Name: evento_insumo_lotes id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_insumo_lotes ALTER COLUMN id SET DEFAULT nextval('public.evento_insumo_lotes_id_seq'::regclass);
+
+
+--
+-- Name: evento_insumos id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.evento_insumos ALTER COLUMN id SET DEFAULT nextval('public.evento_insumos_id_seq'::regclass);
 
 
 --
--- Name: evento_mano_obra id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: evento_mano_obra id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.evento_mano_obra ALTER COLUMN id SET DEFAULT nextval('public.evento_mano_obra_id_seq'::regclass);
 
 
 --
--- Name: eventos_campo id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: evento_maquinaria id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_maquinaria ALTER COLUMN id SET DEFAULT nextval('public.evento_maquinaria_id_seq'::regclass);
+
+
+--
+-- Name: evento_riego_componentes id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_riego_componentes ALTER COLUMN id SET DEFAULT nextval('public.evento_riego_componentes_id_seq'::regclass);
+
+
+--
+-- Name: eventos_campo id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.eventos_campo ALTER COLUMN id SET DEFAULT nextval('public.eventos_campo_id_seq'::regclass);
 
 
 --
--- Name: failed_jobs id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: eventos_riego id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.eventos_riego ALTER COLUMN id SET DEFAULT nextval('public.eventos_riego_id_seq'::regclass);
+
+
+--
+-- Name: failed_jobs id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.failed_jobs ALTER COLUMN id SET DEFAULT nextval('public.failed_jobs_id_seq'::regclass);
 
 
 --
--- Name: fenologia_etapas id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: fenologia_etapas id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.fenologia_etapas ALTER COLUMN id SET DEFAULT nextval('public.fenologia_etapas_id_seq'::regclass);
 
 
 --
--- Name: fincas id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: fincas id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.fincas ALTER COLUMN id SET DEFAULT nextval('public.fincas_id_seq'::regclass);
 
 
 --
--- Name: gastos id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: gastos id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.gastos ALTER COLUMN id SET DEFAULT nextval('public.gastos_id_seq'::regclass);
 
 
 --
--- Name: insumo_componentes id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: insumo_componentes id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.insumo_componentes ALTER COLUMN id SET DEFAULT nextval('public.insumo_componentes_id_seq'::regclass);
 
 
 --
--- Name: insumos id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: insumos id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.insumos ALTER COLUMN id SET DEFAULT nextval('public.insumos_id_seq'::regclass);
 
 
 --
--- Name: jobs id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: jobs id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.jobs ALTER COLUMN id SET DEFAULT nextval('public.jobs_id_seq'::regclass);
 
 
 --
--- Name: labores_plantilla id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: labores_plantilla id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.labores_plantilla ALTER COLUMN id SET DEFAULT nextval('public.labores_plantilla_id_seq'::regclass);
 
 
 --
--- Name: liquidaciones_despacho id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: lecturas_sensores_tanque id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.lecturas_sensores_tanque ALTER COLUMN id SET DEFAULT nextval('public.lecturas_sensores_tanque_id_seq'::regclass);
+
+
+--
+-- Name: liquidaciones_despacho id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.liquidaciones_despacho ALTER COLUMN id SET DEFAULT nextval('public.liquidaciones_despacho_id_seq'::regclass);
 
 
 --
--- Name: lotes id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: lotes id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes ALTER COLUMN id SET DEFAULT nextval('public.lotes_id_seq'::regclass);
 
 
 --
--- Name: lotes_analiticas_suelo id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: lotes_analiticas_suelo id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_analiticas_suelo ALTER COLUMN id SET DEFAULT nextval('public.lotes_analiticas_suelo_id_seq'::regclass);
 
 
 --
--- Name: lotes_insumos id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: lotes_insumos id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_insumos ALTER COLUMN id SET DEFAULT nextval('public.lotes_insumos_id_seq'::regclass);
 
 
 --
--- Name: lotes_sistemas_riego id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: lotes_sistemas_riego id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_sistemas_riego ALTER COLUMN id SET DEFAULT nextval('public.lotes_sistemas_riego_id_seq'::regclass);
 
 
 --
--- Name: lotes_zonas_manejo id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: lotes_zonas_manejo id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_zonas_manejo ALTER COLUMN id SET DEFAULT nextval('public.lotes_zonas_manejo_id_seq'::regclass);
 
 
 --
--- Name: mermas id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: mantenimientos_maquinaria id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
-ALTER TABLE ONLY public.mermas ALTER COLUMN id SET DEFAULT nextval('public.mermas_id_seq'::regclass);
+ALTER TABLE ONLY public.mantenimientos_maquinaria ALTER COLUMN id SET DEFAULT nextval('public.mantenimientos_maquinaria_id_seq'::regclass);
 
 
 --
--- Name: migrations id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: maquinaria id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.maquinaria ALTER COLUMN id SET DEFAULT nextval('public.maquinaria_id_seq'::regclass);
+
+
+--
+-- Name: migrations id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.migrations ALTER COLUMN id SET DEFAULT nextval('public.migrations_id_seq'::regclass);
 
 
 --
--- Name: movimientos_clasificacion id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.movimientos_clasificacion ALTER COLUMN id SET DEFAULT nextval('public.movimientos_clasificacion_id_seq'::regclass);
-
-
---
--- Name: movimientos_stock id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: movimientos_stock id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.movimientos_stock ALTER COLUMN id SET DEFAULT nextval('public.movimientos_stock_id_seq'::regclass);
 
 
 --
--- Name: ordenes_cosecha id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: ordenes_cosecha id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ordenes_cosecha ALTER COLUMN id SET DEFAULT nextval('public.ordenes_cosecha_id_seq'::regclass);
 
 
 --
--- Name: personal_access_tokens id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: pagos_liquidacion id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.pagos_liquidacion ALTER COLUMN id SET DEFAULT nextval('public.pagos_liquidacion_id_seq'::regclass);
+
+
+--
+-- Name: personal_access_tokens id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.personal_access_tokens ALTER COLUMN id SET DEFAULT nextval('public.personal_access_tokens_id_seq'::regclass);
 
 
 --
--- Name: proveedores id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: proveedores id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.proveedores ALTER COLUMN id SET DEFAULT nextval('public.proveedores_id_seq'::regclass);
 
 
 --
--- Name: recepciones_campo id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.recepciones_campo ALTER COLUMN id SET DEFAULT nextval('public.recepciones_campo_id_seq'::regclass);
-
-
---
--- Name: recepciones_destino id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: recepciones_destino id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.recepciones_destino ALTER COLUMN id SET DEFAULT nextval('public.recepciones_destino_id_seq'::regclass);
 
 
 --
--- Name: sesiones_cosecha id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: sistemas_riego id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
-ALTER TABLE ONLY public.sesiones_cosecha ALTER COLUMN id SET DEFAULT nextval('public.sesiones_cosecha_id_seq'::regclass);
+ALTER TABLE ONLY public.sistemas_riego ALTER COLUMN id SET DEFAULT nextval('public.sistemas_riego_id_seq'::regclass);
 
 
 --
--- Name: stock_insumos id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: stock_insumos id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.stock_insumos ALTER COLUMN id SET DEFAULT nextval('public.stock_insumos_id_seq'::regclass);
 
 
 --
--- Name: team_invitations id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: tanques id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.tanques ALTER COLUMN id SET DEFAULT nextval('public.tanques_id_seq'::regclass);
+
+
+--
+-- Name: team_invitations id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.team_invitations ALTER COLUMN id SET DEFAULT nextval('public.team_invitations_id_seq'::regclass);
 
 
 --
--- Name: team_user id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: team_user id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.team_user ALTER COLUMN id SET DEFAULT nextval('public.team_user_id_seq'::regclass);
 
 
 --
--- Name: teams id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: teams id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.teams ALTER COLUMN id SET DEFAULT nextval('public.teams_id_seq'::regclass);
 
 
 --
--- Name: tipos_evento id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: tipo_maquinaria id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.tipo_maquinaria ALTER COLUMN id SET DEFAULT nextval('public.tipo_maquinaria_id_seq'::regclass);
+
+
+--
+-- Name: tipos_evento id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.tipos_evento ALTER COLUMN id SET DEFAULT nextval('public.tipos_evento_id_seq'::regclass);
 
 
 --
--- Name: trabajadores id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: trabajadores id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.trabajadores ALTER COLUMN id SET DEFAULT nextval('public.trabajadores_id_seq'::regclass);
 
 
 --
--- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
 
 --
--- Name: arboles arboles_codigo_unico_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: validaciones_riego id; Type: DEFAULT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.validaciones_riego ALTER COLUMN id SET DEFAULT nextval('public.validaciones_riego_id_seq'::regclass);
+
+
+--
+-- Name: arboles arboles_codigo_unico_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles
@@ -2554,7 +3326,7 @@ ALTER TABLE ONLY public.arboles
 
 
 --
--- Name: arboles_historial_fitosanitario arboles_historial_fitosanitario_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: arboles_historial_fitosanitario arboles_historial_fitosanitario_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles_historial_fitosanitario
@@ -2562,7 +3334,7 @@ ALTER TABLE ONLY public.arboles_historial_fitosanitario
 
 
 --
--- Name: arboles_metricas_historicas arboles_metricas_historicas_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: arboles_metricas_historicas arboles_metricas_historicas_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles_metricas_historicas
@@ -2570,7 +3342,7 @@ ALTER TABLE ONLY public.arboles_metricas_historicas
 
 
 --
--- Name: arboles arboles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: arboles arboles_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles
@@ -2578,7 +3350,7 @@ ALTER TABLE ONLY public.arboles
 
 
 --
--- Name: bitacoras bitacoras_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: bitacoras bitacoras_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.bitacoras
@@ -2586,7 +3358,7 @@ ALTER TABLE ONLY public.bitacoras
 
 
 --
--- Name: cache_locks cache_locks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: cache_locks cache_locks_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.cache_locks
@@ -2594,7 +3366,7 @@ ALTER TABLE ONLY public.cache_locks
 
 
 --
--- Name: cache cache_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: cache cache_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.cache
@@ -2602,7 +3374,7 @@ ALTER TABLE ONLY public.cache
 
 
 --
--- Name: carta_porte carta_porte_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: carta_porte carta_porte_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.carta_porte
@@ -2610,7 +3382,7 @@ ALTER TABLE ONLY public.carta_porte
 
 
 --
--- Name: categorias_insumo categorias_insumo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: categorias_insumo categorias_insumo_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.categorias_insumo
@@ -2618,7 +3390,7 @@ ALTER TABLE ONLY public.categorias_insumo
 
 
 --
--- Name: ciclos_productivos ciclos_productivos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ciclos_productivos ciclos_productivos_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ciclos_productivos
@@ -2626,7 +3398,7 @@ ALTER TABLE ONLY public.ciclos_productivos
 
 
 --
--- Name: clientes clientes_nit_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: clientes clientes_nit_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.clientes
@@ -2634,7 +3406,7 @@ ALTER TABLE ONLY public.clientes
 
 
 --
--- Name: clientes clientes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: clientes clientes_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.clientes
@@ -2642,7 +3414,15 @@ ALTER TABLE ONLY public.clientes
 
 
 --
--- Name: compra_items compra_items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: componentes_riego componentes_riego_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.componentes_riego
+    ADD CONSTRAINT componentes_riego_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: compra_items compra_items_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compra_items
@@ -2650,7 +3430,7 @@ ALTER TABLE ONLY public.compra_items
 
 
 --
--- Name: compras_pagos compras_pagos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: compras_pagos compras_pagos_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compras_pagos
@@ -2658,7 +3438,7 @@ ALTER TABLE ONLY public.compras_pagos
 
 
 --
--- Name: compras compras_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: compras compras_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compras
@@ -2666,7 +3446,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- Name: contenedores contenedores_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: contenedores contenedores_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.contenedores
@@ -2674,7 +3454,7 @@ ALTER TABLE ONLY public.contenedores
 
 
 --
--- Name: cultivos cultivos_nombre_cultivo_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: cultivos cultivos_nombre_cultivo_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.cultivos
@@ -2682,7 +3462,7 @@ ALTER TABLE ONLY public.cultivos
 
 
 --
--- Name: cultivos cultivos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: cultivos cultivos_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.cultivos
@@ -2690,7 +3470,7 @@ ALTER TABLE ONLY public.cultivos
 
 
 --
--- Name: despacho_items despacho_items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: despacho_items despacho_items_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.despacho_items
@@ -2698,7 +3478,7 @@ ALTER TABLE ONLY public.despacho_items
 
 
 --
--- Name: despachos despachos_numero_remision_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: despachos despachos_numero_remision_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.despachos
@@ -2706,7 +3486,7 @@ ALTER TABLE ONLY public.despachos
 
 
 --
--- Name: despachos despachos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: despachos despachos_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.despachos
@@ -2714,7 +3494,23 @@ ALTER TABLE ONLY public.despachos
 
 
 --
--- Name: evento_insumos evento_insumos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_arbol evento_arbol_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_arbol
+    ADD CONSTRAINT evento_arbol_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evento_insumo_lotes evento_insumo_lotes_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_insumo_lotes
+    ADD CONSTRAINT evento_insumo_lotes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evento_insumos evento_insumos_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.evento_insumos
@@ -2722,7 +3518,7 @@ ALTER TABLE ONLY public.evento_insumos
 
 
 --
--- Name: evento_mano_obra evento_mano_obra_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_mano_obra evento_mano_obra_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.evento_mano_obra
@@ -2730,7 +3526,23 @@ ALTER TABLE ONLY public.evento_mano_obra
 
 
 --
--- Name: eventos_campo eventos_campo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_maquinaria evento_maquinaria_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_maquinaria
+    ADD CONSTRAINT evento_maquinaria_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evento_riego_componentes evento_riego_componentes_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_riego_componentes
+    ADD CONSTRAINT evento_riego_componentes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: eventos_campo eventos_campo_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.eventos_campo
@@ -2738,7 +3550,15 @@ ALTER TABLE ONLY public.eventos_campo
 
 
 --
--- Name: failed_jobs failed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: eventos_riego eventos_riego_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.eventos_riego
+    ADD CONSTRAINT eventos_riego_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: failed_jobs failed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.failed_jobs
@@ -2746,7 +3566,7 @@ ALTER TABLE ONLY public.failed_jobs
 
 
 --
--- Name: failed_jobs failed_jobs_uuid_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: failed_jobs failed_jobs_uuid_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.failed_jobs
@@ -2754,7 +3574,7 @@ ALTER TABLE ONLY public.failed_jobs
 
 
 --
--- Name: fenologia_etapas fenologia_etapas_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: fenologia_etapas fenologia_etapas_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.fenologia_etapas
@@ -2762,7 +3582,7 @@ ALTER TABLE ONLY public.fenologia_etapas
 
 
 --
--- Name: fincas fincas_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: fincas fincas_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.fincas
@@ -2770,7 +3590,7 @@ ALTER TABLE ONLY public.fincas
 
 
 --
--- Name: gastos gastos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: gastos gastos_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.gastos
@@ -2778,7 +3598,7 @@ ALTER TABLE ONLY public.gastos
 
 
 --
--- Name: insumo_componentes insumo_componentes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: insumo_componentes insumo_componentes_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.insumo_componentes
@@ -2786,7 +3606,7 @@ ALTER TABLE ONLY public.insumo_componentes
 
 
 --
--- Name: insumos insumos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: insumos insumos_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.insumos
@@ -2794,7 +3614,7 @@ ALTER TABLE ONLY public.insumos
 
 
 --
--- Name: job_batches job_batches_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: job_batches job_batches_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.job_batches
@@ -2802,7 +3622,7 @@ ALTER TABLE ONLY public.job_batches
 
 
 --
--- Name: jobs jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: jobs jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.jobs
@@ -2810,7 +3630,7 @@ ALTER TABLE ONLY public.jobs
 
 
 --
--- Name: labores_plantilla labores_plantilla_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: labores_plantilla labores_plantilla_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.labores_plantilla
@@ -2818,7 +3638,15 @@ ALTER TABLE ONLY public.labores_plantilla
 
 
 --
--- Name: liquidaciones_despacho liquidaciones_despacho_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lecturas_sensores_tanque lecturas_sensores_tanque_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.lecturas_sensores_tanque
+    ADD CONSTRAINT lecturas_sensores_tanque_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: liquidaciones_despacho liquidaciones_despacho_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.liquidaciones_despacho
@@ -2826,7 +3654,7 @@ ALTER TABLE ONLY public.liquidaciones_despacho
 
 
 --
--- Name: lotes_analiticas_suelo lotes_analiticas_suelo_lote_id_fecha_muestreo_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_analiticas_suelo lotes_analiticas_suelo_lote_id_fecha_muestreo_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_analiticas_suelo
@@ -2834,7 +3662,7 @@ ALTER TABLE ONLY public.lotes_analiticas_suelo
 
 
 --
--- Name: lotes_analiticas_suelo lotes_analiticas_suelo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_analiticas_suelo lotes_analiticas_suelo_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_analiticas_suelo
@@ -2842,7 +3670,7 @@ ALTER TABLE ONLY public.lotes_analiticas_suelo
 
 
 --
--- Name: lotes lotes_codigo_lote_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes lotes_codigo_lote_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes
@@ -2850,7 +3678,7 @@ ALTER TABLE ONLY public.lotes
 
 
 --
--- Name: lotes_insumos lotes_insumos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_insumos lotes_insumos_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_insumos
@@ -2858,7 +3686,7 @@ ALTER TABLE ONLY public.lotes_insumos
 
 
 --
--- Name: lotes lotes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes lotes_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes
@@ -2866,7 +3694,7 @@ ALTER TABLE ONLY public.lotes
 
 
 --
--- Name: lotes_sistemas_riego lotes_sistemas_riego_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_sistemas_riego lotes_sistemas_riego_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_sistemas_riego
@@ -2874,7 +3702,7 @@ ALTER TABLE ONLY public.lotes_sistemas_riego
 
 
 --
--- Name: lotes_zonas_manejo lotes_zonas_manejo_codigo_zona_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_zonas_manejo lotes_zonas_manejo_codigo_zona_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_zonas_manejo
@@ -2882,7 +3710,7 @@ ALTER TABLE ONLY public.lotes_zonas_manejo
 
 
 --
--- Name: lotes_zonas_manejo lotes_zonas_manejo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_zonas_manejo lotes_zonas_manejo_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_zonas_manejo
@@ -2890,7 +3718,39 @@ ALTER TABLE ONLY public.lotes_zonas_manejo
 
 
 --
--- Name: mermas mermas_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: mantenimientos_maquinaria mantenimientos_maquinaria_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.mantenimientos_maquinaria
+    ADD CONSTRAINT mantenimientos_maquinaria_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: maquinaria maquinaria_codigo_interno_unique; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.maquinaria
+    ADD CONSTRAINT maquinaria_codigo_interno_unique UNIQUE (codigo_interno);
+
+
+--
+-- Name: maquinaria maquinaria_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.maquinaria
+    ADD CONSTRAINT maquinaria_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: maquinaria maquinaria_serial_unique; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.maquinaria
+    ADD CONSTRAINT maquinaria_serial_unique UNIQUE (serial);
+
+
+--
+-- Name: mermas mermas_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.mermas
@@ -2898,7 +3758,7 @@ ALTER TABLE ONLY public.mermas
 
 
 --
--- Name: migrations migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: migrations migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.migrations
@@ -2906,7 +3766,7 @@ ALTER TABLE ONLY public.migrations
 
 
 --
--- Name: movimientos_clasificacion movimientos_clasificacion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: movimientos_clasificacion movimientos_clasificacion_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.movimientos_clasificacion
@@ -2914,7 +3774,7 @@ ALTER TABLE ONLY public.movimientos_clasificacion
 
 
 --
--- Name: movimientos_stock movimientos_stock_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: movimientos_stock movimientos_stock_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.movimientos_stock
@@ -2922,7 +3782,7 @@ ALTER TABLE ONLY public.movimientos_stock
 
 
 --
--- Name: ordenes_cosecha ordenes_cosecha_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ordenes_cosecha ordenes_cosecha_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ordenes_cosecha
@@ -2930,7 +3790,15 @@ ALTER TABLE ONLY public.ordenes_cosecha
 
 
 --
--- Name: password_reset_tokens password_reset_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: pagos_liquidacion pagos_liquidacion_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.pagos_liquidacion
+    ADD CONSTRAINT pagos_liquidacion_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: password_reset_tokens password_reset_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.password_reset_tokens
@@ -2938,7 +3806,7 @@ ALTER TABLE ONLY public.password_reset_tokens
 
 
 --
--- Name: personal_access_tokens personal_access_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: personal_access_tokens personal_access_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.personal_access_tokens
@@ -2946,7 +3814,7 @@ ALTER TABLE ONLY public.personal_access_tokens
 
 
 --
--- Name: personal_access_tokens personal_access_tokens_token_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: personal_access_tokens personal_access_tokens_token_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.personal_access_tokens
@@ -2954,7 +3822,7 @@ ALTER TABLE ONLY public.personal_access_tokens
 
 
 --
--- Name: proveedores proveedores_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: proveedores proveedores_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.proveedores
@@ -2962,7 +3830,7 @@ ALTER TABLE ONLY public.proveedores
 
 
 --
--- Name: recepciones_campo recepciones_campo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: recepciones_campo recepciones_campo_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.recepciones_campo
@@ -2970,7 +3838,7 @@ ALTER TABLE ONLY public.recepciones_campo
 
 
 --
--- Name: recepciones_destino recepciones_destino_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: recepciones_destino recepciones_destino_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.recepciones_destino
@@ -2978,7 +3846,7 @@ ALTER TABLE ONLY public.recepciones_destino
 
 
 --
--- Name: sesiones_cosecha sesiones_cosecha_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: sesiones_cosecha sesiones_cosecha_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.sesiones_cosecha
@@ -2986,7 +3854,7 @@ ALTER TABLE ONLY public.sesiones_cosecha
 
 
 --
--- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.sessions
@@ -2994,7 +3862,15 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- Name: stock_insumos stock_insumos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: sistemas_riego sistemas_riego_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.sistemas_riego
+    ADD CONSTRAINT sistemas_riego_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stock_insumos stock_insumos_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.stock_insumos
@@ -3002,7 +3878,15 @@ ALTER TABLE ONLY public.stock_insumos
 
 
 --
--- Name: team_invitations team_invitations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: tanques tanques_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.tanques
+    ADD CONSTRAINT tanques_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: team_invitations team_invitations_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.team_invitations
@@ -3010,7 +3894,7 @@ ALTER TABLE ONLY public.team_invitations
 
 
 --
--- Name: team_invitations team_invitations_team_id_email_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: team_invitations team_invitations_team_id_email_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.team_invitations
@@ -3018,7 +3902,7 @@ ALTER TABLE ONLY public.team_invitations
 
 
 --
--- Name: team_user team_user_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: team_user team_user_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.team_user
@@ -3026,7 +3910,7 @@ ALTER TABLE ONLY public.team_user
 
 
 --
--- Name: team_user team_user_team_id_user_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: team_user team_user_team_id_user_id_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.team_user
@@ -3034,7 +3918,7 @@ ALTER TABLE ONLY public.team_user
 
 
 --
--- Name: teams teams_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: teams teams_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.teams
@@ -3042,7 +3926,15 @@ ALTER TABLE ONLY public.teams
 
 
 --
--- Name: tipos_evento tipos_evento_nombre_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: tipo_maquinaria tipo_maquinaria_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.tipo_maquinaria
+    ADD CONSTRAINT tipo_maquinaria_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tipos_evento tipos_evento_nombre_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.tipos_evento
@@ -3050,7 +3942,7 @@ ALTER TABLE ONLY public.tipos_evento
 
 
 --
--- Name: tipos_evento tipos_evento_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: tipos_evento tipos_evento_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.tipos_evento
@@ -3058,7 +3950,7 @@ ALTER TABLE ONLY public.tipos_evento
 
 
 --
--- Name: trabajadores trabajadores_numero_documento_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: trabajadores trabajadores_numero_documento_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.trabajadores
@@ -3066,7 +3958,7 @@ ALTER TABLE ONLY public.trabajadores
 
 
 --
--- Name: trabajadores trabajadores_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: trabajadores trabajadores_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.trabajadores
@@ -3074,7 +3966,7 @@ ALTER TABLE ONLY public.trabajadores
 
 
 --
--- Name: users users_email_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_email_unique; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.users
@@ -3082,7 +3974,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.users
@@ -3090,175 +3982,239 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: arboles_coordenada_spatial_index; Type: INDEX; Schema: public; Owner: -
+-- Name: validaciones_riego validaciones_riego_pkey; Type: CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.validaciones_riego
+    ADD CONSTRAINT validaciones_riego_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: arboles_coordenada_spatial_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX arboles_coordenada_spatial_index ON public.arboles USING gist (coordenada_precision);
 
 
 --
--- Name: arboles_fila_indice_index; Type: INDEX; Schema: public; Owner: -
+-- Name: arboles_fila_indice_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX arboles_fila_indice_index ON public.arboles USING btree (fila_indice);
 
 
 --
--- Name: arboles_historial_fitosanitario_arbol_id_tipo_incidencia_index; Type: INDEX; Schema: public; Owner: -
+-- Name: arboles_historial_fitosanitario_arbol_id_tipo_incidencia_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX arboles_historial_fitosanitario_arbol_id_tipo_incidencia_index ON public.arboles_historial_fitosanitario USING btree (arbol_id, tipo_incidencia);
 
 
 --
--- Name: arboles_metricas_historicas_arbol_id_fecha_medicion_index; Type: INDEX; Schema: public; Owner: -
+-- Name: arboles_metricas_historicas_arbol_id_fecha_medicion_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX arboles_metricas_historicas_arbol_id_fecha_medicion_index ON public.arboles_metricas_historicas USING btree (arbol_id, fecha_medicion);
 
 
 --
--- Name: arboles_posicion_indice_index; Type: INDEX; Schema: public; Owner: -
+-- Name: arboles_posicion_indice_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX arboles_posicion_indice_index ON public.arboles USING btree (posicion_indice);
 
 
 --
--- Name: bitacoras_bitacorable_type_bitacorable_id_index; Type: INDEX; Schema: public; Owner: -
+-- Name: bitacoras_bitacorable_type_bitacorable_id_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX bitacoras_bitacorable_type_bitacorable_id_index ON public.bitacoras USING btree (bitacorable_type, bitacorable_id);
 
 
 --
--- Name: cache_expiration_index; Type: INDEX; Schema: public; Owner: -
+-- Name: cache_expiration_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX cache_expiration_index ON public.cache USING btree (expiration);
 
 
 --
--- Name: cache_locks_expiration_index; Type: INDEX; Schema: public; Owner: -
+-- Name: cache_locks_expiration_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX cache_locks_expiration_index ON public.cache_locks USING btree (expiration);
 
 
 --
--- Name: gastos_gastable_type_gastable_id_index; Type: INDEX; Schema: public; Owner: -
+-- Name: componentes_riego_activo_index; Type: INDEX; Schema: public; Owner: sail
+--
+
+CREATE INDEX componentes_riego_activo_index ON public.componentes_riego USING btree (activo);
+
+
+--
+-- Name: componentes_riego_tipo_componente_index; Type: INDEX; Schema: public; Owner: sail
+--
+
+CREATE INDEX componentes_riego_tipo_componente_index ON public.componentes_riego USING btree (tipo_componente);
+
+
+--
+-- Name: evento_arbol_evento_campo_id_arbol_id_index; Type: INDEX; Schema: public; Owner: sail
+--
+
+CREATE INDEX evento_arbol_evento_campo_id_arbol_id_index ON public.evento_arbol USING btree (evento_campo_id, arbol_id);
+
+
+--
+-- Name: eventos_riego_estado_index; Type: INDEX; Schema: public; Owner: sail
+--
+
+CREATE INDEX eventos_riego_estado_index ON public.eventos_riego USING btree (estado);
+
+
+--
+-- Name: eventos_riego_fecha_hora_inicio_index; Type: INDEX; Schema: public; Owner: sail
+--
+
+CREATE INDEX eventos_riego_fecha_hora_inicio_index ON public.eventos_riego USING btree (fecha_hora_inicio);
+
+
+--
+-- Name: gastos_gastable_type_gastable_id_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX gastos_gastable_type_gastable_id_index ON public.gastos USING btree (gastable_type, gastable_id);
 
 
 --
--- Name: jobs_queue_index; Type: INDEX; Schema: public; Owner: -
+-- Name: jobs_queue_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX jobs_queue_index ON public.jobs USING btree (queue);
 
 
 --
--- Name: lotes_codigo_lote_index; Type: INDEX; Schema: public; Owner: -
+-- Name: lecturas_sensores_tanque_fecha_hora_lectura_index; Type: INDEX; Schema: public; Owner: sail
+--
+
+CREATE INDEX lecturas_sensores_tanque_fecha_hora_lectura_index ON public.lecturas_sensores_tanque USING btree (fecha_hora_lectura);
+
+
+--
+-- Name: lotes_codigo_lote_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX lotes_codigo_lote_index ON public.lotes USING btree (codigo_lote);
 
 
 --
--- Name: lotes_finca_id_activo_index; Type: INDEX; Schema: public; Owner: -
+-- Name: lotes_finca_id_activo_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX lotes_finca_id_activo_index ON public.lotes USING btree (finca_id, activo);
 
 
 --
--- Name: lotes_geometria_gps_spatial_index; Type: INDEX; Schema: public; Owner: -
+-- Name: lotes_geometria_gps_spatial_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX lotes_geometria_gps_spatial_index ON public.lotes USING gist (geometria_gps);
 
 
 --
--- Name: lotes_zonas_manejo_lote_id_index; Type: INDEX; Schema: public; Owner: -
+-- Name: lotes_zonas_manejo_lote_id_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX lotes_zonas_manejo_lote_id_index ON public.lotes_zonas_manejo USING btree (lote_id);
 
 
 --
--- Name: movimientos_stock_movimientoable_type_movimientoable_id_index; Type: INDEX; Schema: public; Owner: -
+-- Name: movimientos_stock_movimientoable_type_movimientoable_id_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX movimientos_stock_movimientoable_type_movimientoable_id_index ON public.movimientos_stock USING btree (movimientoable_type, movimientoable_id);
 
 
 --
--- Name: movimientos_stock_tipo_movimiento_created_at_index; Type: INDEX; Schema: public; Owner: -
+-- Name: movimientos_stock_tipo_movimiento_created_at_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX movimientos_stock_tipo_movimiento_created_at_index ON public.movimientos_stock USING btree (tipo_movimiento, created_at);
 
 
 --
--- Name: personal_access_tokens_expires_at_index; Type: INDEX; Schema: public; Owner: -
+-- Name: personal_access_tokens_expires_at_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX personal_access_tokens_expires_at_index ON public.personal_access_tokens USING btree (expires_at);
 
 
 --
--- Name: personal_access_tokens_tokenable_type_tokenable_id_index; Type: INDEX; Schema: public; Owner: -
+-- Name: personal_access_tokens_tokenable_type_tokenable_id_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX personal_access_tokens_tokenable_type_tokenable_id_index ON public.personal_access_tokens USING btree (tokenable_type, tokenable_id);
 
 
 --
--- Name: sessions_last_activity_index; Type: INDEX; Schema: public; Owner: -
+-- Name: sessions_last_activity_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX sessions_last_activity_index ON public.sessions USING btree (last_activity);
 
 
 --
--- Name: sessions_user_id_index; Type: INDEX; Schema: public; Owner: -
+-- Name: sessions_user_id_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX sessions_user_id_index ON public.sessions USING btree (user_id);
 
 
 --
--- Name: teams_user_id_index; Type: INDEX; Schema: public; Owner: -
+-- Name: sistemas_riego_activo_index; Type: INDEX; Schema: public; Owner: sail
+--
+
+CREATE INDEX sistemas_riego_activo_index ON public.sistemas_riego USING btree (activo);
+
+
+--
+-- Name: sistemas_riego_tipo_riego_index; Type: INDEX; Schema: public; Owner: sail
+--
+
+CREATE INDEX sistemas_riego_tipo_riego_index ON public.sistemas_riego USING btree (tipo_riego);
+
+
+--
+-- Name: tanques_activo_index; Type: INDEX; Schema: public; Owner: sail
+--
+
+CREATE INDEX tanques_activo_index ON public.tanques USING btree (activo);
+
+
+--
+-- Name: teams_user_id_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX teams_user_id_index ON public.teams USING btree (user_id);
 
 
 --
--- Name: trabajadores_activo_cargo_index; Type: INDEX; Schema: public; Owner: -
+-- Name: trabajadores_activo_cargo_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX trabajadores_activo_cargo_index ON public.trabajadores USING btree (activo, cargo);
 
 
 --
--- Name: trabajadores_numero_documento_index; Type: INDEX; Schema: public; Owner: -
+-- Name: trabajadores_numero_documento_index; Type: INDEX; Schema: public; Owner: sail
 --
 
 CREATE INDEX trabajadores_numero_documento_index ON public.trabajadores USING btree (numero_documento);
 
 
 --
--- Name: zonas_geometria_spatial_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX zonas_geometria_spatial_index ON public.lotes_zonas_manejo USING gist (geometria_zona);
-
-
---
--- Name: arboles arboles_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: arboles arboles_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles
@@ -3266,7 +4222,7 @@ ALTER TABLE ONLY public.arboles
 
 
 --
--- Name: arboles_historial_fitosanitario arboles_historial_fitosanitario_arbol_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: arboles_historial_fitosanitario arboles_historial_fitosanitario_arbol_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles_historial_fitosanitario
@@ -3274,7 +4230,7 @@ ALTER TABLE ONLY public.arboles_historial_fitosanitario
 
 
 --
--- Name: arboles_historial_fitosanitario arboles_historial_fitosanitario_usuario_evaluador_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: arboles_historial_fitosanitario arboles_historial_fitosanitario_usuario_evaluador_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles_historial_fitosanitario
@@ -3282,7 +4238,7 @@ ALTER TABLE ONLY public.arboles_historial_fitosanitario
 
 
 --
--- Name: arboles arboles_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: arboles arboles_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles
@@ -3290,7 +4246,7 @@ ALTER TABLE ONLY public.arboles
 
 
 --
--- Name: arboles arboles_lote_zona_manejo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: arboles arboles_lote_zona_manejo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles
@@ -3298,7 +4254,7 @@ ALTER TABLE ONLY public.arboles
 
 
 --
--- Name: arboles_metricas_historicas arboles_metricas_historicas_arbol_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: arboles_metricas_historicas arboles_metricas_historicas_arbol_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.arboles_metricas_historicas
@@ -3306,7 +4262,7 @@ ALTER TABLE ONLY public.arboles_metricas_historicas
 
 
 --
--- Name: bitacoras bitacoras_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: bitacoras bitacoras_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.bitacoras
@@ -3314,7 +4270,7 @@ ALTER TABLE ONLY public.bitacoras
 
 
 --
--- Name: carta_porte carta_porte_despacho_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: carta_porte carta_porte_despacho_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.carta_porte
@@ -3322,7 +4278,7 @@ ALTER TABLE ONLY public.carta_porte
 
 
 --
--- Name: carta_porte carta_porte_transportador_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: carta_porte carta_porte_transportador_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.carta_porte
@@ -3330,7 +4286,7 @@ ALTER TABLE ONLY public.carta_porte
 
 
 --
--- Name: ciclos_productivos ciclos_productivos_agronomo_responsable_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ciclos_productivos ciclos_productivos_agronomo_responsable_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ciclos_productivos
@@ -3338,7 +4294,7 @@ ALTER TABLE ONLY public.ciclos_productivos
 
 
 --
--- Name: ciclos_productivos ciclos_productivos_cultivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ciclos_productivos ciclos_productivos_cultivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ciclos_productivos
@@ -3346,7 +4302,7 @@ ALTER TABLE ONLY public.ciclos_productivos
 
 
 --
--- Name: ciclos_productivos ciclos_productivos_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ciclos_productivos ciclos_productivos_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ciclos_productivos
@@ -3354,7 +4310,7 @@ ALTER TABLE ONLY public.ciclos_productivos
 
 
 --
--- Name: ciclos_productivos ciclos_productivos_proveedor_material_vegetal_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ciclos_productivos ciclos_productivos_proveedor_material_vegetal_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ciclos_productivos
@@ -3362,7 +4318,15 @@ ALTER TABLE ONLY public.ciclos_productivos
 
 
 --
--- Name: compra_items compra_items_compra_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: componentes_riego componentes_riego_sistema_riego_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.componentes_riego
+    ADD CONSTRAINT componentes_riego_sistema_riego_id_foreign FOREIGN KEY (sistema_riego_id) REFERENCES public.sistemas_riego(id) ON DELETE CASCADE;
+
+
+--
+-- Name: compra_items compra_items_compra_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compra_items
@@ -3370,7 +4334,7 @@ ALTER TABLE ONLY public.compra_items
 
 
 --
--- Name: compra_items compra_items_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: compra_items compra_items_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compra_items
@@ -3378,7 +4342,7 @@ ALTER TABLE ONLY public.compra_items
 
 
 --
--- Name: compras compras_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: compras compras_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compras
@@ -3386,7 +4350,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- Name: compras_pagos compras_pagos_compra_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: compras_pagos compras_pagos_compra_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compras_pagos
@@ -3394,7 +4358,7 @@ ALTER TABLE ONLY public.compras_pagos
 
 
 --
--- Name: compras_pagos compras_pagos_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: compras_pagos compras_pagos_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compras_pagos
@@ -3402,7 +4366,7 @@ ALTER TABLE ONLY public.compras_pagos
 
 
 --
--- Name: compras compras_proveedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: compras compras_proveedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compras
@@ -3410,7 +4374,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- Name: compras compras_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: compras compras_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.compras
@@ -3418,7 +4382,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- Name: contenedores contenedores_cliente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: contenedores contenedores_cliente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.contenedores
@@ -3426,7 +4390,7 @@ ALTER TABLE ONLY public.contenedores
 
 
 --
--- Name: contenedores contenedores_orden_pedido_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: contenedores contenedores_orden_pedido_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.contenedores
@@ -3434,7 +4398,7 @@ ALTER TABLE ONLY public.contenedores
 
 
 --
--- Name: contenedores contenedores_sesion_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: contenedores contenedores_sesion_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.contenedores
@@ -3442,7 +4406,15 @@ ALTER TABLE ONLY public.contenedores
 
 
 --
--- Name: despacho_items despacho_items_contenedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: despacho_items despacho_items_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.despacho_items
+    ADD CONSTRAINT despacho_items_ciclo_productivo_id_foreign FOREIGN KEY (ciclo_productivo_id) REFERENCES public.ciclos_productivos(id) ON DELETE SET NULL;
+
+
+--
+-- Name: despacho_items despacho_items_contenedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.despacho_items
@@ -3450,7 +4422,7 @@ ALTER TABLE ONLY public.despacho_items
 
 
 --
--- Name: despacho_items despacho_items_despacho_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: despacho_items despacho_items_despacho_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.despacho_items
@@ -3458,15 +4430,7 @@ ALTER TABLE ONLY public.despacho_items
 
 
 --
--- Name: despachos despachos_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.despachos
-    ADD CONSTRAINT despachos_ciclo_productivo_id_foreign FOREIGN KEY (ciclo_productivo_id) REFERENCES public.ciclos_productivos(id) ON DELETE SET NULL;
-
-
---
--- Name: despachos despachos_cliente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: despachos despachos_cliente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.despachos
@@ -3474,7 +4438,7 @@ ALTER TABLE ONLY public.despachos
 
 
 --
--- Name: despachos despachos_comisionista_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: despachos despachos_comisionista_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.despachos
@@ -3482,15 +4446,39 @@ ALTER TABLE ONLY public.despachos
 
 
 --
--- Name: despachos despachos_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_arbol evento_arbol_arbol_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
-ALTER TABLE ONLY public.despachos
-    ADD CONSTRAINT despachos_lote_id_foreign FOREIGN KEY (lote_id) REFERENCES public.lotes(id) ON DELETE RESTRICT;
+ALTER TABLE ONLY public.evento_arbol
+    ADD CONSTRAINT evento_arbol_arbol_id_foreign FOREIGN KEY (arbol_id) REFERENCES public.arboles(id) ON DELETE CASCADE;
 
 
 --
--- Name: evento_insumos evento_insumos_evento_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_arbol evento_arbol_evento_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_arbol
+    ADD CONSTRAINT evento_arbol_evento_campo_id_foreign FOREIGN KEY (evento_campo_id) REFERENCES public.eventos_campo(id) ON DELETE CASCADE;
+
+
+--
+-- Name: evento_insumo_lotes evento_insumo_lotes_evento_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_insumo_lotes
+    ADD CONSTRAINT evento_insumo_lotes_evento_insumo_id_foreign FOREIGN KEY (evento_insumo_id) REFERENCES public.evento_insumos(id) ON DELETE CASCADE;
+
+
+--
+-- Name: evento_insumo_lotes evento_insumo_lotes_lote_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_insumo_lotes
+    ADD CONSTRAINT evento_insumo_lotes_lote_insumo_id_foreign FOREIGN KEY (lote_insumo_id) REFERENCES public.lotes_insumos(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: evento_insumos evento_insumos_evento_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.evento_insumos
@@ -3498,7 +4486,7 @@ ALTER TABLE ONLY public.evento_insumos
 
 
 --
--- Name: evento_insumos evento_insumos_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_insumos evento_insumos_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.evento_insumos
@@ -3506,15 +4494,7 @@ ALTER TABLE ONLY public.evento_insumos
 
 
 --
--- Name: evento_insumos evento_insumos_movimiento_inventario_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.evento_insumos
-    ADD CONSTRAINT evento_insumos_movimiento_inventario_id_foreign FOREIGN KEY (movimiento_inventario_id) REFERENCES public.movimientos_stock(id) ON DELETE SET NULL;
-
-
---
--- Name: evento_mano_obra evento_mano_obra_ciclo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_mano_obra evento_mano_obra_ciclo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.evento_mano_obra
@@ -3522,7 +4502,7 @@ ALTER TABLE ONLY public.evento_mano_obra
 
 
 --
--- Name: evento_mano_obra evento_mano_obra_evento_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_mano_obra evento_mano_obra_evento_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.evento_mano_obra
@@ -3530,7 +4510,15 @@ ALTER TABLE ONLY public.evento_mano_obra
 
 
 --
--- Name: evento_mano_obra evento_mano_obra_trabajador_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_mano_obra evento_mano_obra_sesion_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_mano_obra
+    ADD CONSTRAINT evento_mano_obra_sesion_id_foreign FOREIGN KEY (sesion_id) REFERENCES public.sesiones_cosecha(id) ON DELETE SET NULL;
+
+
+--
+-- Name: evento_mano_obra evento_mano_obra_trabajador_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.evento_mano_obra
@@ -3538,15 +4526,47 @@ ALTER TABLE ONLY public.evento_mano_obra
 
 
 --
--- Name: eventos_campo eventos_campo_arbol_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_maquinaria evento_maquinaria_evento_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
-ALTER TABLE ONLY public.eventos_campo
-    ADD CONSTRAINT eventos_campo_arbol_id_foreign FOREIGN KEY (arbol_id) REFERENCES public.arboles(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.evento_maquinaria
+    ADD CONSTRAINT evento_maquinaria_evento_id_foreign FOREIGN KEY (evento_id) REFERENCES public.eventos_campo(id) ON DELETE CASCADE;
 
 
 --
--- Name: eventos_campo eventos_campo_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: evento_maquinaria evento_maquinaria_maquina_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_maquinaria
+    ADD CONSTRAINT evento_maquinaria_maquina_id_foreign FOREIGN KEY (maquina_id) REFERENCES public.maquinaria(id) ON DELETE SET NULL;
+
+
+--
+-- Name: evento_maquinaria evento_maquinaria_trabajador_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_maquinaria
+    ADD CONSTRAINT evento_maquinaria_trabajador_id_foreign FOREIGN KEY (trabajador_id) REFERENCES public.users(id);
+
+
+--
+-- Name: evento_riego_componentes evento_riego_componentes_componente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_riego_componentes
+    ADD CONSTRAINT evento_riego_componentes_componente_id_foreign FOREIGN KEY (componente_id) REFERENCES public.componentes_riego(id);
+
+
+--
+-- Name: evento_riego_componentes evento_riego_componentes_evento_riego_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.evento_riego_componentes
+    ADD CONSTRAINT evento_riego_componentes_evento_riego_id_foreign FOREIGN KEY (evento_riego_id) REFERENCES public.eventos_riego(id) ON DELETE CASCADE;
+
+
+--
+-- Name: eventos_campo eventos_campo_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.eventos_campo
@@ -3554,7 +4574,7 @@ ALTER TABLE ONLY public.eventos_campo
 
 
 --
--- Name: eventos_campo eventos_campo_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: eventos_campo eventos_campo_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.eventos_campo
@@ -3562,7 +4582,7 @@ ALTER TABLE ONLY public.eventos_campo
 
 
 --
--- Name: eventos_campo eventos_campo_tipo_evento_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: eventos_campo eventos_campo_tipo_evento_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.eventos_campo
@@ -3570,7 +4590,31 @@ ALTER TABLE ONLY public.eventos_campo
 
 
 --
--- Name: fenologia_etapas fenologia_etapas_cultivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: eventos_campo eventos_campo_zona_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.eventos_campo
+    ADD CONSTRAINT eventos_campo_zona_id_foreign FOREIGN KEY (zona_id) REFERENCES public.lotes_zonas_manejo(id) ON DELETE SET NULL;
+
+
+--
+-- Name: eventos_riego eventos_riego_responsable_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.eventos_riego
+    ADD CONSTRAINT eventos_riego_responsable_id_foreign FOREIGN KEY (responsable_id) REFERENCES public.users(id);
+
+
+--
+-- Name: eventos_riego eventos_riego_sistema_riego_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.eventos_riego
+    ADD CONSTRAINT eventos_riego_sistema_riego_id_foreign FOREIGN KEY (sistema_riego_id) REFERENCES public.sistemas_riego(id);
+
+
+--
+-- Name: fenologia_etapas fenologia_etapas_cultivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.fenologia_etapas
@@ -3578,15 +4622,15 @@ ALTER TABLE ONLY public.fenologia_etapas
 
 
 --
--- Name: gastos gastos_ciclo_producto_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: gastos gastos_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.gastos
-    ADD CONSTRAINT gastos_ciclo_producto_id_foreign FOREIGN KEY (ciclo_producto_id) REFERENCES public.ciclos_productivos(id) ON DELETE SET NULL;
+    ADD CONSTRAINT gastos_ciclo_productivo_id_foreign FOREIGN KEY (ciclo_productivo_id) REFERENCES public.ciclos_productivos(id) ON DELETE SET NULL;
 
 
 --
--- Name: gastos gastos_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: gastos gastos_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.gastos
@@ -3594,7 +4638,7 @@ ALTER TABLE ONLY public.gastos
 
 
 --
--- Name: insumo_componentes insumo_componentes_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: insumo_componentes insumo_componentes_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.insumo_componentes
@@ -3602,7 +4646,7 @@ ALTER TABLE ONLY public.insumo_componentes
 
 
 --
--- Name: insumos insumos_categoria_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: insumos insumos_categoria_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.insumos
@@ -3610,7 +4654,7 @@ ALTER TABLE ONLY public.insumos
 
 
 --
--- Name: insumos insumos_proveedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: insumos insumos_proveedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.insumos
@@ -3618,7 +4662,7 @@ ALTER TABLE ONLY public.insumos
 
 
 --
--- Name: labores_plantilla labores_plantilla_cultivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: labores_plantilla labores_plantilla_cultivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.labores_plantilla
@@ -3626,7 +4670,7 @@ ALTER TABLE ONLY public.labores_plantilla
 
 
 --
--- Name: labores_plantilla labores_plantilla_fenologia_etapa_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: labores_plantilla labores_plantilla_fenologia_etapa_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.labores_plantilla
@@ -3634,7 +4678,7 @@ ALTER TABLE ONLY public.labores_plantilla
 
 
 --
--- Name: labores_plantilla labores_plantilla_tipo_evento_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: labores_plantilla labores_plantilla_tipo_evento_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.labores_plantilla
@@ -3642,7 +4686,15 @@ ALTER TABLE ONLY public.labores_plantilla
 
 
 --
--- Name: liquidaciones_despacho liquidaciones_despacho_despacho_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: lecturas_sensores_tanque lecturas_sensores_tanque_tanque_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.lecturas_sensores_tanque
+    ADD CONSTRAINT lecturas_sensores_tanque_tanque_id_foreign FOREIGN KEY (tanque_id) REFERENCES public.tanques(id) ON DELETE CASCADE;
+
+
+--
+-- Name: liquidaciones_despacho liquidaciones_despacho_despacho_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.liquidaciones_despacho
@@ -3650,7 +4702,7 @@ ALTER TABLE ONLY public.liquidaciones_despacho
 
 
 --
--- Name: liquidaciones_despacho liquidaciones_despacho_despacho_item_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: liquidaciones_despacho liquidaciones_despacho_despacho_item_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.liquidaciones_despacho
@@ -3658,7 +4710,7 @@ ALTER TABLE ONLY public.liquidaciones_despacho
 
 
 --
--- Name: lotes_analiticas_suelo lotes_analiticas_suelo_analista_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_analiticas_suelo lotes_analiticas_suelo_analista_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_analiticas_suelo
@@ -3666,7 +4718,7 @@ ALTER TABLE ONLY public.lotes_analiticas_suelo
 
 
 --
--- Name: lotes_analiticas_suelo lotes_analiticas_suelo_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_analiticas_suelo lotes_analiticas_suelo_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_analiticas_suelo
@@ -3674,7 +4726,7 @@ ALTER TABLE ONLY public.lotes_analiticas_suelo
 
 
 --
--- Name: lotes lotes_finca_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes lotes_finca_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes
@@ -3682,7 +4734,7 @@ ALTER TABLE ONLY public.lotes
 
 
 --
--- Name: lotes_insumos lotes_insumos_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_insumos lotes_insumos_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_insumos
@@ -3690,7 +4742,7 @@ ALTER TABLE ONLY public.lotes_insumos
 
 
 --
--- Name: lotes_insumos lotes_insumos_proveedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_insumos lotes_insumos_proveedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_insumos
@@ -3698,7 +4750,7 @@ ALTER TABLE ONLY public.lotes_insumos
 
 
 --
--- Name: lotes_sistemas_riego lotes_sistemas_riego_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_sistemas_riego lotes_sistemas_riego_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_sistemas_riego
@@ -3706,7 +4758,7 @@ ALTER TABLE ONLY public.lotes_sistemas_riego
 
 
 --
--- Name: lotes_zonas_manejo lotes_zonas_manejo_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: lotes_zonas_manejo lotes_zonas_manejo_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.lotes_zonas_manejo
@@ -3714,7 +4766,31 @@ ALTER TABLE ONLY public.lotes_zonas_manejo
 
 
 --
--- Name: mermas mermas_contenedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: mantenimientos_maquinaria mantenimientos_maquinaria_maquina_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.mantenimientos_maquinaria
+    ADD CONSTRAINT mantenimientos_maquinaria_maquina_id_foreign FOREIGN KEY (maquina_id) REFERENCES public.maquinaria(id) ON DELETE SET NULL;
+
+
+--
+-- Name: maquinaria maquinaria_responsable_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.maquinaria
+    ADD CONSTRAINT maquinaria_responsable_id_foreign FOREIGN KEY (responsable_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
+-- Name: maquinaria maquinaria_tipo_maquinaria_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.maquinaria
+    ADD CONSTRAINT maquinaria_tipo_maquinaria_id_foreign FOREIGN KEY (tipo_maquinaria_id) REFERENCES public.tipo_maquinaria(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: mermas mermas_contenedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.mermas
@@ -3722,7 +4798,7 @@ ALTER TABLE ONLY public.mermas
 
 
 --
--- Name: mermas mermas_recepcion_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: mermas mermas_recepcion_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.mermas
@@ -3730,7 +4806,7 @@ ALTER TABLE ONLY public.mermas
 
 
 --
--- Name: movimientos_clasificacion movimientos_clasificacion_contenedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: movimientos_clasificacion movimientos_clasificacion_contenedor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.movimientos_clasificacion
@@ -3738,7 +4814,7 @@ ALTER TABLE ONLY public.movimientos_clasificacion
 
 
 --
--- Name: movimientos_clasificacion movimientos_clasificacion_recepcion_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: movimientos_clasificacion movimientos_clasificacion_recepcion_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.movimientos_clasificacion
@@ -3746,7 +4822,7 @@ ALTER TABLE ONLY public.movimientos_clasificacion
 
 
 --
--- Name: movimientos_stock movimientos_stock_lote_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: movimientos_stock movimientos_stock_lote_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.movimientos_stock
@@ -3754,7 +4830,7 @@ ALTER TABLE ONLY public.movimientos_stock
 
 
 --
--- Name: movimientos_stock movimientos_stock_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: movimientos_stock movimientos_stock_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.movimientos_stock
@@ -3762,7 +4838,7 @@ ALTER TABLE ONLY public.movimientos_stock
 
 
 --
--- Name: ordenes_cosecha ordenes_cosecha_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ordenes_cosecha ordenes_cosecha_ciclo_productivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ordenes_cosecha
@@ -3770,7 +4846,7 @@ ALTER TABLE ONLY public.ordenes_cosecha
 
 
 --
--- Name: ordenes_cosecha ordenes_cosecha_cliente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ordenes_cosecha ordenes_cosecha_cliente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ordenes_cosecha
@@ -3778,7 +4854,7 @@ ALTER TABLE ONLY public.ordenes_cosecha
 
 
 --
--- Name: ordenes_cosecha ordenes_cosecha_lote_cultivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ordenes_cosecha ordenes_cosecha_lote_cultivo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.ordenes_cosecha
@@ -3786,7 +4862,47 @@ ALTER TABLE ONLY public.ordenes_cosecha
 
 
 --
--- Name: recepciones_campo recepciones_campo_arbol_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ordenes_cosecha ordenes_cosecha_lote_zona_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.ordenes_cosecha
+    ADD CONSTRAINT ordenes_cosecha_lote_zona_id_foreign FOREIGN KEY (lote_zona_id) REFERENCES public.lotes_zonas_manejo(id) ON DELETE SET NULL;
+
+
+--
+-- Name: ordenes_cosecha ordenes_cosecha_responsable_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.ordenes_cosecha
+    ADD CONSTRAINT ordenes_cosecha_responsable_id_foreign FOREIGN KEY (responsable_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
+-- Name: pagos_liquidacion pagos_liquidacion_despacho_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.pagos_liquidacion
+    ADD CONSTRAINT pagos_liquidacion_despacho_id_foreign FOREIGN KEY (despacho_id) REFERENCES public.despachos(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: pagos_liquidacion pagos_liquidacion_liquidacion_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.pagos_liquidacion
+    ADD CONSTRAINT pagos_liquidacion_liquidacion_id_foreign FOREIGN KEY (liquidacion_id) REFERENCES public.liquidaciones_despacho(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: pagos_liquidacion pagos_liquidacion_registrado_por_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.pagos_liquidacion
+    ADD CONSTRAINT pagos_liquidacion_registrado_por_foreign FOREIGN KEY (registrado_por) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
+-- Name: recepciones_campo recepciones_campo_arbol_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.recepciones_campo
@@ -3794,23 +4910,23 @@ ALTER TABLE ONLY public.recepciones_campo
 
 
 --
--- Name: recepciones_campo recepciones_campo_lote_origen_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: recepciones_campo recepciones_campo_lote_zona_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.recepciones_campo
-    ADD CONSTRAINT recepciones_campo_lote_origen_id_foreign FOREIGN KEY (lote_origen_id) REFERENCES public.lotes(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT recepciones_campo_lote_zona_id_foreign FOREIGN KEY (lote_zona_id) REFERENCES public.lotes_zonas_manejo(id) ON DELETE SET NULL;
 
 
 --
--- Name: recepciones_campo recepciones_campo_sesion_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: recepciones_campo recepciones_campo_sesion_cosecha_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.recepciones_campo
-    ADD CONSTRAINT recepciones_campo_sesion_id_foreign FOREIGN KEY (sesion_id) REFERENCES public.sesiones_cosecha(id) ON DELETE CASCADE;
+    ADD CONSTRAINT recepciones_campo_sesion_cosecha_id_foreign FOREIGN KEY (sesion_cosecha_id) REFERENCES public.sesiones_cosecha(id) ON DELETE CASCADE;
 
 
 --
--- Name: recepciones_campo recepciones_campo_trabajador_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: recepciones_campo recepciones_campo_trabajador_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.recepciones_campo
@@ -3818,7 +4934,7 @@ ALTER TABLE ONLY public.recepciones_campo
 
 
 --
--- Name: recepciones_destino recepciones_destino_despacho_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: recepciones_destino recepciones_destino_despacho_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.recepciones_destino
@@ -3826,15 +4942,15 @@ ALTER TABLE ONLY public.recepciones_destino
 
 
 --
--- Name: sesiones_cosecha sesiones_cosecha_evento_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sesiones_cosecha sesiones_cosecha_evento_campo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.sesiones_cosecha
-    ADD CONSTRAINT sesiones_cosecha_evento_campo_id_foreign FOREIGN KEY (evento_campo_id) REFERENCES public.eventos_campo(id);
+    ADD CONSTRAINT sesiones_cosecha_evento_campo_id_foreign FOREIGN KEY (evento_campo_id) REFERENCES public.eventos_campo(id) ON DELETE CASCADE;
 
 
 --
--- Name: sesiones_cosecha sesiones_cosecha_orden_cosecha_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sesiones_cosecha sesiones_cosecha_orden_cosecha_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.sesiones_cosecha
@@ -3842,7 +4958,7 @@ ALTER TABLE ONLY public.sesiones_cosecha
 
 
 --
--- Name: sesiones_cosecha sesiones_cosecha_responsable_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sesiones_cosecha sesiones_cosecha_responsable_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.sesiones_cosecha
@@ -3850,7 +4966,23 @@ ALTER TABLE ONLY public.sesiones_cosecha
 
 
 --
--- Name: stock_insumos stock_insumos_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sistemas_riego sistemas_riego_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.sistemas_riego
+    ADD CONSTRAINT sistemas_riego_lote_id_foreign FOREIGN KEY (lote_id) REFERENCES public.lotes(id) ON DELETE SET NULL;
+
+
+--
+-- Name: sistemas_riego sistemas_riego_tanque_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.sistemas_riego
+    ADD CONSTRAINT sistemas_riego_tanque_id_foreign FOREIGN KEY (tanque_id) REFERENCES public.tanques(id) ON DELETE CASCADE;
+
+
+--
+-- Name: stock_insumos stock_insumos_insumo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.stock_insumos
@@ -3858,7 +4990,15 @@ ALTER TABLE ONLY public.stock_insumos
 
 
 --
--- Name: team_invitations team_invitations_team_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: tanques tanques_lote_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.tanques
+    ADD CONSTRAINT tanques_lote_id_foreign FOREIGN KEY (lote_id) REFERENCES public.lotes(id) ON DELETE SET NULL;
+
+
+--
+-- Name: team_invitations team_invitations_team_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.team_invitations
@@ -3866,11 +5006,27 @@ ALTER TABLE ONLY public.team_invitations
 
 
 --
--- Name: trabajadores trabajadores_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: trabajadores trabajadores_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
 --
 
 ALTER TABLE ONLY public.trabajadores
     ADD CONSTRAINT trabajadores_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
+-- Name: validaciones_riego validaciones_riego_evento_riego_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.validaciones_riego
+    ADD CONSTRAINT validaciones_riego_evento_riego_id_foreign FOREIGN KEY (evento_riego_id) REFERENCES public.eventos_riego(id) ON DELETE CASCADE;
+
+
+--
+-- Name: validaciones_riego validaciones_riego_tanque_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: sail
+--
+
+ALTER TABLE ONLY public.validaciones_riego
+    ADD CONSTRAINT validaciones_riego_tanque_id_foreign FOREIGN KEY (tanque_id) REFERENCES public.tanques(id);
 
 
 --

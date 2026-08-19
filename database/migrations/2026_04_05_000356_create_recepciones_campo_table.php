@@ -15,9 +15,9 @@ return new class extends Migration
             $table->foreign('sesion_cosecha_id')->references('id')->on('sesiones_cosecha')->onDelete('cascade');
             //cosecha
             // $table->foreignId('ciclo_id')->constrained('ciclos_productivos')->onDelete('cascade');
-            $table->foreignId('lote_zona_id')->nullable()->constrained('lotes_zona_manejo')->onDelete('set null');
+            $table->foreignId('lote_zona_id')->nullable()->constrained('lotes_zonas_manejo')->onDelete('set null');
             $table->foreignId('trabajador_id')->constrained('trabajadores')->onDelete('restrict');
-            $table->foreignId('arbol_id')->nullable()->constrained('arboles')->onDelete('set null');    
+            //$table->foreignId('arbol_id')->nullable()->constrained('arboles')->onDelete('set null');    
             // Peso y tara — tara variable por costal: aunque en el campo colombiano ocurren muchas cosas no podemso hacerla storeAs es mejor que en el frotned se recomiende el peso neto pero la persona lo confirme
             $table->decimal('peso_bruto', 10, 2);               // lo que entra con costal
             $table->decimal('tara_costal', 8, 2)->default(0);   // peso del costal vacío
@@ -25,7 +25,7 @@ return new class extends Migration
 
             $table->timestamp('hora_pesaje')->useCurrent();
             $table->string('foto_evidencia')->nullable();
-            
+            $table->enum('metodo_pesaje', ['balanza_electronica', 'balanza_mecanica', 'estimado'])->default('balanza_electronica');
             // Trazabilidad
             $table->string('costal_codigo')->nullable();         // código o número del costal
             $table->integer('numero_corte')->nullable();         // 1er corte, 2do corte...
@@ -39,6 +39,15 @@ return new class extends Migration
             $table->timestamp('client_updated_at')->nullable();
             $table->timestamp('synced_at')->nullable();
 
+            $table->timestamps();
+        });
+
+        Schema::create('recepcion_arboles', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('recepcion_campo_id');
+            $table->foreign('recepcion_campo_id')->references('id')->on('recepciones_campo')->onDelete('cascade');
+            $table->foreignId('arbol_id')->constrained('arboles')->onDelete('cascade');
+            $table->decimal('peso_estimado_kg', 10, 2)->nullable(); // Si se quiere prorratear
             $table->timestamps();
         });
     }

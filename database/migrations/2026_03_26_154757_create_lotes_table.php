@@ -46,7 +46,6 @@ return new class extends Migration
             $table->string('nombre_zona', 100); // Ej: "Zona Norte - Alta Productividad"
             $table->string('codigo_zona', 50)->unique();
             $table->decimal('area_hectareas', 8, 4);
-            
             // Polígono específico de la zona de manejo para segmentación de NDVI / Drones / Sensores
             $table->geometry('geometria_zona', 'POLYGON', 4326)->nullable();
             $table->timestamps();
@@ -54,7 +53,7 @@ return new class extends Migration
             $table->index('lote_id'); 
         });
         
-        DB::statement('CREATE INDEX zonas_geometria_spatial_index ON lotes_zonas_manejo USING gist (geometria_zona);');
+        // DB::statement('CREATE INDEX zonas_geometria_spatial_index ON lotes_zonas_manejo USING gist (geometria_zona);');
 
         // 3. TABLA HISTÓRICA: ANALÍTICAS Y CARACTERIZACIÓN DE SUELO (Auditoría temporal)
         Schema::create('lotes_analiticas_suelo', function (Blueprint $table) {

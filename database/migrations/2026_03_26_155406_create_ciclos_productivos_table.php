@@ -51,6 +51,18 @@ return new class extends Migration
 
             $table->timestamps();
         });
+        Schema::create('ciclo_productivo_zona_manejo', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('ciclo_productivo_id')->constrained('ciclos_productivos')->onDelete('cascade');
+            $table->foreignId('zona_id')->constrained('lotes_zonas_manejo')->onDelete('cascade');
+            
+            // --- CAMPOS DE CONGELACIÓN (SNAPSHOT) ---
+            $table->decimal('toneladas_producidas', 8, 2)->default(0.00); // Ej: 3.00 toneladas
+            $table->decimal('area_hectareas_momento', 8, 4)->nullable(); // Cuánto medía la zona en ESE ciclo
+            // Opcional (Toque Pro): Guardas el polígono exacto que se usó en ese ciclo por si se deforma el original
+            $table->geometry('geometria_zona_momento', 'POLYGON', 4326)->nullable();
+            $table->timestamps();
+        });
     }
 
 

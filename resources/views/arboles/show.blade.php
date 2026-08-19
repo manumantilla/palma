@@ -1,315 +1,401 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
-            <div>
-                <nav class="text-sm font-medium text-gray-500 mb-1">
-                    <a href="{{ route('lotes-gis.index') }}" class="hover:text-gray-700">Lotes</a> &middot; 
-                    <a href="{{ route('lotes-gis.show', $arbol->lote_id) }}" class="hover:text-gray-700">{{ $arbol->lote->nombre_lote }}</a> &middot;
-                    <span class="text-gray-900">Árbol {{ $arbol->codigo_unico }}</span>
-                </nav>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
-                    Ficha Técnica: Individuo {{ $arbol->codigo_unico }}
-                    <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-gray-100 text-gray-800">
-                        {{ $arbol->etapa_biologica }}
-                    </span>
-                </h2>
-            </div>
-            <div class="flex space-x-2">
-                <a href="{{ route('arboles.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                    Volver al índice
-                </a>
-            </div>
-        </div>
-    </x-slot>
-
-    <div class="py-12" x-data="{ activeTab: 'metricas' }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="container mx-auto px-4 py-6">
+        {{-- Encabezado con estilo agrícola --}}
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-green-800 via-green-700 to-green-900 p-6 text-white shadow-xl">
+            <div class="absolute right-0 top-0 -mt-12 -mr-12 h-48 w-48 rounded-full bg-green-500 opacity-20"></div>
+            <div class="absolute bottom-0 left-0 -mb-8 -ml-8 h-32 w-32 rounded-full bg-yellow-500 opacity-10"></div>
             
-            <x-alert-notification />
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-5 border-t-4 border-emerald-500">
-                    <span class="text-xs text-gray-400 font-bold uppercase">Estado Vital</span>
-                    <p class="text-lg font-bold text-gray-900 mt-1">{{ $arbol->estado_vital_badge }}</p>
-                </div>
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-5 border-t-4 border-indigo-500">
-                    <span class="text-xs text-gray-400 font-bold uppercase">Edad Fisiológica</span>
-                    <p class="text-lg font-bold text-gray-900 mt-1">{{ $arbol->edad_meses }} Meses</p>
-                </div>
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-5 border-t-4 border-amber-500">
-                    <span class="text-xs text-gray-400 font-bold uppercase">Ubicación Campo</span>
-                    <p class="text-lg font-bold text-gray-900 mt-1">Fila {{ $arbol->fila_indice }} &middot; Pos {{ $arbol->posicion_indice }}</p>
-                </div>
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-5 border-t-4 border-teal-500">
-                    <span class="text-xs text-gray-400 font-bold uppercase">Rendimiento Histórico</span>
-                    <p class="text-lg font-bold text-gray-900 mt-1">{{ number_format($arbol->produccion_acumulada_kg, 2) }} kg</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 lg:col-span-2">
-                    <h3 class="text-md font-bold text-gray-900 border-b pb-2 mb-4">Información de Establecimiento y Variedad</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <span class="text-gray-500 block">Variedad botánica:</span>
-                            <span class="font-semibold text-gray-800">{{ $arbol->variedad ?? 'No especificada' }}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500 block">Campaña / Ciclo Inicial:</span>
-                            <span class="font-semibold text-gray-800">{{ $arbol->cicloProductivo->nombre_campana ?? 'Sin ciclo' }}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500 block">Fecha de Siembra:</span>
-                            <span class="font-semibold text-gray-800">{{ $arbol->fecha_siembra ? $arbol->fecha_siembra->format('d/m/Y') : 'N/A' }}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500 block">Primera Cosecha:</span>
-                            <span class="font-semibold text-gray-800">{{ $arbol->fecha_primera_cosecha ? $arbol->fecha_primera_cosecha->format('d/m/Y') : 'N/A' }}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500 block">Zona de Manejo Asociada:</span>
-                            <span class="font-semibold text-gray-800 text-indigo-600">{{ $arbol->zonaManejo->nombre_zona ?? 'Ninguna segmentación' }}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500 block">Condición de Reemplazo:</span>
-                            <span class="font-semibold text-gray-800">
-                                {!! $arbol->es_reemplazo ? '⚠️ Sí (Reemplazado el ' . ($arbol->fecha_reemplazo ? $arbol->fecha_reemplazo->format('d/m/Y') : '') . ')' : 'Original' !!}
-                            </span>
-                        </div>
+            <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    {{-- Icono de árbol --}}
+                    <svg class="h-12 w-12 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight">
+                            Árbol <span class="text-green-200">{{ $arbol->codigo_unico }}</span>
+                        </h1>
+                        <p class="text-green-100 text-sm flex items-center gap-2">
+                            <span class="inline-block w-2 h-2 rounded-full {{ $arbol->estado_vital === 'activo' ? 'bg-green-400' : ($arbol->estado_vital === 'enfermo' ? 'bg-yellow-400' : 'bg-red-400') }}"></span>
+                            {{ ucfirst($arbol->estado_vital ?? 'Sin estado') }}
+                            · Edad: <strong>{{ $arbol->edad_meses }}</strong> meses
+                            · Variedad: {{ $arbol->variedad ?? 'N/A' }}
+                        </p>
                     </div>
-
-                    @if($arbol->observaciones)
-                        <div class="mt-6 bg-gray-50 p-3 rounded border text-sm text-gray-600">
-                            <span class="font-bold block text-gray-700 mb-1">Observaciones técnicas:</span>
-                            {{ $arbol->observaciones }}
-                        </div>
+                </div>
+                <div class="mt-4 md:mt-0 flex flex-wrap gap-2">
+                    <span class="inline-flex items-center rounded-full bg-green-600 px-4 py-1 text-sm font-medium text-white">
+                        {{ $arbol->etapa_biologica ?? 'Sin etapa' }}
+                    </span>
+                    @if($arbol->es_reemplazo)
+                        <span class="inline-flex items-center rounded-full bg-yellow-500 px-4 py-1 text-sm font-medium text-white">
+                            Reemplazo
+                        </span>
                     @endif
                 </div>
+            </div>
 
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-md font-bold text-gray-900 border-b pb-2 mb-4">Telemetría y Coordenadas</h3>
-                        <div class="space-y-3 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Altitud Relativa:</span>
-                                <span class="font-semibold text-gray-800">{{ $arbol->altitud ?? 'N/A' }} m</span>
+            {{-- Mini estadísticas --}}
+            <div class="relative mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                    <p class="text-green-200">Producción acumulada</p>
+                    <p class="text-2xl font-semibold">{{ number_format($arbol->produccion_acumulada_kg ?? 0, 2) }} kg</p>
+                </div>
+                <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                    <p class="text-green-200">Ciclos productivos</p>
+                    <p class="text-2xl font-semibold">{{ $arbol->ciclos_productivos_count ?? 0 }}</p>
+                </div>
+                <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                    <p class="text-green-200">Altitud</p>
+                    <p class="text-2xl font-semibold">{{ number_format($arbol->altitud ?? 0, 2) }} m</p>
+                </div>
+                <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                    <p class="text-green-200">Coordenadas</p>
+                    <p class="text-xs font-mono truncate">
+                        @if($coordenadas = $arbol->coordenadas_gps)
+                            {{ number_format($coordenadas[0], 6) }}, {{ number_format($coordenadas[1], 6) }}
+                        @else
+                            No registradas
+                        @endif
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Contenido principal con tabs --}}
+        <div x-data="{ tab: 'info' }" class="mt-8">
+            {{-- Navegación de tabs --}}
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                    <button @click="tab = 'info'" :class="{ 'border-green-500 text-green-700': tab === 'info', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'info' }" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+                        Información general
+                    </button>
+                    <button @click="tab = 'metricas'" :class="{ 'border-green-500 text-green-700': tab === 'metricas', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'metricas' }" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+                        Métricas históricas
+                    </button>
+                    <button @click="tab = 'fitosanitario'" :class="{ 'border-green-500 text-green-700': tab === 'fitosanitario', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'fitosanitario' }" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+                        Historial fitosanitario
+                    </button>
+                    <button @click="tab = 'eventos'" :class="{ 'border-green-500 text-green-700': tab === 'eventos', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'eventos' }" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+                        Eventos de campo
+                    </button>
+                </nav>
+            </div>
+
+            {{-- Panel: Información general --}}
+            <div x-show="tab === 'info'" class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {{-- Columna izquierda: datos principales --}}
+                <div class="lg:col-span-2 space-y-6">
+                    {{-- Tarjeta de datos del árbol --}}
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                            <h3 class="text-lg font-medium text-gray-800 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Datos del árbol
+                            </h3>
+                            <span class="text-xs text-gray-500">ID: {{ $arbol->id }}</span>
+                        </div>
+                        <div class="p-6 grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-500">Lote</p>
+                                <p class="font-medium text-gray-800">{{ $arbol->lote->nombre_lote ?? 'N/A' }}</p>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Altitud Ortométrica (MSNM):</span>
-                                <span class="font-semibold text-gray-800">{{ $arbol->altitud_ortometrica_msnm ?? 'N/A' }} msnm</span>
+                            <div>
+                                <p class="text-gray-500">Zona de manejo</p>
+                                <p class="font-medium text-gray-800">{{ $arbol->zonaManejo->nombre_zona ?? 'N/A' }}</p>
                             </div>
-                            <div class="flex justify-between border-t pt-2">
-                                <span class="text-gray-500">Longitud (X):</span>
-                                <span class="font-mono text-xs font-semibold text-gray-800">{{ $arbol->coordenadas_gps[0] ?? 'Sin señal GPS' }}</span>
+                            <div>
+                                <p class="text-gray-500">Ciclo productivo</p>
+                                <p class="font-medium text-gray-800">{{ $arbol->cicloProductivo->nombre_campana ?? 'N/A' }}</p>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Latitud (Y):</span>
-                                <span class="font-mono text-xs font-semibold text-gray-800">{{ $arbol->coordenadas_gps[1] ?? 'Sin señal GPS' }}</span>
+                            <div>
+                                <p class="text-gray-500">Fecha de siembra</p>
+                                <p class="font-medium text-gray-800">{{ $arbol->fecha_siembra ? $arbol->fecha_siembra->format('d/m/Y') : 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Primera cosecha</p>
+                                <p class="font-medium text-gray-800">{{ $arbol->fecha_primera_cosecha ? $arbol->fecha_primera_cosecha->format('d/m/Y') : 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Fecha de muerte/baja</p>
+                                <p class="font-medium text-gray-800">{{ $arbol->fecha_baja_muerte ? $arbol->fecha_baja_muerte->format('d/m/Y') : 'N/A' }}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-gray-500">Motivo de baja</p>
+                                <p class="font-medium text-gray-800">{{ $arbol->motivo_baja ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Altitud ortométrica</p>
+                                <p class="font-medium text-gray-800">{{ number_format($arbol->altitud_ortometrica_msnm ?? 0, 2) }} msnm</p>
                             </div>
                         </div>
-                    </div>
-@if($arbol->coordenadas_gps)
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // 1. Extraer las coordenadas procesadas por PostGIS desde el Accessor de Laravel
-        // $arbol->coordenadas_gps retorna [longitud, latitud]
-        const lng = {{ $arbol->coordenadas_gps[0] }};
-        const lat = {{ $arbol->coordenadas_gps[1] }};
-        const codigoUnico = "{{ $arbol->codigo_unico }}";
-        const estadoVital = "{{ $arbol->estado_vital_badge }}";
-
-        // 2. Inicializar el mapa centrado exactamente en el árbol con un zoom alto (ideal para agricultura)
-        const map = L.map('map-arbol').setView([lat, lng], 19);
-
-        // 3. Capa de Mapa Estándar (OpenStreetMap) por si la quieres como alternativa
-        const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 21,
-            attribution: '© OpenStreetMap'
-        });
-
-        // 4. CAPA SATELITAL DE PRECISIÓN (Esri World Imagery)
-        const satelital = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 21, // Permite un nivel de acercamiento brutal para ver copas de árboles
-            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-        });
-
-        // Activar la capa satelital por defecto
-        satelital.addTo(map);
-
-        // 5. Crear un controlador de capas en la esquina superior derecha por si quieren cambiar de vista
-        const baseMaps = {
-            "Vista Satelital": satelital,
-            "Mapa Político": osm
-        };
-        L.control.layers(baseMaps).addTo(map);
-
-        // 6. Dibujar el marcador del Árbol en el mapa
-        const marker = L.marker([lat, lng]).addTo(map);
-
-        // 7. Añadir un Popup informativo estilizado al hacer clic en el marcador
-        marker.bindPopup(`
-            <div style="font-family: sans-serif; sm:text-xs">
-                <strong style="color: #4f46e5; font-size: 14px;">${codigoUnico}</strong><br>
-                <span style="font-size: 12px; display: block; margin-top: 4px;">Status: ${estadoVital}</span>
-                <span style="font-size: 11px; color: #6b7280; display: block;">Fila-Pos: F{{ $arbol->fila_indice }}-P{{ $arbol->posicion_indice }}</span>
-            </div>
-        `).openPopup(); // Abre el globo informativo por defecto al cargar el mapa
-    });
-</script>
-@endif
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                        <h3 class="text-md font-bold text-gray-900 border-b pb-2 mb-4">Ubicación Espacial de Precisión (PostGIS)</h3>
-                        
-                        @if($arbol->coordenadas_gps)
-                            <div id="map-arbol" class="w-full h-80 rounded-lg shadow-inner border border-gray-200 z-10"></div>
-                            
-                            <div class="mt-2 flex justify-between text-xs text-gray-500 font-mono">
-                                <span>Lat: {{ $arbol->coordenadas_gps[1] }}</span>
-                                <span>Lng: {{ $arbol->coordenadas_gps[0] }}</span>
-                                <span class="text-emerald-600 font-bold">EPSG:4326 (WGS84)</span>
-                            </div>
-                        @else
-                            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center text-sm text-amber-700">
-                                ⚠️ Este individuo no cuenta con datos geométricos o de posicionamiento GPS registrados.
+                        @if($arbol->observaciones)
+                            <div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
+                                <p class="text-gray-500 text-xs">Observaciones</p>
+                                <p class="text-gray-800 text-sm">{{ $arbol->observaciones }}</p>
                             </div>
                         @endif
                     </div>
+
+                    {{-- Tarjeta de ubicación (mapa simbólico) --}}
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                            <h3 class="text-lg font-medium text-gray-800 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                Ubicación GPS
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            @if($coordenadas = $arbol->coordenadas_gps)
+                                <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden relative">
+                                    {{-- Aquí podrías integrar Leaflet u OpenStreetMap con un marcador --}}
+                                    <div class="w-full h-full flex items-center justify-center bg-green-50">
+                                        <div class="text-center">
+                                            <svg class="mx-auto h-12 w-12 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                            <p class="mt-2 text-sm text-gray-600">Coordenadas:</p>
+                                            <p class="font-mono text-sm text-gray-800">{{ number_format($coordenadas[0], 6) }}, {{ number_format($coordenadas[1], 6) }}</p>
+                                            <p class="text-xs text-gray-500 mt-1">(Longitud, Latitud)</p>
+                                        </div>
+                                    </div>
+                                    {{-- Para un mapa real, descomenta y usa Leaflet --}}
+                                    {{-- 
+                                    <div id="map" style="height: 200px;" data-lat="{{ $coordenadas[1] }}" data-lng="{{ $coordenadas[0] }}"></div>
+                                    --}}
+                                </div>
+                            @else
+                                <div class="text-center py-8 text-gray-400">
+                                    <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                                    <p class="mt-2">No se han registrado coordenadas para este árbol.</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Columna derecha: relaciones adicionales y resumen --}}
+                <div class="space-y-6">
+                    {{-- Relaciones: Lote y Zona --}}
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                            <h3 class="text-lg font-medium text-gray-800">Ubicación en parcela</h3>
+                        </div>
+                        <div class="p-6 space-y-3 text-sm">
+                            <div>
+                                <span class="text-gray-500">Fila / Posición</span>
+                                <div class="font-medium text-gray-800">
+                                    {{ $arbol->fila_indice ?? 'N/A' }} / {{ $arbol->posicion_indice ?? 'N/A' }}
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Lote</span>
+                                <div class="font-medium text-gray-800">
+                                    <a href="{{ route('lotes-gis.show', $arbol->lote_id) }}" class="text-green-700 hover:underline">
+                                        {{ $arbol->lote->nombre ?? 'Sin lote' }}
+                                    </a>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Zona de manejo</span>
+                                <div class="font-medium text-gray-800">
+                                    {{ $arbol->zonaManejo->nombre ?? 'No asignada' }}
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Ciclo productivo</span>
+                                <div class="font-medium text-gray-800">
+                                    <a href="{{ route('ciclos-productivos.show', $arbol->ciclo_productivo_id) }}" class="text-green-700 hover:underline">
+                                        {{ $arbol->cicloProductivo->nombre ?? 'Sin ciclo' }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Datos de reemplazo si aplica --}}
+                    @if($arbol->es_reemplazo)
+                        <div class="bg-yellow-50 rounded-xl shadow-md overflow-hidden border border-yellow-200">
+                            <div class="px-6 py-4 bg-yellow-100 border-b border-yellow-200 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <h3 class="text-lg font-medium text-yellow-800">Árbol de reemplazo</h3>
+                            </div>
+                            <div class="p-6 space-y-2 text-sm">
+                                <div><span class="text-gray-600">Fecha de reemplazo:</span> {{ $arbol->fecha_reemplazo ? $arbol->fecha_reemplazo->format('d/m/Y') : 'N/A' }}</div>
+                                <div><span class="text-gray-600">Motivo de muerte:</span> {{ $arbol->causa_muerte ?? 'No especificado' }}</div>
+                                <div><span class="text-gray-600">Fecha de muerte:</span> {{ $arbol->fecha_muerte ? $arbol->fecha_muerte->format('d/m/Y') : 'N/A' }}</div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="border-b border-gray-200 bg-gray-50 px-4">
-                    <nav class="-mb-px flex space-x-6">
-                        <button 
-                            @click="activeTab = 'metricas'"
-                            :class="activeTab === 'metricas' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none"
-                        >
-                            📊 Métricas Alométricas e IoT ({{ $arbol->metricasHistoricas->count() }})
-                        </button>
-                        <button 
-                            @click="activeTab = 'fitosanitario'"
-                            :class="activeTab === 'fitosanitario' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none"
-                        >
-                            🛡️ Sanidad e Historial Fitosanitario ({{ $arbol->historialFitosanitario->count() }})
-                        </button>
-                    </nav>
-                </div>
-
-                <div class="p-6">
-                    <div x-show="activeTab === 'metricas'" space-y-6>
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Historial de Crecimiento y Teledetección</h4>
-                            </div>
-
-                        @if($arbol->metricasHistoricas->isEmpty())
-                            <p class="text-sm text-gray-500 italic text-center py-6">No se han registrado telemetrías ni mediciones con drones para este árbol.</p>
-                        @else
+            {{-- Panel: Métricas históricas --}}
+            <div x-show="tab === 'metricas'" class="mt-6">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                        <h3 class="text-lg font-medium text-gray-800 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            Métricas históricas
+                        </h3>
+                        <span class="text-sm text-gray-500">{{ $arbol->metricasHistoricas->count() }} registros</span>
+                    </div>
+                    <div class="p-6">
+                        @if($arbol->metricasHistoricas->count())
                             <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Fecha</th>
-                                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Dimensiones (H / Ø Tronco / Ø Copa)</th>
-                                            <th class="px-4 py-2 text-center text-xs font-semibold text-gray-500 uppercase">NDVI</th>
-                                            <th class="px-4 py-2 text-center text-xs font-semibold text-gray-500 uppercase">NDRE</th>
-                                            <th class="px-4 py-2 text-center text-xs font-semibold text-gray-500 uppercase">Canopia (°C)</th>
-                                            <th class="px-4 py-2 text-center text-xs font-semibold text-gray-500 uppercase">Escala BBCH</th>
-                                            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Origen</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diámetro (cm)</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Altura (m)</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rendimiento</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notas</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-200">
+                                    <tbody class="bg-white divide-y divide-gray-200">
                                         @foreach($arbol->metricasHistoricas as $metrica)
-                                            <tr class="hover:bg-gray-50">
-                                                <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
-                                                    {{ \Carbon\Carbon::parse($metrica->fecha_medicion)->format('d/m/Y H:i') }}
-                                                </td>
-                                                <td class="px-4 py-2 text-gray-600">
-                                                    {{ $metrica->altura_metros ?? '-' }}m / {{ $metrica->diametro_tronco_cm ?? '-' }}cm / {{ $metrica->diametro_copa_proyeccion_m ?? '-' }}m
-                                                </td>
-                                                <td class="px-4 py-2 text-center font-semibold {{ $metrica->indice_ndvi_medido > 0.6 ? 'text-emerald-600' : 'text-amber-600' }}">
-                                                    {{ $metrica->indice_ndvi_medido ?? '-' }}
-                                                </td>
-                                                <td class="px-4 py-2 text-center text-gray-600">{{ $metrica->indice_ndre_medido ?? '-' }}</td>
-                                                <td class="px-4 py-2 text-center text-gray-600">{{ $metrica->temperatura_canopia_celsius ? $metrica->temperatura_canopia_celsius.'°C' : '-' }}</td>
-                                                <td class="px-4 py-2 text-center font-mono text-xs text-gray-700">{{ $metrica->codigo_escala_bbch ?? '-' }}</td>
-                                                <td class="px-4 py-2">
-                                                    <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                                                        {{ $metrica->origen_datos }}
-                                                    </span>
-                                                </td>
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $metrica->fecha_medicion->format('d/m/Y') }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ number_format($metrica->diametro_cm ?? 0, 1) }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ number_format($metrica->altura_m ?? 0, 1) }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ number_format($metrica->rendimiento_kg ?? 0, 2) }} kg</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $metrica->notas ?? '' }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
+                        @else
+                            <div class="text-center py-8 text-gray-400">
+                                <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <p class="mt-2">No hay métricas registradas para este árbol.</p>
+                            </div>
                         @endif
                     </div>
+                </div>
+            </div>
 
-                    <div x-show="activeTab === 'fitosanitario'" space-y-6>
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Reportes e Incidencias de Sanidad Vegetal</h4>
-                        </div>
-
-                        @if($arbol->historialFitosanitario->isEmpty())
-                            <p class="text-sm text-gray-500 italic text-center py-6">Excelente: No se registran afectaciones de plagas o enfermedades en la bitácora.</p>
+            {{-- Panel: Historial fitosanitario --}}
+            <div x-show="tab === 'fitosanitario'" class="mt-6">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                        <h3 class="text-lg font-medium text-gray-800 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            Historial fitosanitario
+                        </h3>
+                        <span class="text-sm text-gray-500">{{ $arbol->historialFitosanitario->count() }} registros</span>
+                    </div>
+                    <div class="p-6">
+                        @if($arbol->historialFitosanitario->count())
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo de evento</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gravedad</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tratamiento</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach($arbol->historialFitosanitario as $registro)
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $registro->fecha_evento->format('d/m/Y') }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $registro->tipo_evento ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                        @if($registro->gravedad == 'baja') bg-green-100 text-green-800
+                                                        @elseif($registro->gravedad == 'media') bg-yellow-100 text-yellow-800
+                                                        @else bg-red-100 text-red-800 @endif">
+                                                        {{ ucfirst($registro->gravedad ?? 'desconocida') }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $registro->tratamiento ?? 'N/A' }}</td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $registro->notas ?? '' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         @else
-                            <div class="space-y-4">
-                                @foreach($arbol->historialFitosanitario as $incidencia)
-                                    <div class="border rounded-lg p-4 bg-gray-50 hover:bg-white transition shadow-sm">
-                                        <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-2 mb-2 gap-2">
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-bold text-gray-900 capitalize">{{ $incidencia->tipo_incidencia }}</span>
-                                                <span class="text-sm text-gray-700 font-semibold bg-white px-2 py-0.5 rounded border">
-                                                    🦠 {{ $incidencia->agente_patogeno_nombre }}
-                                                </span>
-                                            </div>
-                                            <div class="flex items-center gap-2 text-xs">
-                                                <span class="text-gray-400 font-mono">{{ \Carbon\Carbon::parse($incidencia->fecha_hallazgo)->format('d/m/Y') }}</span>
-                                                <span class="px-2 py-0.5 rounded font-bold uppercase 
-                                                    {{ $incidencia->severidad_afectacion === 'critica_cuarentena' ? 'bg-red-100 text-red-800' : ($incidencia->severidad_afectacion === 'moderada' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800') }}">
-                                                    {{ $incidencia->severidad_afectacion }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mt-3">
-                                            <div class="md:col-span-2">
-                                                <span class="text-xs font-bold text-gray-400 uppercase block">Sintomatología</span>
-                                                <p class="text-gray-700 mt-0.5">{{ $incidencia->descripcion_sintomas }}</p>
-                                                
-                                                <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-xs text-gray-500">
-                                                    <span>🛠️ Químico requerido: <strong class="text-gray-700">{{ $incidencia->requiere_intervencion_quimica ? 'Sí' : 'No' }}</strong></span>
-                                                    <span>🎯 Estatus actual: <strong class="{{ $incidencia->caso_controlado ? 'text-green-600' : 'text-rose-600' }}">{{ $incidencia->caso_controlado ? 'Caso Solucionado' : 'Alerta Activa' }}</strong></span>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="flex flex-col justify-center items-center bg-white p-2 rounded border">
-                                                @if($incidencia->evidencia_fotografica_url)
-                                                    <a href="{{ $incidencia->evidencia_fotografica_url }}" target="_blank" class="group relative block overflow-hidden rounded">
-                                                        <img src="{{ $incidencia->evidencia_fotografica_url }}" alt="Evidencia de campo" class="h-20 w-auto object-cover group-hover:scale-105 transition duration-200">
-                                                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200">
-                                                            <span class="text-[10px] text-white font-bold uppercase">Ampliar</span>
-                                                        </div>
-                                                    </a>
-                                                @else
-                                                    <div class="text-center text-gray-400 py-3 text-xs">
-                                                        <svg class="mx-auto h-5 w-5 mb-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375 0 1 1-.75 0 .375 0 0 1 .75 0Z" /></svg>
-                                                        Sin evidencia
-                                                    </div>
+                            <div class="text-center py-8 text-gray-400">
+                                <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                <p class="mt-2">No hay registros fitosanitarios para este árbol.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            {{-- Panel: Eventos de campo --}}
+            <div x-show="tab === 'eventos'" class="mt-6">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                        <h3 class="text-lg font-medium text-gray-800 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Eventos de campo asociados
+                        </h3>
+                        <span class="text-sm text-gray-500">{{ $arbol->eventos->count() }} eventos</span>
+                    </div>
+                    <div class="p-6">
+                        @if($arbol->eventos->count())
+                            <div class="grid grid-cols-1 gap-4">
+                                @foreach($arbol->eventos as $evento)
+                                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                                        <div class="flex flex-col md:flex-row md:items-center justify-between">
+                                            <div>
+                                                <h4 class="text-md font-medium text-gray-800">{{ $evento->nombre ?? 'Evento' }}</h4>
+                                                <p class="text-sm text-gray-500">{{ $evento->fecha_inicio ? $evento->fecha_inicio->format('d/m/Y') : 'Fecha no definida' }}</p>
+                                                @if($evento->pivot->novedad_arbol)
+                                                    <p class="text-sm text-gray-700 mt-1"><span class="font-semibold">Novedad:</span> {{ $evento->pivot->novedad_arbol }}</p>
                                                 @endif
+                                                @if($evento->pivot->nota_individual)
+                                                    <p class="text-sm text-gray-600"><span class="font-semibold">Nota:</span> {{ $evento->pivot->nota_individual }}</p>
+                                                @endif
+                                            </div>
+                                            <div class="mt-2 md:mt-0">
+                                                <a href="{{ route('eventos_campo.show', $evento) }}" class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                    Ver evento
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
+                        @else
+                            <div class="text-center py-8 text-gray-400">
+                                <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <p class="mt-2">Este árbol no está asociado a ningún evento de campo.</p>
+                            </div>
                         @endif
                     </div>
-
                 </div>
             </div>
+        </div>
 
+        {{-- Botones de acción --}}
+        <div class="mt-8 flex flex-wrap gap-4">
+            <a href="{{ route('arboles.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Volver al listado
+            </a>
+          
         </div>
     </div>
-</x-app-layout> 
+
+@push('scripts')
+    {{-- Si usas Leaflet, puedes agregar el código aquí --}}
+    {{-- 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                const lat = parseFloat(mapElement.dataset.lat);
+                const lng = parseFloat(mapElement.dataset.lng);
+                // Inicializar mapa...
+            }
+        });
+    </script>
+    --}}
+@endpush
+</x-app-layout>

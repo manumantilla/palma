@@ -11,16 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('movimientos_clasificacion', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignId('recepcion_campo_id')->constrained('recepciones_campo')->onDelete('cascade');
-            $table->foreignId('contenedor_id')->constrained('contenedores')->onDelete('cascade');
-            $table->decimal('kilos_asignados', 10, 2);
-            $table->text('observaciones')->nullable();
-            $table->timestamp('client_updated_at')->nullable();
-            $table->timestamp('synced_at')->nullable();
-            $table->timestamps();
-        });
+            Schema::create('movimientos_clasificacion', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->foreignId('operario_id')->nullable()->constrained('users')->onDelete('set null');
+                $table->foreignUuid('recepcion_campo_id')->constrained('recepciones_campo')->onDelete('cascade');
+                $table->foreignUuid('contenedor_id')->constrained('contenedores')->onDelete('cascade');
+                $table->date('fecha_movimiento');
+                $table->decimal('kilos_asignados', 10, 2);
+                $table->text('observaciones')->nullable();
+                $table->timestamp('client_updated_at')->nullable();
+                $table->timestamp('synced_at')->nullable();
+                $table->timestamps();
+                $table->softDeletes();
+            });
     }
 
     /**

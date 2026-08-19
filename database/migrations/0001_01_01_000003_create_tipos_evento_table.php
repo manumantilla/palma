@@ -29,6 +29,237 @@ return new class extends Migration
             $table->unsignedSmallInteger('periodo_carencia_dias')->nullable(); // Días antes de cosecha
             $table->timestamps();
         });
+
+        DB::table('tipos_evento')->insert([
+
+        // ==========================
+        // MANTENIMIENTO
+        // ==========================
+        [
+            'nombre' => 'Riego',
+            'categoria' => 'Mantenimiento',
+            'consume_insumos' => false,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => false,
+            'requiere_area_ha' => true,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+
+        ],
+        [
+            'nombre' => 'Deshierbe',
+            'categoria' => 'Mantenimiento',
+            'consume_insumos' => false,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => false,
+            'requiere_area_ha' => true,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+        [
+            'nombre' => 'Poda',
+            'categoria' => 'Mantenimiento',
+            'consume_insumos' => false,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => false,
+            'requiere_area_ha' => false,
+            'aplica_a_arbol' => true,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+        [
+            'nombre' => 'Tutorado',
+            'categoria' => 'Mantenimiento',
+            'consume_insumos' => true,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => false,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+
+        // ==========================
+        // FERTILIZACIÓN
+        // ==========================
+        [
+            'nombre' => 'Fertilización química',
+            'categoria' => 'Fertilización',
+            'consume_insumos' => true,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => true,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+        [
+            'nombre' => 'Fertilización orgánica',
+            'categoria' => 'Fertilización',
+            'consume_insumos' => true,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => true,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+        [
+            'nombre' => 'Encalado',
+            'categoria' => 'Fertilización',
+            'consume_insumos' => true,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => true,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+
+        // ==========================
+        // FITOSANITARIO
+        // ==========================
+        [
+            'nombre' => 'Aplicación de fungicida',
+            'categoria' => 'Fitosanitario',
+            'consume_insumos' => true,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => true,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+        [
+            'nombre' => 'Aplicación de insecticida',
+            'categoria' => 'Fitosanitario',
+            'consume_insumos' => true,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => true,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+        [
+            'nombre' => 'Aplicación de herbicida',
+            'categoria' => 'Fitosanitario',
+            'consume_insumos' => true,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => true,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 21,
+        ],
+        [
+            'nombre' => 'Aplicación de bioinsumos',
+            'categoria' => 'Fitosanitario',
+            'consume_insumos' => true,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => true,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+
+        // ==========================
+        // COSECHA
+        // ==========================
+        [
+            'nombre' => 'Cosecha',
+            'categoria' => 'Cosecha',
+            'consume_insumos' => false,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => true,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => false,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+
+        // ==========================
+        // LOGÍSTICA
+        // ==========================
+        [
+            'nombre' => 'Recepción de cosecha',
+            'categoria' => 'Logística',
+            'consume_insumos' => false,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => false,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+        [
+            'nombre' => 'Transporte',
+            'categoria' => 'Logística',
+            'consume_insumos' => false,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => false,
+            'requiere_area_ha' => false,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+        [
+            'nombre' => 'Clasificación',
+            'categoria' => 'Logística',
+            'consume_insumos' => false,
+            'consume_mano_obra' => true,
+            'genera_ingreso' => false,
+            'genera_movimiento_stock' => true,
+            'requiere_area_ha' => false,
+            'aplica_a_arbol' => false,
+            'aplica_a_ciclo' => true,
+            
+            'periodo_reingreso_horas' => 24,
+            'periodo_carencia_dias' => 14,
+        ],
+    ]);
     }
 
     /**

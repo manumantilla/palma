@@ -7,15 +7,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+use App\Http\Controllers\ContenedorController;
 
 
-    Route::get('/ciclos/{ciclo}/grafo', [ArbolApiController::class, 'index'])->name('grafo');
+// Ruta especial para el formulario/contexto de creación
+Route::resource('contenedores', ContenedorController::class)->except(['create']);
+Route::get('contenedores/create/{sesion_cosecha_id}', [ContenedorController::class, 'create'])->name('contenedores.create');
+
+require __DIR__.'/OrdenCosecha.php';
+require __DIR__.'/Contenedor.php';
 
 use App\Http\Controllers\CultivoController;
 Route::resource('cultivos', CultivoController::class);
 
 use App\Http\Controllers\SesionCosechaController;
-Route::resource('sesiones-cosecha', SesionCosechaController::class);
+Route::resource('sesiones-cosecha', SesionCosechaController::class)->except(['create']);
+Route::get('sesiones-cosecha/create/{orden_cosecha}', [SesionCosechaController::class, 'create'])->name('sesiones-cosecha.create');
 
 Route::get('/ciclos/{ciclo}/grafo', [ArbolApiController::class, 'index'])->name('grafo');
 use App\Http\Controllers\FenologiaEtapaController;
@@ -86,10 +93,12 @@ use App\Http\Controllers\LoteController;
 
 use App\Http\Controllers\OrdenCosechaController;
 Route::resource('ordenes_cosecha', OrdenCosechaController::class)->except('create');
-Route::get('/ordenes-cosecha/crear/{lote}', [OrdenCosechaController::class, 'create'])->name('ordenes_cosecha.create');  
+Route::get('/ordenes-cosecha/crear/{ciclo}', [OrdenCosechaController::class, 'create'])->name('ordenes_cosecha.create');  
 
 
 Route::middleware(['auth:sanctum', config('jetstream::auth_session'), 'verified'])->group(function () {
+        Route::get('/lotes-gis/mapa', [LoteController::class, 'mapa'])->name('lotes-gis.mapa');
+
     // CRUD Principal del Lote Maestro
     Route::get('/lotes-gis', [LoteController::class, 'index'])->name('lotes-gis.index');
     Route::get('/lotes-gis/crear', [LoteController::class, 'create'])->name('lotes-gis.create');
@@ -100,6 +109,8 @@ Route::middleware(['auth:sanctum', config('jetstream::auth_session'), 'verified'
     Route::post('/lotes-gis/{lote_gis}/zonas', [LoteController::class, 'storeZona'])->name('lotes-gis.zonas.store');
     Route::post('/lotes-gis/{lote_gis}/analiticas', [LoteController::class, 'storeAnalitica'])->name('lotes-gis.analiticas.store');
     Route::post('/lotes-gis/{lote_gis}/riegos', [LoteController::class, 'storeRiego'])->name('lotes-gis.riegos.store');
+
+
 });
 use App\Http\Controllers\ArbolController;
 
@@ -122,6 +133,13 @@ use App\Http\Controllers\EventoController;
 Route::get('/eventos-campo/nuevo-general', [EventoController::class, 'createGeneral'])->name('eventos_campo.create_general');
 Route::post('/eventos-campo/general', [EventoController::class, 'store'])->name('eventos_campo.store_general');
 Route::get('/eventos-campo', [EventoController::class, 'index'])->name('eventos_campo.index');
+Route::get('/eventos-campo/{evento}', [EventoController::class, 'show'])->name('eventos_campo.show');
+
+use App\Http\Controllers\EventoInsumoController;
+Route::get('/eventos-campo/{evento}/agregar-insumos', [EventoInsumoController::class, 'create'])->name('eventos_campo.insumos.create');
+Route::post('/eventos-campo/{evento}/insumos', [EventoInsumoController::class, 'store'])
+    ->name('eventos_campo.insumos.store');
+
 // Rutas para Evento con Cultivo (Pasando el ID del ciclo en la URL)
 Route::get('/ciclos/{ciclo}/nuevo-evento', [EventoController::class, 'createConCultivo'])->name('eventos_campo.create_cultivo');
 Route::post('/ciclos/{ciclo}/evento', [EventoController::class, 'storeWithCultivo'])->name('eventos_campo.store_cultivo');

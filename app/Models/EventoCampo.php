@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
+
 class EventoCampo extends Model
 {
-    //
-    
+    use HasFactory, SoftDeletes;
 
     protected $table = 'eventos_campo';
 
@@ -18,10 +20,6 @@ class EventoCampo extends Model
         'tipo_evento_id',
         'fecha_programada',
         'fecha_ejecucion',
-        'hora_inicio',
-        'hora_fin',
-        'latitud',
-        'longitud',
         'estado',
         'observaciones',
     ];
@@ -29,18 +27,21 @@ class EventoCampo extends Model
     protected $casts = [
         'fecha_programada' => 'datetime',
         'fecha_ejecucion'  => 'datetime',
-        'latitud'          => 'float',
-        'longitud'         => 'float',
+        'latitud'          => 'decimal:8',
+        'longitud'         => 'decimal:8',
+        'hora_inicio'      => 'datetime:H:i:s', // or just 'string'
+        'hora_fin'         => 'datetime:H:i:s',
     ];
 
+    // Relationships
     public function cicloProductivo()
     {
-        return $this->belongsTo(cicloProductivo::class, 'ciclo_productivo_id');
+        return $this->belongsTo(CicloProductivo::class);
     }
 
     public function lote()
     {
-        return $this->belongsTo(Lote::class, 'lote_id');
+        return $this->belongsTo(Lote::class);
     }
 
     public function zona()
@@ -50,32 +51,17 @@ class EventoCampo extends Model
 
     public function tipoEvento()
     {
-        return $this->belongsTo(TipoEvento::class, 'tipo_evento_id');
+        return $this->belongsTo(TipoEvento::class);
     }
 
     public function eventoArboles()
     {
-        return $this->hasMany(EventoArbol::class, 'evento_campo_id');
+        return $this->hasMany(EventoArbol::class);
     }
 
-    public function arboles()
+    public function eventoInsumos()
     {
-        return $this->belongsToMany(
-            Arbol::class,
-            'evento_arbol',
-            'evento_campo_id',
-            'arbol_id',
-        )->withPivot(['novedad_arbol', 'nota_individual'])->withTimestamps();
-    }
-
-    public function insumos()
-    {
-        return $this->hasMany(EventoInsumo::class, 'evento_campo_id');
-    }
-
-    public function manoObra()
-    {
-        return $this->hasMany(EventoManoObra::class, 'evento_campo_id');
+        return $this->hasMany(EventoInsumo::class);
     }
 
     public function scopeFiltrar(Builder $query, array $filtros)
