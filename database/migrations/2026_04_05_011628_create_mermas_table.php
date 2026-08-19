@@ -13,19 +13,22 @@ return new class extends Migration
     {
         Schema::create('mermas', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('recepcion_campo_id')->nullable()->constrained('recepciones_campo')->onDelete('set null');
-            $table->foreignId('contenedor_id')->nullable()->constrained('contenedores')->onDelete('set null');
-            $table->date('fecha_registro');
+            $table->foreignId('operario_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignUuid('recepcion_campo_id')->nullable()->constrained('recepciones_campo')->onDelete('set null');
+            $table->foreignUuid('contenedor_id')->nullable()->constrained('contenedores')->onDelete('set null');
+            $table->dateTime('fecha_registro')->useCurrent();
             $table->decimal('kilos_merma', 10, 2);
             $table->enum('motivo', [
-                'daño',
-                'perdida',
-                'robo',
-                'deshidratacion',
-                'consumo_interno',
-                'error',
-                'otro'
-            ]);                             
+                    'daño_mecanico',      // Golpes, magulladuras, cortes
+                    'daño_fitosanitario', // Pudrición, hongos, plagas
+                    'descarte_calidad',   // No da la talla, color o forma requerida
+                    'deshidratacion',     // Pérdida de peso natural por agua
+                    'perdida',            // Cayó al piso, irrecuperable
+                    'robo',               
+                    'consumo_interno',    // Muestreo de calidad (Brix, firmeza) o degustación
+                    'error_bascula',      // Ajustes de inventario
+                    'otro'
+                ]);                        
             $table->decimal('costo_estimado', 10, 2)->nullable();
             $table->string('destino_final')->nullable();         // basura, abono, donación...
             $table->text('comentarios')->nullable();

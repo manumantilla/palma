@@ -2,7 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+
 use Illuminate\Support\Facades\Schema;
+
 
 return new class extends Migration
 {
@@ -17,18 +19,21 @@ return new class extends Migration
             $table->foreignId('ciclo_productivo_id')->nullable()->constrained('ciclos_productivos')->onDelete('set null');
             $table->foreignId('lote_id')->nullable()->constrained('lotes');
             //zona de lotex
-            $table->foreignId('zona_id')->nullable()->constrained('zonas_lote_manejo')->onDelete('set null');
-            $table->time('hora_inicio')->nullable();
-            $table->time('hora_fin')->nullable();
+            $table->foreignId('zona_id')->nullable()->constrained('lotes_zonas_manejo')->onDelete('set null');
+            // $table->time('hora_inicio')->nullable();
+            // $table->time('hora_fin')->nullable();
             //Importante
             $table->foreignId('tipo_evento_id')->constrained('tipos_evento');
             $table->dateTime('fecha_programada');
             $table->dateTime('fecha_ejecucion')->nullable();
-            $table->decimal('latitud', 10, 8)->nullable();
-            $table->decimal('longitud', 11, 8)->nullable();
+            $table->geometry('coordenada_gps', 'GEOMETRY', 4326)->nullable();
             $table->enum('estado', ['Pendiente', 'En Proceso', 'Completado', 'Cancelado'])->default('Pendiente');
-            $table->text('observaciones')->nullable();
-            $table->softDelete();
+            $table->enum('prioridad', ['baja', 'media', 'alta'])->default('media');
+            $table->text('observaciones')->nullable();                        
+            $table->foreignId('creado_por')->nullable()->constrained('users');
+            $table->foreignId('actualizado_por')->nullable()->constrained('users');
+            $table->foreignId('cancelado_por')->nullable()->constrained('users');
+            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -67,6 +72,9 @@ return new class extends Migration
             $table->foreignId('evento_insumo_id')->constrained('evento_insumos')->onDelete('cascade');
             $table->foreignId('lote_insumo_id')->constrained('lotes_insumos')->onDelete('restrict');
             $table->decimal('cantidad', 12,2); // cantidad del insumo aplicada a ese lote específico
+            $table->decimal('precio',14,2);
+            $table->decimal('area_aplicada',10,2)->nullable();
+            
             $table->timestamps();
         });
 

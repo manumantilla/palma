@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('despacho_items', function (Blueprint $table) {
         $table->id();
         $table->foreignId('despacho_id')->constrained('despachos')->onDelete('cascade');
-        $table->foreignId('contenedor_id')->nullable()->constrained('contenedores')->onDelete('set null');
+        $table->foreignUuid('contenedor_id')->nullable()->constrained('contenedores')->onDelete('set null');
         
         // NUEVO: Origen a nivel de ítem por si se despacha directo del campo o contenedores puros de un lote
         $table->foreignId('ciclo_productivo_id')->nullable()->constrained('ciclos_productivos')->onDelete('set null');

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('cliente_id')->constrained('users')->onDelete('restrict');
             $table->foreignId('ciclo_productivo_id')->constrained('ciclos_productivos');
             $table->foreignId('lote_cultivo_id')->nullable()->constrained('lotes')->onDelete('restrict');
-            $table->foreignId('lote_zona_id')->nullable()->constrained('lotes_zona_manejo')->onDelete('set null');
+            $table->foreignId('lote_zona_id')->nullable()->constrained('lotes_zonas_manejo')->onDelete('set null');
             $table->date('fecha_programada');
             $table->date('fecha_entrega');
             $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('set null');        

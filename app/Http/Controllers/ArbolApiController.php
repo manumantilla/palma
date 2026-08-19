@@ -90,6 +90,6 @@ class ArbolApiController extends Controller
     public function index(CicloProductivo $ciclo)
     {
         
-        return view('grafos.dashboard', compact('ciclo'));
+        return view('grafo.index', compact('ciclo'));
     }
 }

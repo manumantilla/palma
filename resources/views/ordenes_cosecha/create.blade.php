@@ -1,29 +1,29 @@
-{{-- resources/views/ordenes_cosecha/create.blade.php --}}
-<x-app-layout>
-    <x-slot name="header">
-        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 shadow-sm">
-            <h2 class="text-center font-semibold text-xl text-emerald-800 leading-tight">
-                {{ __('Registrar Nueva Orden de Cosecha') }}
-            </h2>
-        </div>
-    </x-slot>
+    {{-- resources/views/ordenes_cosecha/create.blade.php --}}
+    <x-app-layout>
+        <x-slot name="header">
+            <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 shadow-sm">
+                <h2 class="text-center font-semibold text-xl text-emerald-800 leading-tight">
+                    {{ __('Registrar Nueva Orden de Cosecha') }}
+                </h2>
+            </div>
+        </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 border-b border-gray-200">
-                
-                <form method="POST" action="{{ route('ordenes_cosecha.store') }}">
-                    @csrf
+        <div class="py-12">
+            <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 border-b border-gray-200">
+                    
+                    <form method="POST" action="{{ route('ordenes_cosecha.store') }}">
+                        @csrf
 
-                    <input type="hidden" name="ciclo_productivo_id" value="{{ $ciclo->id }}">
-                    <input type="hidden" name="lote_cultivo_id" value="{{ is_object($lote) ? $lote->id : $lote }}">
+                        <input type="hidden" name="ciclo_productivo_id" value="{{ $ciclo->id }}">
+                        <input type="hidden" name="lote_cultivo_id" value="{{ is_object($lote) ? $lote->id : $lote }}">
 
-                    <h3 class="text-sm font-bold text-emerald-700 uppercase tracking-wider mb-4 border-b border-emerald-100 pb-1">1. Contexto de la Orden</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500">Ciclo Productivo Asignado</label>
-                            <input type="text" disabled value="{{ $ciclo->nombre_campana }}" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-50 text-gray-600 shadow-sm text-sm font-semibold">
-                        </div>
+                        <h3 class="text-sm font-bold text-emerald-700 uppercase tracking-wider mb-4 border-b border-emerald-100 pb-1">1. Contexto de la Orden</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Ciclo Productivo Asignado {{ $ciclo->id }}aja</label>
+                                <input type="text" disabled value="{{ $ciclo->nombre_campana }}" placeholder="{{ $ciclo->nombre_campana }}"class="mt-1 block w-full rounded-md border-gray-200 bg-gray-50 text-gray-600 shadow-sm text-sm font-semibold">
+                            </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-500">Lote de Cultivo</label>

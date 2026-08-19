@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('movimientos_stock', function (Blueprint $table) {
             $table->id();
-            // 1. Corrección del nombre de la tabla (lotes_insumos)
             $table->foreignId('lote_insumo_id')->constrained('lotes_insumos')->onDelete('cascade');
             
             $table->enum('tipo_movimiento', [

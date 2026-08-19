@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class EventoController extends Controller
 {
-    /**
-     * READ (Index): Listar todos los eventos de campo
-     */
     public function index(Request $request)
     {
         $eventos = EventoCampo::with(['tipoEvento', 'cicloProductivo', 'lote', 'zona'])
@@ -42,12 +39,23 @@ class EventoController extends Controller
     /**
      * READ (Show): Ver el detalle de un evento específico
      */
-    public function show($id)
-    {
-        $evento = EventoCampo::with(['tipoEvento', 'cicloProductivo', 'lote', 'zona', 'arboles'])->findOrFail($id);
-        
-        return view('eventos_campo.show', compact('evento'));
-    }
+public function show($id)
+{
+    $evento = EventoCampo::with([
+        'tipoEvento', 
+        'cicloProductivo', 
+        'lote', 
+        'zona', 
+        'eventoArboles.arbol', // Carga árboles intervenidos
+        'eventoInsumos.insumo', // Carga los insumos
+        'eventoInsumos.lotes'   // Carga los lotes del Kardex usados
+    ])->findOrFail($id);
+
+    // Si usas la relación de gastos que teníamos en el store:
+    // $evento->load('gastos'); 
+
+    return view('eventos_campo.show', compact('evento'));
+}
 
     /**
      * Mostrar formulario para Evento General (Fase 1: SIN RELACIÓN A CULTIVO)
@@ -64,24 +72,12 @@ class EventoController extends Controller
     public function createConCultivo(CicloProductivo $ciclo)
     {
         $tiposEvento = DB::table('tipos_evento')->select('id', 'nombre')->get();
-
-        // 1. Buscamos los lotes que estén asociados a este ciclo productivo 
-        // (Ajusta los nombres de las columnas según tus llaves foráneas)
-        $lotes = DB::table('lotes')
-            ->where('activo', true)
-            ->where('ciclo_productivo_id', $ciclo->id) // O a través de la relación que tengas
-            ->select('id', 'nombre_lote', 'codigo_lote')
-            ->get();
-
-        // 2. Si quieres ahorrarle un paso de AJAX al usuario, puedes mandarle de una vez 
-        // todas las zonas de esos lotes para que JavaScript las filtre al cambiar de lote.
-        $lotesIds = $lotes->pluck('id');
+        $zonas = $ciclo->lote->zonasManejo()->select('id', 'nombre_zona')->get();
         $zonas = DB::table('lotes_zonas_manejo')
-            ->whereIn('lote_id', $lotesIds)
             ->select('id', 'lote_id', 'nombre_zona')
             ->get();
 
-        return view('eventos_campo.create_cultivo', compact('ciclo', 'tiposEvento', 'lotes', 'zonas'));
+        return view('eventos_campo.create_cultivo', compact('ciclo', 'tiposEvento', 'zonas'));
     }
     /**
      * CREATE (Store) - Fase 1: SIN RELACIÓN A UN CULTIVO

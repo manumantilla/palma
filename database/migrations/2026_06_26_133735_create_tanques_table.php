@@ -9,10 +9,12 @@ return new class extends Migration
 
     public function up(): void
     {
+        // Schema::create('sys_tipos_riego')
         Schema::create('tanques', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
             $table->decimal('capacidad_litros',15,2);
+            $table->decimal('altura_maxima_cm', 9,2);
             // Ubicacion con PostGIS
             $table->foreignId('lote_id')->nullable()->constrained('lotes')->onDelete('set null');
             $table->decimal('nivel_actual_litros', 12, 2)->default(0);
@@ -86,9 +88,8 @@ return new class extends Migration
             $table->timestamps();
         });
         Schema::create('lecturas_sensores_tanque', function (Blueprint $table) {
-            $table->id(); // El gateway genera el UUID local antes de transmitir por MQTT/HTTP
+            $table->uuid('id')->primary(); 
             $table->foreignId('tanque_id')->constrained('tanques')->onDelete('cascade');
-            
             $table->decimal('lectura_distancia_cm', 6, 2)->nullable(); // Medición cruda del sensor ultrasonido
             $table->decimal('porcentaje_volumen', 5, 2); // Ej: 85.50% lleno
             $table->decimal('calculo_litros_actuales', 12, 2); // Volumen neto convertido por la geometría del tanque
