@@ -41,11 +41,7 @@ class EventoInsumo extends Model
         return $this->belongsTo(Insumo::class, 'insumo_id');
     }
 
-    /**
-     * Relación con los lotes específicos de este insumo aplicado.
-     */
-    public function detallesLotes(): HasMany
-    {
+    public function lotes() {
         return $this->hasMany(EventoInsumoLote::class, 'evento_insumo_id');
     }
 }

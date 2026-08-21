@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('ciclo_productivo_id')->nullable()->constrained('ciclos_productivos')->onDelete('set null');
             $table->foreignId('lote_id')->nullable()->constrained('lotes');
             //zona de lotex
-            $table->foreignId('zona_id')->nullable()->constrained('zonas_lote_manejo')->onDelete('set null');
+            $table->foreignId('zona_id')->nullable()->constrained('lotes_zonas_manejo')->onDelete('set null');
             $table->time('hora_inicio')->nullable();
             $table->time('hora_fin')->nullable();
             //Importante
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->decimal('longitud', 11, 8)->nullable();
             $table->enum('estado', ['Pendiente', 'En Proceso', 'Completado', 'Cancelado'])->default('Pendiente');
             $table->text('observaciones')->nullable();
-            $table->softDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
 

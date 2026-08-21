@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('movimientos_clasificacion', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('recepcion_campo_id')->constrained('recepciones_campo')->onDelete('cascade');
-            $table->foreignId('contenedor_id')->constrained('contenedores')->onDelete('cascade');
+            
+            $table->foreignUuid('recepcion_campo_id')->constrained('recepciones_campo')->onDelete('cascade');
+            $table->foreignUuid('contenedor_id')->constrained('contenedores')->onDelete('cascade');
             $table->decimal('kilos_asignados', 10, 2);
             $table->text('observaciones')->nullable();
             $table->timestamp('client_updated_at')->nullable();

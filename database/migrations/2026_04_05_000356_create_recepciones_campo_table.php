@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreign('sesion_cosecha_id')->references('id')->on('sesiones_cosecha')->onDelete('cascade');
             //cosecha
             // $table->foreignId('ciclo_id')->constrained('ciclos_productivos')->onDelete('cascade');
-            $table->foreignId('lote_zona_id')->nullable()->constrained('lotes_zona_manejo')->onDelete('set null');
+            $table->foreignId('lote_zona_id')->nullable()->constrained('lotes_zonas_manejo')->onDelete('set null');
             $table->foreignId('trabajador_id')->constrained('trabajadores')->onDelete('restrict');
             $table->foreignId('arbol_id')->nullable()->constrained('arboles')->onDelete('set null');    
             // Peso y tara — tara variable por costal: aunque en el campo colombiano ocurren muchas cosas no podemso hacerla storeAs es mejor que en el frotned se recomiende el peso neto pero la persona lo confirme

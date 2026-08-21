@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class SesionCosecha extends Model
 {
     use HasFactory;
-
-    // Forzamos el nombre exacto de tu tabla
     protected $table = 'sesiones_cosecha';
 
     protected $fillable = [
@@ -50,6 +48,11 @@ class SesionCosecha extends Model
     public function responsable(): BelongsTo
     {
         return $this->belongsTo(User::class, 'responsable_id');
+    }
+
+    public function recepcionesCampo()
+    {
+        return $this->hasMany(RecepcionCampo::class, 'sesion_cosecha_id');
     }
 
     /*

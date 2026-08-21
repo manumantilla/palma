@@ -14,6 +14,7 @@ class CicloProductivo extends Model
     protected $table = 'ciclos_productivos';
 
     protected $fillable = [
+        
         'lote_id', 'cultivo_id', 'estado', 'tipo', 'nombre_campana',
         'fecha_inicio', 'fecha_estimada_cosecha', 'fecha_real_inicio_cosecha',
         'fecha_estimada_fin_cosecha', 'fecha_real_fin_cosecha', 'fecha_finalizacion_ciclo',
@@ -48,6 +49,13 @@ class CicloProductivo extends Model
     public function cultivo(): BelongsTo
     {
         return $this->belongsTo(Cultivo::class, 'cultivo_id');
+    }
+
+    // --RELACIONES DE APOYO
+    //Nombre cultivo
+    public function nombreCultivo()
+    {
+        return $this->cultivo ? $this->cultivo->nombre : 'n/a';
     }
 
     public function proveedorMaterial(): BelongsTo

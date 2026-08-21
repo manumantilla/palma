@@ -26,12 +26,7 @@ class EventoInsumoLote extends Model
         return $this->belongsTo(EventoInsumo::class, 'evento_insumo_id');
     }
 
-    /**
-     * Relación con el lote de insumo (Inventario).
-     */
-    public function loteInsumo(): BelongsTo
-    {
-        // Asumo que tu modelo se llama LoteInsumo
+    public function loteInsumo() {
         return $this->belongsTo(LoteInsumo::class, 'lote_insumo_id');
     }
 }
