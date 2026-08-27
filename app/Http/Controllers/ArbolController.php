@@ -129,7 +129,7 @@ class ArbolController extends Controller
     /**
      * Ficha técnica del Árbol (Muestra analíticas IoT/Drones e historial fitosanitario).
      */
-    public function show(Arbol $arbol)
+    public function show(Request $request, Arbol $arbol)
     {
         // Carga relacional con ordenamiento cronológico inverso para el historial
         $arbol->load([

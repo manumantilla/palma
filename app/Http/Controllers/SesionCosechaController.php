@@ -4,129 +4,284 @@ namespace App\Http\Controllers;
 
 use App\Models\SesionCosecha;
 use App\Models\OrdenCosecha;
-use App\Models\User;
 use App\Models\EventoCampo;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SesionCosechaController extends Controller
 {
-    /**
-     * R - READ (Index): Listar con filtros aplicados
-     */
+
     public function index(Request $request)
     {
-        $sesiones = SesionCosecha::with(['ordenCosecha', 'eventoCampo', 'responsable'])
-            ->filter($request->all())
-            ->orderBy('fecha', 'desc')
-            ->paginate(15)
-            ->withQueryString();
-
-        $responsables = User::orderBy('name')->get();
-
-        return view('sesiones_cosecha.index', compact('sesiones', 'responsables'));
-    }
-
-    /**
-     * C - CREATE: Formulario de creación amarrado a la Orden
-     */
-    public function create(OrdenCosecha $ordenCosecha)
-    {
-        $responsables = User::orderBy('name')->get();
-        $eventosCampo = EventoCampo::whereIn('estado', ['Pendiente','En Proceso'])->orderBy('id', 'desc')->get(); 
-
-        return view('sesiones_cosecha.create', compact('ordenCosecha', 'responsables', 'eventosCampo'));
-    }
-
-    /**
-     * C - STORE: Guardar en la Base de Datos central
-     */
-    public function store(Request $request, OrdenCosecha $ordenCosecha)
-    {
-        $data = $request->validate([
-            'evento_campo_id'     => 'required|exists:eventos_campo,id',
-            'responsable_id'      => 'required|exists:users,id',
-            'fecha'               => 'required|date',
-            'meta_kg_dia'         => 'nullable|numeric|min:0',
-            'numero_recolectores' => 'nullable|integer|min:0',
-            'hora_inicio'         => 'nullable|date_format:H:i',
+        // 1. Filtros validados del Request
+        $filters = $request->only([
+            'estado',
+            'responsable_id',
+            'orden_cosecha_id',
+            'evento_campo_id',
+            'fecha_desde',
+            'fecha_hasta',
         ]);
 
-        // Inyectamos la orden del binding y metadatos online
-        $data['orden_cosecha_id'] = $ordenCosecha->id;
-        $data['estado'] = 'abierta';
-        $data['synced_at'] = now(); // Nació en la web, ya está sincronizado
+        // 2. Consulta optimizada con Eager Loading
+        $sesiones = SesionCosecha::with([
+            'ordenCosecha:id,variedad_requerida,lote_cultivo_id,cantidad_planificada_kg',
+            'ordenCosecha.loteCultivo:id,nombre_lote',
+            'eventoCampo:id,fecha_programada,prioridad',
+            'responsable:id,name',
+        ])
+        ->withCount('recepcionesCampo') // Asume relación hasMany en el modelo
+        ->filter($filters)
+        ->orderBy('fecha', 'desc')
+        ->orderBy('id', 'desc')
+        ->paginate(12)
+        ->withQueryString();
 
-        // El Trait HasUuids del modelo generará el ID UUID automáticamente aquí
-        $sesion = SesionCosecha::create($data);
+        // 3. Catálogos para los selectores de la vista
+        $responsables = User::select('id', 'name')->get();
+        $ordenes = OrdenCosecha::select('id', 'variedad_requerida')->get();
 
-        return redirect()
-            ->route('sesiones-cosecha.show', $sesion->id)
-            ->with('success', 'Sesión de cosecha abierta correctamente.');
+        return view('sesiones_cosecha.index', compact('sesiones', 'responsables', 'ordenes'));
+    }
+    
+    public function create()
+    {
+        $ordenes = OrdenCosecha::where('estado', '!=', ['completada','cancelada'])->get();
+        $eventos = EventoCampo::where('estado', 'activo')->get();
+        $responsables = User::all();
+
+        return view('sesiones_cosecha.create', compact('ordenes', 'eventos', 'responsables'));
     }
 
     /**
-     * R - READ (Show): Ver detalle de una sesión específica por UUID
+     * Store a newly created resource in storage.
      */
-    public function show(SesionCosecha $sesionCosecha)
+    public function store(Request $request)
     {
-        // Cargamos relaciones y pesajes asociados si los necesitas en la vista
-        $sesionCosecha->load(['ordenCosecha', 'eventoCampo', 'responsable']);
-        
-        return view('sesiones_cosecha.show', compact('sesionCosecha'));
-    }
-
-    /**
-     * U - UPDATE (Edit): Formulario de edición
-     */
-    public function edit(SesionCosecha $sesionCosecha)
-    {
-        $responsables = User::orderBy('name')->get();
-        $eventosCampo = EventoCampo::orderBy('id', 'desc')->get();
-
-        return view('sesiones_cosecha.edit', compact('sesionCosecha', 'responsables', 'eventosCampo'));
-    }
-
-    /**
-     * U - UPDATE (Update): Procesar los cambios en el servidor
-     */
-    public function update(Request $request, SesionCosecha $sesionCosecha)
-    {
-        $data = $request->validate([
-            'evento_campo_id'     => 'required|exists:eventos_campo,id',
-            'responsable_id'      => 'required|exists:users,id',
-            'fecha'               => 'required|date',
-            'estado'              => 'required|in:abierta,cerrada',
-            'meta_kg_dia'         => 'nullable|numeric|min:0',
+        $validated = $request->validate([
+            'orden_cosecha_id' => 'required|exists:ordenes_cosecha,id',
+            'evento_campo_id' => 'required|exists:eventos_campo,id',
+            'responsable_id' => 'required|exists:users,id',
+            'fecha' => 'required|date',
+            'estado' => 'required|in:abierta,cerrada',
+            'meta_kg_dia' => 'nullable|numeric|min:0',
             'numero_recolectores' => 'nullable|integer|min:0',
-            'hora_inicio'         => 'nullable|date_format:H:i:s,H:i',
-            'hora_fin'            => 'required_if:estado,cerrada|nullable|date_format:H:i:s,H:i',
+            'hora_inicio' => 'nullable|date_format:H:i',
+            'hora_fin' => 'nullable|date_format:H:i|after:hora_inicio',
+            'total_recolectado_kg' => 'nullable|numeric|min:0',
         ]);
 
-        // Como se editó en entorno web, actualizamos marcas de sincronización
-        $data['synced_at'] = now();
+        try {
+            DB::beginTransaction();
 
-        $sesionCosecha->update($data);
+            $sesion = SesionCosecha::create($validated);
 
-        return redirect()
-            ->route('sesiones_cosecha.show', $sesionCosecha->id)
-            ->with('success', 'Sesión de cosecha actualizada correctamente.');
-    }
+            Log::info('Sesión de cosecha creada exitosamente', [
+                'sesion_id' => $sesion->id,
+                'orden_cosecha_id' => $sesion->orden_cosecha_id,
+                'responsable_id' => $sesion->responsable_id,
+                'fecha' => $sesion->fecha,
+                'user_id' => auth()->id()
+            ]);
 
+            DB::commit();
 
-    public function destroy(SesionCosecha $sesionCosecha)
-    {
-        // Protección: Si la sesión ya tiene kilos recolectados, es mejor no borrarla directamente
-        if ($sesionCosecha->total_recolectado_kg > 0) {
+            return redirect()
+                ->route('sesiones-cosecha.index')
+                ->with('success', 'Sesión de cosecha creada exitosamente.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error al crear sesión de cosecha', [
+                'error' => $e->getMessage(),
+                'data' => $validated,
+                'user_id' => auth()->id()
+            ]);
+
             return redirect()
                 ->back()
-                ->with('error', 'No se puede eliminar una sesión que ya registra kilos recolectados.');
+                ->withInput()
+                ->with('error', 'Ocurrió un error al crear la sesión de cosecha. Por favor, intente nuevamente.');
         }
-
-        $sesionCosecha->delete();
-
-        return redirect()
-            ->route('sesiones_cosecha.index')
-            ->with('success', 'La sesión de cosecha fue eliminada.');
     }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        try {
+            $sesion = SesionCosecha::with([
+                'ordenCosecha',
+                'eventoCampo',
+                'responsable'
+            ])->findOrFail($id);
+
+            Log::info('Visualización de sesión de cosecha', [
+                'sesion_id' => $sesion->id,
+                'user_id' => auth()->id()
+            ]);
+
+            return view('sesiones-cosecha.show', compact('sesion'));
+
+        } catch (\Exception $e) {
+            Log::error('Error al mostrar sesión de cosecha', [
+                'error' => $e->getMessage(),
+                'sesion_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+
+            return redirect()
+                ->route('sesiones-cosecha.index')
+                ->with('error', 'La sesión de cosecha solicitada no existe o ha sido eliminada.');
+        }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        try {
+            $sesion = SesionCosecha::findOrFail($id);
+            $ordenes = OrdenCosecha::where('estado', 'activa')->get();
+            $eventos = EventoCampo::where('estado', 'activo')->get();
+            $responsables = User::where('role', 'responsable_campo')->get();
+
+            return view('sesiones-cosecha.edit', compact('sesion', 'ordenes', 'eventos', 'responsables'));
+
+        } catch (\Exception $e) {
+            Log::error('Error al editar sesión de cosecha', [
+                'error' => $e->getMessage(),
+                'sesion_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+
+            return redirect()
+                ->route('sesiones-cosecha.index')
+                ->with('error', 'No se pudo cargar el formulario de edición.');
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'orden_cosecha_id' => 'required|exists:ordenes_cosecha,id',
+            'evento_campo_id' => 'required|exists:eventos_campo,id',
+            'responsable_id' => 'required|exists:users,id',
+            'fecha' => 'required|date',
+            'estado' => 'required|in:abierta,cerrada',
+            'meta_kg_dia' => 'nullable|numeric|min:0',
+            'numero_recolectores' => 'nullable|integer|min:0',
+            'hora_inicio' => 'nullable|date_format:H:i',
+            'hora_fin' => 'nullable|date_format:H:i|after:hora_inicio',
+            'total_recolectado_kg' => 'nullable|numeric|min:0',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $sesion = SesionCosecha::findOrFail($id);
+            $oldData = $sesion->toArray();
+            $sesion->update($validated);
+
+            Log::info('Sesión de cosecha actualizada exitosamente', [
+                'sesion_id' => $sesion->id,
+                'old_data' => $oldData,
+                'new_data' => $validated,
+                'user_id' => auth()->id()
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->route('sesiones-cosecha.index')
+                ->with('success', 'Sesión de cosecha actualizada exitosamente.');
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
+
+            Log::warning('Intento de actualizar sesión inexistente', [
+                'sesion_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+
+            return redirect()
+                ->route('sesiones-cosecha.index')
+                ->with('error', 'La sesión de cosecha que intenta actualizar no existe.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error al actualizar sesión de cosecha', [
+                'error' => $e->getMessage(),
+                'sesion_id' => $id,
+                'data' => $validated,
+                'user_id' => auth()->id()
+            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Ocurrió un error al actualizar la sesión de cosecha. Por favor, intente nuevamente.');
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $sesion = SesionCosecha::findOrFail($id);
+            $sesionData = $sesion->toArray();
+            $sesion->delete();
+
+            Log::info('Sesión de cosecha eliminada exitosamente', [
+                'sesion_id' => $id,
+                'deleted_data' => $sesionData,
+                'user_id' => auth()->id()
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->route('sesiones-cosecha.index')
+                ->with('success', 'Sesión de cosecha eliminada exitosamente.');
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
+
+            Log::warning('Intento de eliminar sesión inexistente', [
+                'sesion_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+
+            return redirect()
+                ->route('sesiones-cosecha.index')
+                ->with('error', 'La sesión de cosecha que intenta eliminar no existe.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error al eliminar sesión de cosecha', [
+                'error' => $e->getMessage(),
+                'sesion_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+
+            return redirect()
+                ->route('sesiones-cosecha.index')
+                ->with('error', 'Ocurrió un error al eliminar la sesión de cosecha. Por favor, intente nuevamente.');
+        }
+    }
+
 }

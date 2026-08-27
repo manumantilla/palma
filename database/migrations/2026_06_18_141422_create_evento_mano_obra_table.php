@@ -16,6 +16,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             // Vincular a una sesion de cosecha
             $table->foreignUuid('sesion_id')->nullable()->constrained('sesiones_cosecha')->onDelete('set null'); // A veces esta mano de obra no corresponde a un evento
+            $table->foreignId('ciclo_id')->nullable()->constrained('ciclos_productivos')->onDelete('set null'); // A veces las manos de obra corresponden a algo especifico a un cultivo y a veces arreglos normales  carreteras o cercas
             $table->enum('tipo_labor', [
                 'jornal_dia_completo',  
                 'jornal_medio_dia',

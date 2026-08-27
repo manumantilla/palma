@@ -31,8 +31,7 @@ class EventoInsumoLote extends Model
         return $this->belongsTo(EventoInsumo::class);
     }
 
-    public function loteInsumo()
-    {
-        return $this->belongsTo(LoteInsumo::class);
+    public function loteInsumo() {
+        return $this->belongsTo(LoteInsumo::class, 'lote_insumo_id');
     }
 }

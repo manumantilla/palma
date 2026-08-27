@@ -135,4 +135,35 @@ class Arbol extends Model
     {
         parent::delete();
     }
+
+
+    /**
+     * Conexiones salientes de la red donde este árbol es el origen.
+     */
+    public function redVecindadOrigen(): HasMany
+    {
+        return $this->hasMany(ArbolRedVecindad::class, 'arbol_origen_id');
+    }
+
+    /**
+     * Conexiones entrantes de la red donde este árbol es el destino.
+     */
+    public function redVecindadDestino(): HasMany
+    {
+        return $this->hasMany(ArbolRedVecindad::class, 'arbol_destino_id');
+    }
+
+    /**
+     * Relación directa Muchos a Muchos con los árboles vecinos que puede infectar/afectar.
+     */
+    public function arbolesVecinos(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Arbol::class,
+            'arboles_red_vecindad',
+            'arbol_origen_id',
+            'arbol_destino_id'
+        )->withPivot(['distancia_metros', 'probabilidad_contagio_base', 'tipo_contacto'])
+        ->withTimestamps();
+    }
 }

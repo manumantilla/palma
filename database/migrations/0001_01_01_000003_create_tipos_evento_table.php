@@ -31,10 +31,6 @@ return new class extends Migration
         });
 
         DB::table('tipos_evento')->insert([
-
-        // ==========================
-        // MANTENIMIENTO
-        // ==========================
         [
             'nombre' => 'Riego',
             'categoria' => 'Mantenimiento',

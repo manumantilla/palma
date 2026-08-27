@@ -1,147 +1,141 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <!-- Encabezado estilo campo -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-            <div class="flex items-center gap-3">
-                <div class="bg-green-700 p-2.5 rounded-full shadow-md">
-                    <i class="fas fa-seedling text-white text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-3xl font-bold text-green-800 tracking-wide" style="font-family: 'Segoe UI', 'Georgia', serif;">
-                        Órdenes de Cosecha
-                    </h1>
-                    <p class="text-sm text-amber-700 flex items-center gap-2">
-                        <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                        Campo activo
-                        <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                    </p>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="text-sm text-green-600 bg-green-50 px-4 py-1.5 rounded-full border border-green-200">
-                    <i class="fas fa-tractor mr-1.5"></i> Temporada actual
-                </span>
-                <button class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-full shadow-md transition-all duration-200 flex items-center gap-2 text-sm font-medium">
-                    <i class="fas fa-plus-circle"></i> Nueva orden
-                </button>
-            </div>
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+    
+    <!-- Encabezado -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Órdenes de Cosecha</h1>
+            <p class="text-sm text-gray-500">Planificación y seguimiento de recolecciones en campo</p>
         </div>
+        <div class="mt-4 md:mt-0">
+          
+        </div>
+    </div>
 
-        <!-- Tabla con estilo rústico -->
-        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-green-100/80">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-green-100">
-                    <thead class="bg-green-50/80">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">ID</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">Cliente</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">Ciclo</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">Fecha Programada</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">Estado</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-green-800 uppercase tracking-wider">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-green-50">
-                        @forelse($ordenes as $orden)
-                        <tr class="hover:bg-green-50/40 transition duration-150 ease-in-out group">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-900">
-                                <span class="bg-green-100 text-green-800 px-2.5 py-0.5 rounded-full text-xs font-mono">#{{ $orden->id }}</span>
+    <!-- Panel de Filtros -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+        <form method="GET" action="{{ route('ordenes_cosecha.index') }}" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            
+            <!-- Búsqueda General -->
+            <div class="lg:col-span-2">
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Buscar</label>
+                <input type="text" name="buscar" value="{{ request('buscar') }}" placeholder="Variedad, notas..." class="w-full text-sm rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+            </div>
+
+            <!-- Estado -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Estado</label>
+                <select name="estado" class="w-full text-sm rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <option value="">Todos</option>
+                    <option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                    <option value="en_proceso" {{ request('estado') == 'en_proceso' ? 'selected' : '' }}>En Proceso</option>
+                    <option value="completada" {{ request('estado') == 'completada' ? 'selected' : '' }}>Completada</option>
+                    <option value="cancelada" {{ request('estado') == 'cancelada' ? 'selected' : '' }}>Cancelada</option>
+                </select>
+            </div>
+
+            <!-- Lote -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Lote</label>
+                <select name="lote_cultivo_id" class="w-full text-sm rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <option value="">Todos</option>
+                    @foreach($lotes as $lote)
+                        <option value="{{ $lote->id }}" {{ request('lote_cultivo_id') == $lote->id ? 'selected' : '' }}>{{ $lote->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Fecha Desde -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Desde</label>
+                <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}" class="w-full text-sm rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="flex items-end space-x-2">
+                <button type="submit" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-medium py-2 px-3 rounded-lg text-sm transition">
+                    Filtrar
+                </button>
+                <a href="{{ route('ordenes_cosecha.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-2 px-3 rounded-lg text-sm transition" title="Limpiar Filtros">
+                    🔄
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla de Resultados -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <th class="py-3 px-4">ID / Variedad</th>
+                        <th class="py-3 px-4">Lote / Zona</th>
+                        <th class="py-3 px-4">Prog. / Cosechado</th>
+                        <th class="py-3 px-4">Fecha Prog.</th>
+                        <th class="py-3 px-4">Responsable</th>
+                        <th class="py-3 px-4 text-center">Estado</th>
+                        <th class="py-3 px-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+                    @forelse($ordenes as $orden)
+                        <tr class="hover:bg-gray-50/50 transition">
+                            <td class="py-3 px-4 font-medium text-gray-900">
+                                #{{ $orden->id }} - {{ $orden->variedad_requerida ?? 'N/A' }}
+                                <div class="text-xs text-gray-400 font-normal">{{ $orden->cicloProductivo->nombre_campana ?? '' }}</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-user-tie text-amber-600 text-xs"></i>
-                                    {{ $orden->cliente->name ?? 'N/A' }}
-                                </div>
+                            <td class="py-3 px-4">
+                                {{ $orden->loteCultivo->nombre ?? 'N/A' }}
+                                @if($orden->loteZona)
+                                    <span class="text-xs text-gray-400 block">({{ $orden->loteZona->nombre }})</span>
+                                @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-leaf text-green-500 text-xs"></i>
-                                    {{ $orden->cicloProductivo->nombre_campana ?? 'N/A' }}
-                                </div>
+                            <td class="py-3 px-4">
+                                <span class="font-semibold text-gray-800">{{ number_format($orden->cantidad_planificada_kg ?? 0, 1) }} kg</span>
+                                <span class="text-xs text-gray-400 block">Rec: {{ number_format($orden->cantidad_recolectada_kg ?? 0, 1) }} kg</span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                <div class="flex items-center gap-2">
-                                    <i class="far fa-calendar-alt text-amber-500 text-xs"></i>
-                                    {{ \Carbon\Carbon::parse($orden->fecha_programada)->locale('es')->isoFormat('D MMMM [de] Y') }}
-                                </div>
+                            <td class="py-3 px-4">
+                                {{ $orden->fecha_programada ? $orden->fecha_programada->format('d/m/Y') : 'Sin fecha' }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="py-3 px-4">
+                                {{ $orden->responsable->name ?? 'Unassigned' }}
+                            </td>
+                            <td class="py-3 px-4 text-center">
                                 @php
-                                    $estados = [
-                                        'borrador' => ['bg-gray-100 text-gray-700', '📄'],
-                                        'confirmada' => ['bg-blue-100 text-blue-700', '✅'],
-                                        'en_proceso' => ['bg-amber-100 text-amber-700', '⏳'],
-                                        'completada' => ['bg-green-100 text-green-700', '🌾'],
-                                        'cancelada' => ['bg-red-100 text-red-700', '❌']
-                                    ];
-                                    $estado = $estados[$orden->estado] ?? ['bg-gray-100 text-gray-700', '📄'];
+                                    $badgeClasses = [
+                                        'pendiente' => 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                                        'en_proceso' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                        'completada' => 'bg-green-50 text-green-700 border-green-200',
+                                        'cancelada' => 'bg-red-50 text-red-700 border-red-200',
+                                    ][$orden->estado] ?? 'bg-gray-50 text-gray-600 border-gray-200';
                                 @endphp
-                                <span class="px-3 py-1 inline-flex items-center gap-1.5 text-xs leading-4 font-semibold rounded-full {{ $estado[0] }}">
-                                    <span>{{ $estado[1] }}</span>
-                                    {{ ucfirst($orden->estado) }}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-medium border {{ $badgeClasses }}">
+                                    {{ ucfirst(str_replace('_', ' ', $orden->estado)) }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center gap-3">
-                                    <a href="{{ route('ordenes_cosecha.show', $orden) }}" class="text-green-600 hover:text-green-800 transition-colors" title="Ver">
-                                        <i class="fas fa-eye">Ver</i>
-                                    </a>
-                                    <a href="{{ route('ordenes_cosecha.edit', $orden) }}" class="text-amber-600 hover:text-amber-800 transition-colors" title="Editar">
-                                        <i class="fas fa-pen">Editar</i>
-                                    </a>
-                                    <form action="{{ route('ordenes_cosecha.destroy', $orden) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de eliminar esta orden?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-400 hover:text-red-600 transition-colors" title="Eliminar">
-                                            <i class="fas fa-trash-alt">Eliminar</i>
-                                        </button>
-                                    </form>
-                                </div>
+                            <td class="py-3 px-4 text-right space-x-2">
+                                <a href="{{ route('ordenes_cosecha.show', $orden) }}" class="text-blue-600 hover:text-blue-800 font-medium text-xs">Ver</a>
+                                <a href="{{ route('ordenes_cosecha.edit', $orden) }}" class="text-gray-600 hover:text-gray-800 font-medium text-xs">Editar</a>
                             </td>
                         </tr>
-                        @empty
+                    @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-                                <i class="fas fa-seedling text-3xl text-green-200 block mb-3"></i>
-                                <span class="text-lg font-medium text-gray-400">No hay órdenes de cosecha registradas</span>
-                                <p class="text-sm text-gray-400 mt-1">Comienza creando una nueva orden</p>
+                            <td colspan="7" class="py-8 text-center text-gray-400 text-sm">
+                                No se encontraron órdenes de cosecha que coincidan con los filtros.
                             </td>
                         </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pie con paginación y decoración -->
-            <div class="bg-green-50/30 px-6 py-4 border-t border-green-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div class="flex items-center gap-3 text-sm text-green-700">
-                    <span class="flex items-center gap-1.5">
-                        <span class="inline-block w-2 h-2 rounded-full bg-green-400"></span>
-                        <span class="font-medium">Total:</span> {{ $ordenes->total() }} órdenes
-                    </span>
-                    <span class="inline-block w-px h-4 bg-green-200"></span>
-                    <span class="flex items-center gap-1.5">
-                        <span class="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
-                        <span class="font-medium">Activas:</span> {{ $ordenes->whereIn('estado', ['confirmada', 'en_proceso'])->count() }}
-                    </span>
-                </div>
-                <div class="flex items-center gap-2">
-                    {{ $ordenes->links() }}
-                </div>
-            </div>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
 
-        <!-- Pequeños puntos decorativos (estilo agrícola) -->
-        <div class="mt-6 flex justify-center gap-2 opacity-40">
-            <span class="inline-block w-2 h-2 rounded-full bg-green-300"></span>
-            <span class="inline-block w-2 h-2 rounded-full bg-amber-300"></span>
-            <span class="inline-block w-2 h-2 rounded-full bg-green-300"></span>
-            <span class="inline-block w-2 h-2 rounded-full bg-amber-300"></span>
-            <span class="inline-block w-2 h-2 rounded-full bg-green-300"></span>
-            <span class="inline-block w-2 h-2 rounded-full bg-amber-300"></span>
-            <span class="inline-block w-2 h-2 rounded-full bg-green-300"></span>
-        </div>
-
+        <!-- Paginación -->
+        @if($ordenes->hasPages())
+            <div class="p-4 border-t border-gray-100">
+                {{ $ordenes->links() }}
+            </div>
+        @endif
     </div>
+</div>
 </x-app-layout>

@@ -20,19 +20,15 @@ return new class extends Migration
             $table->foreignId('lote_id')->nullable()->constrained('lotes');
             //zona de lotex
             $table->foreignId('zona_id')->nullable()->constrained('lotes_zonas_manejo')->onDelete('set null');
-            // $table->time('hora_inicio')->nullable();
-            // $table->time('hora_fin')->nullable();
+            $table->time('hora_inicio')->nullable();
+            $table->time('hora_fin')->nullable();
             //Importante
             $table->foreignId('tipo_evento_id')->constrained('tipos_evento');
             $table->dateTime('fecha_programada');
             $table->dateTime('fecha_ejecucion')->nullable();
             $table->geometry('coordenada_gps', 'GEOMETRY', 4326)->nullable();
             $table->enum('estado', ['Pendiente', 'En Proceso', 'Completado', 'Cancelado'])->default('Pendiente');
-            $table->enum('prioridad', ['baja', 'media', 'alta'])->default('media');
-            $table->text('observaciones')->nullable();                        
-            $table->foreignId('creado_por')->nullable()->constrained('users');
-            $table->foreignId('actualizado_por')->nullable()->constrained('users');
-            $table->foreignId('cancelado_por')->nullable()->constrained('users');
+            $table->text('observaciones')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

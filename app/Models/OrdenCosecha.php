@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class OrdenCosecha extends Model
 {
     use HasFactory;
@@ -38,6 +39,8 @@ class OrdenCosecha extends Model
         'fecha_fin'        => 'date',
     ];
 
+
+
     /**
      * Relación con el Cliente (Usuario)
      */
@@ -62,19 +65,21 @@ class OrdenCosecha extends Model
         return $this->belongsTo(CicloProductivo::class, 'ciclo_productivo_id');
     }
 
-    /**
-     * Relación con el Lote de Cultivo
-     */
     public function loteCultivo(): BelongsTo
     {
         return $this->belongsTo(Lote::class, 'lote_cultivo_id');
     }
 
-    /**
-     * Relación con la Zona de Manejo del Lote
-     */
+
     public function loteZona(): BelongsTo
     {
         return $this->belongsTo(LoteZonaManejo::class, 'lote_zona_id');
+    }
+
+    // Relacion para el nombre del cutlivo
+    public function getNombreCultivoAttribute(): string
+    {
+        // El operador ?-> (null-safe) evita el error si alguna relación viene nula
+        return $this->cicloProductivo?->cultivo?->nombre ?? 'N/A';
     }
 }

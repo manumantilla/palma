@@ -1,166 +1,190 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold text-gray-800 leading-tight">
-                Sesiones de Cosecha
-            </h2>
-            {{-- El botón create va desde la Orden, no desde aquí directamente --}}
+<x-app-layout>  
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+    
+    <!-- Encabezado -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Sesiones de Cosecha</h1>
+            <p class="text-sm text-gray-500">Planificación, control de pesajes y recolección offline en campo</p>
         </div>
-    </x-slot>
-
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-
-            {{-- FILTROS --}}
-            <div class="bg-white rounded-xl border border-gray-200 p-5">
-                <form method="GET" action="{{ route('sesiones-cosecha.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Responsable</label>
-                        <select name="responsable_id" class="w-full text-sm border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
-                            <option value="">Todos</option>
-                            @foreach ($responsables as $r)
-                                <option value="{{ $r->id }}" @selected(request('responsable_id') == $r->id)>
-                                    {{ $r->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Estado</label>
-                        <select name="estado" class="w-full text-sm border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
-                            <option value="">Todos</option>
-                            <option value="abierta"  @selected(request('estado') === 'abierta')>Abierta</option>
-                            <option value="cerrada"  @selected(request('estado') === 'cerrada')>Cerrada</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Fecha desde</label>
-                        <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
-                               class="w-full text-sm border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Fecha hasta</label>
-                        <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}"
-                               class="w-full text-sm border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
-                    </div>
-
-                    <div class="sm:col-span-2 lg:col-span-4 flex items-center gap-3">
-                        <button type="submit"
-                                class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white text-sm font-medium rounded-lg transition-colors">
-                            Filtrar
-                        </button>
-                        <a href="{{ route('sesiones-cosecha.index') }}"
-                           class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                            Limpiar
-                        </a>
-                    </div>
-                </form>
-            </div>
-
-            {{-- TABLA --}}
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-100 text-sm">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Fecha</th>
-                                <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Orden</th>
-                                <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Evento de campo</th>
-                                <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Responsable</th>
-                                <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Meta kg/día</th>
-                                <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Recolectores</th>
-                                <th class="px-5 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado</th>
-                                <th class="px-5 py-3"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @forelse ($sesiones as $sesion)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-5 py-3.5 whitespace-nowrap font-medium text-gray-800">
-                                    {{ \Carbon\Carbon::parse($sesion->fecha)->format('d/m/Y') }}
-                                </td>
-                                <td class="px-5 py-3.5 whitespace-nowrap text-gray-600">
-                                    {{ $sesion->ordenCosecha?->codigo ?? '—' }}
-                                </td>
-                                <td class="px-5 py-3.5 text-gray-600">
-                                    {{ $sesion->eventoCampo?->nombre ?? '—' }}
-                                </td>
-                                <td class="px-5 py-3.5 whitespace-nowrap text-gray-600">
-                                    {{ $sesion->responsable?->name ?? '—' }}
-                                </td>
-                                <td class="px-5 py-3.5 text-right text-gray-700">
-                                    {{ $sesion->meta_kg_dia ? number_format($sesion->meta_kg_dia, 1) : '—' }}
-                                </td>
-                                <td class="px-5 py-3.5 text-right text-gray-700">
-                                    {{ $sesion->numero_recolectores ?? '—' }}
-                                </td>
-                                <td class="px-5 py-3.5 text-center">
-                                    @if ($sesion->estado === 'abierta')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                            Abierta
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                                            Cerrada
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-5 py-3.5 whitespace-nowrap text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('sesiones_cosecha.show', $sesion->id) }}"
-                                           class="text-gray-400 hover:text-green-700 transition-colors" title="Ver detalle">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                        </a>
-                                        <a href="{{ route('sesiones_cosecha.edit', $sesion->id) }}"
-                                           class="text-gray-400 hover:text-blue-600 transition-colors" title="Editar">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                        </a>
-                                        <form method="POST" action="{{ route('sesiones_cosecha.destroy', $sesion->id) }}"
-                                              onsubmit="return confirm('¿Eliminar esta sesión?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="text-gray-400 hover:text-red-600 transition-colors" title="Eliminar">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="8" class="px-5 py-12 text-center">
-                                    <div class="flex flex-col items-center gap-2 text-gray-400">
-                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                        </svg>
-                                        <p class="text-sm font-medium text-gray-500">No hay sesiones registradas</p>
-                                        <p class="text-xs text-gray-400">Crea una sesión desde una orden de cosecha.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                @if ($sesiones->hasPages())
-                <div class="px-5 py-4 border-t border-gray-100">
-                    {{ $sesiones->links() }}
-                </div>
-                @endif
-            </div>
-
+        <div class="mt-4 md:mt-0">
+            <a href="{{ route('sesiones-cosecha.create') }}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow inline-flex items-center text-sm transition">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Nueva Sesión
+            </a>
         </div>
     </div>
+
+    <!-- Panel de Filtros Dinámicos -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+        <form method="GET" action="{{ route('sesiones-cosecha.index') }}" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            
+            <!-- Estado -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Estado</label>
+                <select name="estado" class="w-full text-sm rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <option value="">Todos</option>
+                    <option value="abierta" {{ request('estado') == 'abierta' ? 'selected' : '' }}>Abierta</option>
+                    <option value="cerrada" {{ request('estado') == 'cerrada' ? 'selected' : '' }}>Cerrada</option>
+                </select>
+            </div>
+
+            <!-- Orden de Cosecha -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Orden Cosecha</label>
+                <select name="orden_cosecha_id" class="w-full text-sm rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <option value="">Todas</option>
+                    @foreach($ordenes as $orden)
+                        <option value="{{ $orden->id }}" {{ request('orden_cosecha_id') == $orden->id ? 'selected' : '' }}>
+                            #{{ $orden->id }} - {{ $orden->variedad_requerida }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Responsable -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Responsable</label>
+                <select name="responsable_id" class="w-full text-sm rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <option value="">Todos</option>
+                    @foreach($responsables as $resp)
+                        <option value="{{ $resp->id }}" {{ request('responsable_id') == $resp->id ? 'selected' : '' }}>
+                            {{ $resp->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Fecha Desde -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Desde</label>
+                <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}" class="w-full text-sm rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+            </div>
+
+            <!-- Fecha Hasta -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}" class="w-full text-sm rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="flex items-end space-x-2">
+                <button type="submit" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-medium py-2 px-3 rounded-lg text-sm transition">
+                    Filtrar
+                </button>
+                <a href="{{ route('sesiones-cosecha.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-2 px-3 rounded-lg text-sm transition" title="Limpiar Filtros">
+                    🔄
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla de Sesiones de Cosecha -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <th class="py-3 px-4">Sesión / Fecha</th>
+                        <th class="py-3 px-4">Orden / Cultivo</th>
+                        <th class="py-3 px-4">Responsable</th>
+                        <th class="py-3 px-4">Avance Metas</th>
+                        <th class="py-3 px-4">Recolectores</th>
+                        <th class="py-3 px-4 text-center">Estado</th>
+                        <th class="py-3 px-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+                    @forelse($sesiones as $sesion)
+                        <tr class="hover:bg-gray-50/50 transition">
+                            <!-- ID y Fecha -->
+                            <td class="py-3 px-4 font-medium text-gray-900">
+                                #{{ $sesion->id }}
+                                <span class="text-xs text-gray-400 block font-normal">
+                                    📅 {{ $sesion->fecha ? $sesion->fecha->format('d/m/Y') : 'Sin fecha' }}
+                                </span>
+                            </td>
+
+                            <!-- Orden y Lote -->
+                            <td class="py-3 px-4">
+                                @if($sesion->ordenCosecha)
+                                    <span class="font-medium text-gray-800">Orden #{{ $sesion->ordenCosecha->id }}</span>
+                                    <span class="text-xs text-gray-500 block">
+                                        {{ $sesion->ordenCosecha->variedad_requerida ?? 'Variedad N/A' }} 
+                                        ({{ $sesion->ordenCosecha->loteCultivo->nombre ?? 'Sin Lote' }})
+                                    </span>
+                                @else
+                                    <span class="text-xs text-gray-400">Sin orden asignada</span>
+                                @endif
+                            </td>
+
+                            <!-- Responsable -->
+                            <td class="py-3 px-4">
+                                {{ $sesion->responsable->name ?? 'Sin asignar' }}
+                            </td>
+
+                            <!-- Avance (Meta vs Real) -->
+                            <td class="py-3 px-4">
+                                @php 
+                                    $meta = $sesion->meta_kg_dia ?? 0;
+                                    $recolectado = $sesion->total_recolectado_kg ?? 0;
+                                    $porcentaje = $meta > 0 ? min(100, round(($recolectado / $meta) * 100)) : 0;
+                                @endphp
+                                <div class="flex items-center justify-between text-xs mb-1">
+                                    <span class="font-semibold text-gray-800">{{ number_format($recolectado, 1) }} kg</span>
+                                    <span class="text-gray-400">/ {{ number_format($meta, 1) }} kg</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                                    <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ $porcentaje }}%"></div>
+                                </div>
+                            </td>
+
+                            <!-- Recolectores / Pesajes -->
+                            <td class="py-3 px-4 text-xs">
+                                <span class="font-medium text-gray-700">👥 {{ $sesion->numero_recolectores ?? 0 }} personas</span>
+                                <span class="text-gray-400 block">📦 {{ $sesion->recepciones_campo_count ?? 0 }} pesajes</span>
+                            </td>
+
+                            <!-- Estado -->
+                            <td class="py-3 px-4 text-center">
+                                @php
+                                    $badge = $sesion->estado === 'abierta' 
+                                        ? 'bg-green-50 text-green-700 border-green-200' 
+                                        : 'bg-gray-100 text-gray-600 border-gray-200';
+                                @endphp
+                                <span class="px-2.5 py-1 rounded-full text-xs font-medium border {{ $badge }}">
+                                    {{ ucfirst($sesion->estado) }}
+                                </span>
+                            </td>
+
+                            <!-- Acciones / Botón Modo Campo -->
+                            <td class="py-3 px-4 text-right space-x-2">
+                                <a href="{{ route('cosecha.preparar_offline', $sesion->id) }}" 
+                                   class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded text-xs inline-flex items-center shadow-sm transition">
+                                    📲 Ir a Campo
+                                </a>
+                                <a href="{{ route('sesiones-cosecha.show', $sesion->id) }}" class="text-gray-500 hover:text-gray-700 text-xs font-medium">
+                                    Ver
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="py-8 text-center text-gray-400 text-sm">
+                                No se encontraron sesiones de cosecha con los filtros aplicados.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        @if($sesiones->hasPages())
+            <div class="p-4 border-t border-gray-100">
+                {{ $sesiones->links() }}
+            </div>
+        @endif
+    </div>
+</div>
 </x-app-layout>

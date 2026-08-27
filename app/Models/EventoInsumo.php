@@ -39,8 +39,7 @@ class EventoInsumo extends Model
         return $this->belongsTo(Insumo::class);
     }
 
-    public function eventoInsumoLotes()
-    {
-        return $this->hasMany(EventoInsumoLote::class);
+    public function lotes() {
+        return $this->hasMany(EventoInsumoLote::class, 'evento_insumo_id');
     }
 }

@@ -28,8 +28,8 @@ return new class extends Migration
         $table->string('departamento_destino')->nullable();
 
         // Actores comerciales
-        $table->foreignId('cliente_id')->nullable()->constrained('users')->onDelete('set null');
-        $table->foreignId('comisionista_id')->nullable()->constrained('users')->onDelete('set null');
+        // $table->foreignId('cliente_id')->nullable()->constrained('users')->onDelete('set null');
+        // $table->foreignId('comisionista_id')->nullable()->constrained('users')->onDelete('set null');
 
         // Tiempos logísticos
         $table->dateTime('fecha_despacho');

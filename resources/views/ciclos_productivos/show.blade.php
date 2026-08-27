@@ -202,13 +202,12 @@
                         <a href="{{ route('ciclos-productivos.index') }}" class="px-3 py-2 border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 rounded-xl text-center font-semibold text-xs transition-colors shadow-sm">
                             ← Volver
                         </a>
-                        <a href="{{ route('eventos_campo.create_cultivo', $cicloProductivo->id) }}" class="px-3 py-2 border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 rounded-xl text-center font-semibold text-xs transition-colors shadow-sm">
-                            Crear Evento Campo
-                        </a>
-                        <a href="{{ route('ordenes_cosecha.create', $cicloProductivo->id) }}" class="px-3 py-2 border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 rounded-xl text-center font-semibold text-xs transition-colors shadow-sm">
-                            Crear Orden Cosecha
-                        </a>
-                        
+                    <a href="{{ route('ordenes_cosecha.create', ['ciclo' => $cicloProductivo->id ]) }}" class="px-3 py-2 border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 rounded-xl text-center font-semibold text-xs transition-colors shadow-sm">
+                        Crear Nueva Orden de Cosecha
+                    </a>
+                    <a href="{{ route('.create', ['ciclo' => $cicloProductivo->id ]) }}" class="px-3 py-2 border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 rounded-xl text-center font-semibold text-xs transition-colors shadow-sm">
+                        Arboles
+                    </a>
                         <button type="button" class="px-3 py-2 border border-stone-300 bg-white text-amber-700 hover:bg-amber-50 rounded-xl text-center font-bold text-xs transition-colors shadow-sm">
                             📝 Editar Ciclo
                         </button>

@@ -30,14 +30,14 @@
                     <x-nav-link href="{{ route('ciclos-productivos.index') }}" :active="request()->routeIs('ciclos-productivos.index')">
                         {{ __('Cultivos') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('tipos-evento.index') }}" :active="request()->routeIs('tipos-evento.index')">
-                        {{ __('Tipos de Labores') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('ordenes_cosecha.index') }}" :active="request()->routeIs('ordenes-cosecha.index')">
-                        {{ __('Ordenes Cosecha') }}
+                    <x-nav-link href="{{ route('ordenes_cosecha.index') }}" :active="request()->routeIs('ordenes_cosecha.index')">
+                        {{ __('Ordenes de Cosecha') }}
                     </x-nav-link>
                     <x-nav-link href="{{ route('sesiones-cosecha.index') }}" :active="request()->routeIs('sesiones-cosecha.index')">
-                        {{ __('Sesiones Cosecha') }}
+                        {{ __('Recoleccion de Cosecha') }}
+                    </x-nav-link>
+                    <x-nav-link href="{{ route('tipos-evento.index') }}" :active="request()->routeIs('ciclos-productivos.index')">
+                        {{ __('Tipos de Labores') }}
                     </x-nav-link>
                 </div>
             </div>

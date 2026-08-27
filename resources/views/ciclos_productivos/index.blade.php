@@ -139,10 +139,7 @@
                             </td>
                             
                             <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
-                            <a href="{{ route('grafo', $ciclo->id) }}"
-                            class="btn btn-primary">
-                                Ver Grafo
-                            </a>
+                           
 </td>   
                         </tr>
                     @empty

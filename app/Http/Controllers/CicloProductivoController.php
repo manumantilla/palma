@@ -8,6 +8,7 @@ use App\Models\Cultivo;
 use App\Models\Proveedor;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -113,7 +114,7 @@ class CicloProductivoController extends Controller
 
             DB::commit();
 
-            return redirect()->route('ciclos.index')
+            return redirect()->route('ciclos-productivos.index')
                 ->with('success', 'Campaña y ciclo productivo aperturado con éxito.');
 
         } catch (Exception $e) {
@@ -130,6 +131,89 @@ class CicloProductivoController extends Controller
         }
     }
 
+    public function obtenerGrafoYEstadisticas(CicloProductivo $cicloProductivo): JsonResponse
+    {
+        // 1. Obtener árboles con datos espaciales (ST_X/ST_Y) en una sola consulta
+        $arboles = DB::table('arboles')
+            ->selectRaw('
+                id, 
+                codigo_unico, 
+                estado_vital, 
+                etapa_biologica,
+                fecha_siembra, 
+                produccion_acumulada_kg,
+                ST_Y(coordenada_precision) as lat,
+                ST_X(coordenada_precision) as lng
+            ')
+            ->where('ciclo_productivo_id', $cicloProductivo->id)
+            ->whereNull('deleted_at')
+            ->get();
+
+        if ($arboles->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El ciclo productivo no tiene árboles asignados.',
+                'total_arboles' => 0
+            ], 404);
+        }
+
+        $arbolesIds = $arboles->pluck('id');
+
+        // 2. Extraer las aristas (red de vecindad) para Dijkstra / Grafos
+        $aristasGrafo = DB::table('arboles_red_vecindad')
+            ->whereIn('arbol_origen_id', $arbolesIds)
+            ->select(
+                'arbol_origen_id as origen',
+                'arbol_destino_id as destino',
+                'distancia_metros as peso_distancia',
+                'probabilidad_contagio_base as peso_contagio',
+                'tipo_contacto'
+            )
+            ->get();
+
+        // 3. Formatear nodos para Leaflet y Visualización de Grafos
+        $nodosLeaflet = $arboles->map(function ($arbol) {
+            return [
+                'id' => $arbol->id,
+                'codigo' => $arbol->codigo_unico,
+                'lat' => (float) $arbol->lat,
+                'lng' => (float) $arbol->lng,
+                'estado_vital' => $arbol->estado_vital,
+                'produccion_kg' => (float) $arbol->produccion_acumulada_kg,
+            ];
+        });
+
+        // 4. Métricas y Estadísticas integradas
+        $conteoEstados = $arboles->groupBy('estado_vital')->map->count();
+        $totalArboles = $arboles->count();
+        
+        $estadisticas = [
+            'total_arboles' => $totalArboles,
+            'produccion_total_kg' => round($arboles->sum('produccion_acumulada_kg'), 2),
+            'produccion_promedio_kg' => round($arboles->avg('produccion_acumulada_kg'), 2),
+            'desglose_estado_vital' => $conteoEstados,
+            'porcentaje_saludables' => round((($conteoEstados->get('excelente', 0) / $totalArboles) * 100), 2),
+            'total_conexiones_red' => $aristasGrafo->count(),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'ciclo_id' => $cicloProductivo->id,
+            'estadisticas' => $estadisticas,
+            'leaflet' => [
+                'marcadores' => $nodosLeaflet,
+            ],
+            'grafo_dijkstra' => [
+                'nodos' => $arbolesIds->values(),
+                'aristas' => $aristasGrafo,
+            ],
+        ]);
+    }
+
+    public function vistaMapa(CicloProductivo $cicloProductivo)
+    {
+        return view('ciclos_productivos.grafo', compact('cicloProductivo'));
+    }
     public function show(CicloProductivo $cicloProductivo)
     {
         $cicloProductivo->load([

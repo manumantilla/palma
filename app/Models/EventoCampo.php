@@ -1,12 +1,14 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
-
+use App\Models\LoteZonaManejo;
 class EventoCampo extends Model
 {
     use HasFactory, SoftDeletes;
@@ -17,9 +19,13 @@ class EventoCampo extends Model
         'ciclo_productivo_id',
         'lote_id',
         'zona_id',
+        'hora_inicio',
+        'hora_fin',
         'tipo_evento_id',
         'fecha_programada',
         'fecha_ejecucion',
+        'latitud',
+        'longitud',
         'estado',
         'observaciones',
     ];
@@ -27,41 +33,82 @@ class EventoCampo extends Model
     protected $casts = [
         'fecha_programada' => 'datetime',
         'fecha_ejecucion'  => 'datetime',
+        'hora_inicio'      => 'datetime:H:i', // Parsea a objeto Carbon
+        'hora_fin'         => 'datetime:H:i',
         'latitud'          => 'decimal:8',
         'longitud'         => 'decimal:8',
-        'hora_inicio'      => 'datetime:H:i:s', // or just 'string'
-        'hora_fin'         => 'datetime:H:i:s',
     ];
 
-    // Relationships
-    public function cicloProductivo()
+    // ==========================================
+    // RELACIONES DE PERTENENCIA (BelongsTo)
+    // ==========================================
+    
+    public function cicloProductivo(): BelongsTo
     {
-        return $this->belongsTo(CicloProductivo::class);
+        return $this->belongsTo(CicloProductivo::class, 'ciclo_productivo_id');
     }
 
-    public function lote()
+    public function lote(): BelongsTo
     {
         return $this->belongsTo(Lote::class);
     }
 
-    public function zona()
+    public function zona(): BelongsTo
     {
         return $this->belongsTo(LoteZonaManejo::class, 'zona_id');
     }
 
-    public function tipoEvento()
+    public function tipoEvento(): BelongsTo
     {
         return $this->belongsTo(TipoEvento::class);
     }
 
-    public function eventoArboles()
+    // ==========================================
+    // RELACIONES MANY-TO-MANY (Pivot)
+    // ==========================================
+
+    public function arboles(): BelongsToMany
     {
-        return $this->hasMany(EventoArbol::class);
+        return $this->belongsToMany(Arbol::class, 'evento_arbol', 'evento_campo_id', 'arbol_id')
+                    ->withPivot(['novedad_arbol', 'nota_individual'])
+                    ->withTimestamps();
     }
 
-    public function eventoInsumos()
+    // ==========================================
+    // RELACIONES ONE-TO-MANY (HasMany)
+    // ==========================================
+
+    public function eventoInsumos(): HasMany
     {
-        return $this->hasMany(EventoInsumo::class);
+        return $this->hasMany(EventoInsumo::class, 'evento_campo_id');
+    }
+
+    public function eventoManoObra(): HasMany
+    {
+        return $this->hasMany(EventoManoObra::class, 'evento_campo_id');
+    }
+
+    // ==========================================
+    // ACCESSORS PARA CÁLCULOS FINANCIEROS
+    // ==========================================
+
+    public function getCostoTotalInsumosAttribute(): float
+    {
+        // 'costo_total' ya existe como columna en 'evento_insumos'
+        return (float) $this->eventoInsumos->sum('costo_total');
+    }
+
+    public function getCostoTotalManoObraAttribute(): float
+    {
+        // Se calcula iterando en memoria la colección ya cargada (no genera queries)
+        return (float) $this->eventoManoObra->sum(function ($item) {
+            return $item->cantidad * $item->valor_unitario;
+        });
+    }
+
+    public function getCostoTotalEventoAttribute(): float
+    {
+        return $this->costo_total_insumos + $this->costo_total_mano_obra;
     }
 
     public function scopeFiltrar(Builder $query, array $filtros)

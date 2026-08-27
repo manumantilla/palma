@@ -1,401 +1,348 @@
 <x-app-layout>
-    <div class="container mx-auto px-4 py-6">
-        {{-- Encabezado con estilo agrícola --}}
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-green-800 via-green-700 to-green-900 p-6 text-white shadow-xl">
-            <div class="absolute right-0 top-0 -mt-12 -mr-12 h-48 w-48 rounded-full bg-green-500 opacity-20"></div>
-            <div class="absolute bottom-0 left-0 -mb-8 -ml-8 h-32 w-32 rounded-full bg-yellow-500 opacity-10"></div>
+    <x-slot name="header">
+        <style>
+            @keyframes fade-in-up {
+                0% { opacity: 0; transform: translateY(20px); }
+                100% { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up {
+                animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                opacity: 0;
+            }
+            .delay-100 { animation-delay: 100ms; }
+            .delay-200 { animation-delay: 200ms; }
+            .delay-300 { animation-delay: 300ms; }
+            .delay-400 { animation-delay: 400ms; }
+            .delay-500 { animation-delay: 500ms; }
             
-            <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    {{-- Icono de árbol --}}
-                    <svg class="h-12 w-12 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                    </svg>
-                    <div>
-                        <h1 class="text-3xl font-bold tracking-tight">
-                            Árbol <span class="text-green-200">{{ $arbol->codigo_unico }}</span>
-                        </h1>
-                        <p class="text-green-100 text-sm flex items-center gap-2">
-                            <span class="inline-block w-2 h-2 rounded-full {{ $arbol->estado_vital === 'activo' ? 'bg-green-400' : ($arbol->estado_vital === 'enfermo' ? 'bg-yellow-400' : 'bg-red-400') }}"></span>
-                            {{ ucfirst($arbol->estado_vital ?? 'Sin estado') }}
-                            · Edad: <strong>{{ $arbol->edad_meses }}</strong> meses
-                            · Variedad: {{ $arbol->variedad ?? 'N/A' }}
-                        </p>
-                    </div>
-                </div>
-                <div class="mt-4 md:mt-0 flex flex-wrap gap-2">
-                    <span class="inline-flex items-center rounded-full bg-green-600 px-4 py-1 text-sm font-medium text-white">
-                        {{ $arbol->etapa_biologica ?? 'Sin etapa' }}
-                    </span>
-                    @if($arbol->es_reemplazo)
-                        <span class="inline-flex items-center rounded-full bg-yellow-500 px-4 py-1 text-sm font-medium text-white">
-                            Reemplazo
-                        </span>
-                    @endif
-                </div>
-            </div>
+            /* Mejoras responsive */
+            @media (max-width: 1024px) {
+                .lg\:sticky {
+                    position: relative !important;
+                }
+                .lg\:h-\[calc\(100vh-6rem\)\] {
+                    height: auto !important;
+                }
+            }
+            
+            @media (max-width: 640px) {
+                .grid-cols-2 {
+                    grid-template-columns: 1fr 1fr !important;
+                }
+                .gap-4 {
+                    gap: 0.75rem !important;
+                }
+                .p-8 {
+                    padding: 1rem !important;
+                }
+                .lg\:p-12 {
+                    padding: 1rem !important;
+                }
+                .px-6 {
+                    padding-left: 0.75rem !important;
+                    padding-right: 0.75rem !important;
+                }
+                .py-4 {
+                    padding-top: 0.5rem !important;
+                    padding-bottom: 0.5rem !important;
+                }
+                .text-2xl {
+                    font-size: 1.25rem !important;
+                }
+                .text-3xl {
+                    font-size: 1.5rem !important;
+                }
+                .rounded-\[2rem\] {
+                    border-radius: 1rem !important;
+                }
+                .w-16 {
+                    width: 3rem !important;
+                    height: 3rem !important;
+                }
+                .h-16 {
+                    height: 3rem !important;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .grid-cols-2 {
+                    grid-template-columns: 1fr !important;
+                }
+                .flex-wrap {
+                    flex-direction: column !important;
+                    align-items: stretch !important;
+                }
+                .flex-wrap .gap-4 {
+                    gap: 0.5rem !important;
+                }
+                .text-sm {
+                    font-size: 0.75rem !important;
+                }
+                .text-xs {
+                    font-size: 0.6rem !important;
+                }
+            }
+        </style>
+    </x-slot>
 
-            {{-- Mini estadísticas --}}
-            <div class="relative mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                    <p class="text-green-200">Producción acumulada</p>
-                    <p class="text-2xl font-semibold">{{ number_format($arbol->produccion_acumulada_kg ?? 0, 2) }} kg</p>
-                </div>
-                <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                    <p class="text-green-200">Ciclos productivos</p>
-                    <p class="text-2xl font-semibold">{{ $arbol->ciclos_productivos_count ?? 0 }}</p>
-                </div>
-                <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                    <p class="text-green-200">Altitud</p>
-                    <p class="text-2xl font-semibold">{{ number_format($arbol->altitud ?? 0, 2) }} m</p>
-                </div>
-                <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                    <p class="text-green-200">Coordenadas</p>
-                    <p class="text-xs font-mono truncate">
-                        @if($coordenadas = $arbol->coordenadas_gps)
-                            {{ number_format($coordenadas[0], 6) }}, {{ number_format($coordenadas[1], 6) }}
-                        @else
-                            No registradas
-                        @endif
-                    </p>
-                </div>
-            </div>
-        </div>
+    <div class="py-6 sm:py-8 md:py-12 bg-gray-50 min-h-screen">
+        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="bg-white rounded-2xl sm:rounded-[2rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row relative">
+                
+                <!-- Barra lateral izquierda - Resumen del árbol (Responsive) -->
+                <div class="lg:w-2/5 w-full bg-gradient-to-br from-emerald-600 to-green-900 p-6 sm:p-8 lg:p-12 text-white relative overflow-hidden lg:sticky lg:top-0 lg:h-[calc(100vh-6rem)]">
+                    <div class="absolute -top-24 -left-24 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl"></div>
+                    <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-400 opacity-20 rounded-full blur-3xl"></div>
 
-        {{-- Contenido principal con tabs --}}
-        <div x-data="{ tab: 'info' }" class="mt-8">
-            {{-- Navegación de tabs --}}
-            <div class="border-b border-gray-200">
-                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <button @click="tab = 'info'" :class="{ 'border-green-500 text-green-700': tab === 'info', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'info' }" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
-                        Información general
-                    </button>
-                    <button @click="tab = 'metricas'" :class="{ 'border-green-500 text-green-700': tab === 'metricas', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'metricas' }" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
-                        Métricas históricas
-                    </button>
-                    <button @click="tab = 'fitosanitario'" :class="{ 'border-green-500 text-green-700': tab === 'fitosanitario', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'fitosanitario' }" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
-                        Historial fitosanitario
-                    </button>
-                    <button @click="tab = 'eventos'" :class="{ 'border-green-500 text-green-700': tab === 'eventos', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'eventos' }" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
-                        Eventos de campo
-                    </button>
-                </nav>
-            </div>
-
-            {{-- Panel: Información general --}}
-            <div x-show="tab === 'info'" class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {{-- Columna izquierda: datos principales --}}
-                <div class="lg:col-span-2 space-y-6">
-                    {{-- Tarjeta de datos del árbol --}}
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-                            <h3 class="text-lg font-medium text-gray-800 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Datos del árbol
-                            </h3>
-                            <span class="text-xs text-gray-500">ID: {{ $arbol->id }}</span>
+                    <div class="relative z-10 animate-fade-in-up">
+                        <!-- Cabecera responsive -->
+                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                            <div class="flex items-center sm:block gap-4">
+                                <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-2 sm:mb-6 border border-white/30 shadow-lg flex-shrink-0">
+                                    <svg class="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1 sm:mb-2 break-all">{{ $arbol->codigo_unico ?? 'Sin Código' }}</h2>
+                                    <p class="text-emerald-100 text-xs sm:text-sm font-light">Ficha detallada del árbol</p>
+                                </div>
+                            </div>
+                            <!-- Badge de estado vital -->
+                            <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg border border-white/20 {{ $arbol->estado_vital_badge_class ?? 'bg-white/20 text-white' }} self-start sm:self-auto">
+                                {{ $arbol->estado_vital_badge }}
+                            </span>
                         </div>
-                        <div class="p-6 grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+
+                        <!-- Información responsive -->
+                        <div class="mt-6 sm:mt-8 space-y-3 sm:space-y-4 text-sm">
+                            <div class="flex items-center gap-3 border-b border-white/10 pb-3">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <div class="min-w-0">
+                                    <p class="text-emerald-200 text-xs uppercase tracking-wider">Lote GIS</p>
+                                    <p class="font-semibold truncate">{{ $arbol->lote->nombre_lote ?? 'No asignado' }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 border-b border-white/10 pb-3">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                <div class="min-w-0">
+                                    <p class="text-emerald-200 text-xs uppercase tracking-wider">Zona de Manejo</p>
+                                    <p class="font-semibold truncate">{{ $arbol->zonaManejo->nombre_zona ?? 'No asignada' }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 border-b border-white/10 pb-3">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                                <div>
+                                    <p class="text-emerald-200 text-xs uppercase tracking-wider">Topología</p>
+                                    <p class="font-semibold text-xs sm:text-sm">Fila {{ $arbol->fila_indice ?? '-' }} / Pos. {{ $arbol->posicion_indice ?? '-' }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <div class="min-w-0">
+                                    <p class="text-emerald-200 text-xs uppercase tracking-wider">Ciclo Productivo</p>
+                                    @if($arbol->ciclo_productivo_id)
+                                        <a href="{{ route('ciclos-productivos.show', $arbol->ciclo_productivo_id) }}" class="font-semibold text-white hover:underline flex items-center gap-1 text-xs sm:text-sm">
+                                            <span class="truncate">{{ $arbol->cicloProductivo->nombre_campana ?? 'Ver Ciclo' }}</span>
+                                            <svg class="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                        </a>
+                                    @else
+                                        <span class="text-emerald-200 italic">Ninguno</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info extra responsive -->
+                        <div class="mt-6 grid grid-cols-2 gap-2 sm:gap-3 p-3 sm:p-4 bg-black/10 backdrop-blur-sm rounded-xl border border-white/10">
                             <div>
-                                <p class="text-gray-500">Lote</p>
-                                <p class="font-medium text-gray-800">{{ $arbol->lote->nombre_lote ?? 'N/A' }}</p>
+                                <p class="text-emerald-200 text-[10px] sm:text-xs uppercase tracking-wider">Variedad</p>
+                                <p class="font-semibold text-xs sm:text-sm truncate">{{ $arbol->variedad ?? 'Desconocida' }}</p>
                             </div>
                             <div>
-                                <p class="text-gray-500">Zona de manejo</p>
-                                <p class="font-medium text-gray-800">{{ $arbol->zonaManejo->nombre_zona ?? 'N/A' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500">Ciclo productivo</p>
-                                <p class="font-medium text-gray-800">{{ $arbol->cicloProductivo->nombre_campana ?? 'N/A' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500">Fecha de siembra</p>
-                                <p class="font-medium text-gray-800">{{ $arbol->fecha_siembra ? $arbol->fecha_siembra->format('d/m/Y') : 'N/A' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500">Primera cosecha</p>
-                                <p class="font-medium text-gray-800">{{ $arbol->fecha_primera_cosecha ? $arbol->fecha_primera_cosecha->format('d/m/Y') : 'N/A' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500">Fecha de muerte/baja</p>
-                                <p class="font-medium text-gray-800">{{ $arbol->fecha_baja_muerte ? $arbol->fecha_baja_muerte->format('d/m/Y') : 'N/A' }}</p>
+                                <p class="text-emerald-200 text-[10px] sm:text-xs uppercase tracking-wider">Edad</p>
+                                <p class="font-semibold text-xs sm:text-sm">{{ $arbol->edad_meses ?? 0 }} <span class="text-[10px] sm:text-xs font-normal">meses</span></p>
                             </div>
                             <div class="col-span-2">
-                                <p class="text-gray-500">Motivo de baja</p>
-                                <p class="font-medium text-gray-800">{{ $arbol->motivo_baja ?? 'N/A' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500">Altitud ortométrica</p>
-                                <p class="font-medium text-gray-800">{{ number_format($arbol->altitud_ortometrica_msnm ?? 0, 2) }} msnm</p>
+                                <p class="text-emerald-200 text-[10px] sm:text-xs uppercase tracking-wider">Etapa Biológica</p>
+                                <p class="font-semibold text-xs sm:text-sm capitalize truncate">{{ $arbol->etapa_biologica ?? 'N/A' }}</p>
                             </div>
                         </div>
-                        @if($arbol->observaciones)
-                            <div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
-                                <p class="text-gray-500 text-xs">Observaciones</p>
-                                <p class="text-gray-800 text-sm">{{ $arbol->observaciones }}</p>
-                            </div>
-                        @endif
                     </div>
 
-                    {{-- Tarjeta de ubicación (mapa simbólico) --}}
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                            <h3 class="text-lg font-medium text-gray-800 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                Ubicación GPS
-                            </h3>
-                        </div>
-                        <div class="p-6">
-                            @if($coordenadas = $arbol->coordenadas_gps)
-                                <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden relative">
-                                    {{-- Aquí podrías integrar Leaflet u OpenStreetMap con un marcador --}}
-                                    <div class="w-full h-full flex items-center justify-center bg-green-50">
-                                        <div class="text-center">
-                                            <svg class="mx-auto h-12 w-12 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                            <p class="mt-2 text-sm text-gray-600">Coordenadas:</p>
-                                            <p class="font-mono text-sm text-gray-800">{{ number_format($coordenadas[0], 6) }}, {{ number_format($coordenadas[1], 6) }}</p>
-                                            <p class="text-xs text-gray-500 mt-1">(Longitud, Latitud)</p>
-                                        </div>
-                                    </div>
-                                    {{-- Para un mapa real, descomenta y usa Leaflet --}}
-                                    {{-- 
-                                    <div id="map" style="height: 200px;" data-lat="{{ $coordenadas[1] }}" data-lng="{{ $coordenadas[0] }}"></div>
-                                    --}}
+                    <!-- Producción histórica responsive -->
+                    <div class="relative z-10 mt-6 sm:mt-8 hidden md:block animate-fade-in-up delay-200">
+                        <div class="p-3 sm:p-4 bg-black/10 backdrop-blur-md rounded-2xl border border-white/10">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                                 </div>
-                            @else
-                                <div class="text-center py-8 text-gray-400">
-                                    <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-                                    <p class="mt-2">No se han registrado coordenadas para este árbol.</p>
+                                <div class="min-w-0">
+                                    <p class="text-xs sm:text-sm font-semibold">Producción Histórica</p>
+                                    <p class="text-base sm:text-lg font-bold truncate">{{ number_format($arbol->produccion_acumulada_kg ?? 0, 2) }} Kg</p>
                                 </div>
-                            @endif
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- Columna derecha: relaciones adicionales y resumen --}}
-                <div class="space-y-6">
-                    {{-- Relaciones: Lote y Zona --}}
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                            <h3 class="text-lg font-medium text-gray-800">Ubicación en parcela</h3>
-                        </div>
-                        <div class="p-6 space-y-3 text-sm">
-                            <div>
-                                <span class="text-gray-500">Fila / Posición</span>
-                                <div class="font-medium text-gray-800">
-                                    {{ $arbol->fila_indice ?? 'N/A' }} / {{ $arbol->posicion_indice ?? 'N/A' }}
-                                </div>
-                            </div>
-                            <div>
-                                <span class="text-gray-500">Lote</span>
-                                <div class="font-medium text-gray-800">
-                                    <a href="{{ route('lotes-gis.show', $arbol->lote_id) }}" class="text-green-700 hover:underline">
-                                        {{ $arbol->lote->nombre ?? 'Sin lote' }}
-                                    </a>
-                                </div>
-                            </div>
-                            <div>
-                                <span class="text-gray-500">Zona de manejo</span>
-                                <div class="font-medium text-gray-800">
-                                    {{ $arbol->zonaManejo->nombre ?? 'No asignada' }}
-                                </div>
-                            </div>
-                            <div>
-                                <span class="text-gray-500">Ciclo productivo</span>
-                                <div class="font-medium text-gray-800">
-                                    <a href="{{ route('ciclos-productivos.show', $arbol->ciclo_productivo_id) }}" class="text-green-700 hover:underline">
-                                        {{ $arbol->cicloProductivo->nombre ?? 'Sin ciclo' }}
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Datos de reemplazo si aplica --}}
-                    @if($arbol->es_reemplazo)
-                        <div class="bg-yellow-50 rounded-xl shadow-md overflow-hidden border border-yellow-200">
-                            <div class="px-6 py-4 bg-yellow-100 border-b border-yellow-200 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                <h3 class="text-lg font-medium text-yellow-800">Árbol de reemplazo</h3>
-                            </div>
-                            <div class="p-6 space-y-2 text-sm">
-                                <div><span class="text-gray-600">Fecha de reemplazo:</span> {{ $arbol->fecha_reemplazo ? $arbol->fecha_reemplazo->format('d/m/Y') : 'N/A' }}</div>
-                                <div><span class="text-gray-600">Motivo de muerte:</span> {{ $arbol->causa_muerte ?? 'No especificado' }}</div>
-                                <div><span class="text-gray-600">Fecha de muerte:</span> {{ $arbol->fecha_muerte ? $arbol->fecha_muerte->format('d/m/Y') : 'N/A' }}</div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            {{-- Panel: Métricas históricas --}}
-            <div x-show="tab === 'metricas'" class="mt-6">
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-                        <h3 class="text-lg font-medium text-gray-800 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                            Métricas históricas
+                <!-- Contenido principal - lado derecho (Responsive) -->
+                <div class="lg:w-3/5 w-full p-4 sm:p-6 md:p-8 lg:p-12 bg-white relative">
+                    
+                    <!-- Cabecera con botón volver (Responsive) -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8 animate-fade-in-up">
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
+                            <span class="bg-emerald-100 text-emerald-700 p-1.5 sm:p-2 rounded-xl">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            </span>
+                            <span class="text-lg sm:text-2xl">Detalles del Árbol</span>
                         </h3>
-                        <span class="text-sm text-gray-500">{{ $arbol->metricasHistoricas->count() }} registros</span>
+                        <a href="{{ route('arboles.index') }}" class="inline-flex items-center gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-white border border-emerald-200 rounded-lg text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 font-medium text-xs sm:text-sm shadow-sm hover:shadow w-full sm:w-auto justify-center sm:justify-start">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                            <span class="whitespace-nowrap">Volver al Inventario</span>
+                        </a>
                     </div>
-                    <div class="p-6">
-                        @if($arbol->metricasHistoricas->count())
+
+                    <!-- Métricas rápidas (resumen) Responsive -->
+                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-6 sm:mb-8 animate-fade-in-up delay-100">
+                        <div class="bg-emerald-50/50 p-2 sm:p-3 md:p-4 rounded-xl border border-emerald-100 flex items-center gap-2 sm:gap-3">
+                            <div class="p-1.5 sm:p-2 bg-emerald-100 rounded-lg text-emerald-700 flex-shrink-0">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[10px] sm:text-xs text-stone-500 font-medium uppercase">Edad</p>
+                                <p class="text-base sm:text-lg font-bold text-stone-800 truncate">{{ $arbol->edad_meses ?? 0 }} <span class="text-[10px] sm:text-sm font-normal text-stone-500">meses</span></p>
+                            </div>
+                        </div>
+                        <div class="bg-amber-50/50 p-2 sm:p-3 md:p-4 rounded-xl border border-amber-100 flex items-center gap-2 sm:gap-3">
+                            <div class="p-1.5 sm:p-2 bg-amber-100 rounded-lg text-amber-700 flex-shrink-0">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[10px] sm:text-xs text-stone-500 font-medium uppercase">Producción</p>
+                                <p class="text-base sm:text-lg font-bold text-stone-800 truncate">{{ number_format($arbol->produccion_acumulada_kg ?? 0, 2) }} <span class="text-[10px] sm:text-sm font-normal text-stone-500">kg</span></p>
+                            </div>
+                        </div>
+                        <div class="bg-sky-50/50 p-2 sm:p-3 md:p-4 rounded-xl border border-sky-100 flex items-center gap-2 sm:gap-3">
+                            <div class="p-1.5 sm:p-2 bg-sky-100 rounded-lg text-sky-700 flex-shrink-0">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[10px] sm:text-xs text-stone-500 font-medium uppercase">Estado Vital</p>
+                                <p class="text-base sm:text-lg font-bold text-stone-800 truncate">{{ $arbol->estado_vital_badge ?? 'N/D' }}</p>
+                            </div>
+                        </div>
+                        <div class="bg-purple-50/50 p-2 sm:p-3 md:p-4 rounded-xl border border-purple-100 flex items-center gap-2 sm:gap-3">
+                            <div class="p-1.5 sm:p-2 bg-purple-100 rounded-lg text-purple-700 flex-shrink-0">
+                                <svg class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[10px] sm:text-xs text-stone-500 font-medium uppercase">Ciclo</p>
+                                <p class="text-base sm:text-lg font-bold text-stone-800 truncate max-w-[60px] sm:max-w-[80px] md:max-w-[100px]">{{ $arbol->cicloProductivo->nombre_campana ?? 'Sin ciclo' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: Historial de Métricas (Responsive) -->
+                    <div class="mb-6 sm:mb-8 animate-fade-in-up delay-200">
+                        <div class="bg-white rounded-xl sm:rounded-2xl shadow-md border border-emerald-100/80 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                            <div class="bg-gradient-to-r from-emerald-50 to-emerald-100/50 px-4 sm:px-6 py-3 sm:py-4 border-b border-emerald-200/50 flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 sm:gap-3">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                    <h3 class="font-bold text-emerald-800 text-sm sm:text-base">Métricas Históricas</h3>
+                                </div>
+                                <span class="text-[10px] sm:text-xs bg-emerald-200 text-emerald-800 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium">{{ $arbol->metricasHistoricas->count() }}</span>
+                            </div>
                             <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
+                                <table class="min-w-full divide-y divide-stone-200">
+                                    <thead class="bg-stone-50/80">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diámetro (cm)</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Altura (m)</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rendimiento</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notas</th>
+                                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-stone-500 uppercase tracking-wider">Fecha</th>
+                                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-stone-500 uppercase tracking-wider">Métrica</th>
+                                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-stone-500 uppercase tracking-wider">Valor</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach($arbol->metricasHistoricas as $metrica)
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $metrica->fecha_medicion->format('d/m/Y') }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ number_format($metrica->diametro_cm ?? 0, 1) }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ number_format($metrica->altura_m ?? 0, 1) }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ number_format($metrica->rendimiento_kg ?? 0, 2) }} kg</td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $metrica->notas ?? '' }}</td>
+                                    <tbody class="divide-y divide-stone-200 bg-white">
+                                        @forelse($arbol->metricasHistoricas as $metrica)
+                                            <tr class="hover:bg-emerald-50/50 transition-colors duration-150 even:bg-stone-50/30">
+                                                <td class="px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-stone-800">{{ $metrica->fecha_medicion->format('d/m/Y') }}</td>
+                                                <td class="px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-stone-600">{{ $metrica->tipo_metrica }}</td>
+                                                <td class="px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm font-medium text-emerald-700">{{ $metrica->valor }}</td>
                                             </tr>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="px-3 sm:px-6 py-6 sm:py-10 text-center">
+                                                    <div class="flex flex-col items-center text-stone-400">
+                                                        <svg class="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                                        <span class="text-xs sm:text-sm">No hay métricas registradas.</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
-                        @else
-                            <div class="text-center py-8 text-gray-400">
-                                <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                <p class="mt-2">No hay métricas registradas para este árbol.</p>
-                            </div>
-                        @endif
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            {{-- Panel: Historial fitosanitario --}}
-            <div x-show="tab === 'fitosanitario'" class="mt-6">
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-                        <h3 class="text-lg font-medium text-gray-800 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                            Historial fitosanitario
-                        </h3>
-                        <span class="text-sm text-gray-500">{{ $arbol->historialFitosanitario->count() }} registros</span>
-                    </div>
-                    <div class="p-6">
-                        @if($arbol->historialFitosanitario->count())
+                    <!-- SECCIÓN: Historial Fitosanitario (Responsive) -->
+                    <div class="animate-fade-in-up delay-300">
+                        <div class="bg-white rounded-xl sm:rounded-2xl shadow-md border border-amber-100/80 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                            <div class="bg-gradient-to-r from-amber-50 to-amber-100/50 px-4 sm:px-6 py-3 sm:py-4 border-b border-amber-200/50 flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 sm:gap-3">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    <h3 class="font-bold text-amber-800 text-sm sm:text-base">Historial Fitosanitario</h3>
+                                </div>
+                                <span class="text-[10px] sm:text-xs bg-amber-200 text-amber-800 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium">{{ $arbol->historialFitosanitario->count() }}</span>
+                            </div>
                             <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
+                                <table class="min-w-full divide-y divide-stone-200">
+                                    <thead class="bg-stone-50/80">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo de evento</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gravedad</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tratamiento</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notas</th>
+                                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-stone-500 uppercase tracking-wider">Fecha</th>
+                                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-stone-500 uppercase tracking-wider">Agente</th>
+                                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-stone-500 uppercase tracking-wider">Severidad</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach($arbol->historialFitosanitario as $registro)
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $registro->fecha_evento->format('d/m/Y') }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $registro->tipo_evento ?? 'N/A' }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        @if($registro->gravedad == 'baja') bg-green-100 text-green-800
-                                                        @elseif($registro->gravedad == 'media') bg-yellow-100 text-yellow-800
-                                                        @else bg-red-100 text-red-800 @endif">
-                                                        {{ ucfirst($registro->gravedad ?? 'desconocida') }}
+                                    <tbody class="divide-y divide-stone-200 bg-white">
+                                        @forelse($arbol->historialFitosanitario as $registro)
+                                            <tr class="hover:bg-amber-50/50 transition-colors duration-150 even:bg-stone-50/30">
+                                                <td class="px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-stone-800">{{ $registro->fecha_hallazgo->format('d/m/Y') }}</td>
+                                                <td class="px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-stone-600">{{ $registro->agente_causal }}</td>
+                                                <td class="px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm">
+                                                    @php
+                                                        $severityColors = [
+                                                            'alta' => 'bg-red-100 text-red-800 border-red-200',
+                                                            'media' => 'bg-amber-100 text-amber-800 border-amber-200',
+                                                            'baja' => 'bg-green-100 text-green-800 border-green-200',
+                                                        ];
+                                                        $class = $severityColors[$registro->severidad] ?? 'bg-gray-100 text-gray-700 border-gray-200';
+                                                    @endphp
+                                                    <span class="inline-flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase border {{ $class }}">
+                                                        {{ $registro->severidad }}
                                                     </span>
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $registro->tratamiento ?? 'N/A' }}</td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">{{ $registro->notas ?? '' }}</td>
                                             </tr>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="px-3 sm:px-6 py-6 sm:py-10 text-center">
+                                                    <div class="flex flex-col items-center text-stone-400">
+                                                        <svg class="w-6 h-6 sm:w-8 sm:h-8 mb-1 sm:mb-2 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                                        <span class="text-xs sm:text-sm">Árbol sano. Sin reportes fitosanitarios.</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
-                        @else
-                            <div class="text-center py-8 text-gray-400">
-                                <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                <p class="mt-2">No hay registros fitosanitarios para este árbol.</p>
-                            </div>
-                        @endif
+                        </div>
                     </div>
+
                 </div>
             </div>
 
-            {{-- Panel: Eventos de campo --}}
-            <div x-show="tab === 'eventos'" class="mt-6">
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-                        <h3 class="text-lg font-medium text-gray-800 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Eventos de campo asociados
-                        </h3>
-                        <span class="text-sm text-gray-500">{{ $arbol->eventos->count() }} eventos</span>
-                    </div>
-                    <div class="p-6">
-                        @if($arbol->eventos->count())
-                            <div class="grid grid-cols-1 gap-4">
-                                @foreach($arbol->eventos as $evento)
-                                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                                        <div class="flex flex-col md:flex-row md:items-center justify-between">
-                                            <div>
-                                                <h4 class="text-md font-medium text-gray-800">{{ $evento->nombre ?? 'Evento' }}</h4>
-                                                <p class="text-sm text-gray-500">{{ $evento->fecha_inicio ? $evento->fecha_inicio->format('d/m/Y') : 'Fecha no definida' }}</p>
-                                                @if($evento->pivot->novedad_arbol)
-                                                    <p class="text-sm text-gray-700 mt-1"><span class="font-semibold">Novedad:</span> {{ $evento->pivot->novedad_arbol }}</p>
-                                                @endif
-                                                @if($evento->pivot->nota_individual)
-                                                    <p class="text-sm text-gray-600"><span class="font-semibold">Nota:</span> {{ $evento->pivot->nota_individual }}</p>
-                                                @endif
-                                            </div>
-                                            <div class="mt-2 md:mt-0">
-                                                <a href="{{ route('eventos_campo.show', $evento) }}" class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                                    Ver evento
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <div class="text-center py-8 text-gray-400">
-                                <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <p class="mt-2">Este árbol no está asociado a ningún evento de campo.</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Botones de acción --}}
-        <div class="mt-8 flex flex-wrap gap-4">
-            <a href="{{ route('arboles.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Volver al listado
-            </a>
-          
         </div>
     </div>
-
-@push('scripts')
-    {{-- Si usas Leaflet, puedes agregar el código aquí --}}
-    {{-- 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mapElement = document.getElementById('map');
-            if (mapElement) {
-                const lat = parseFloat(mapElement.dataset.lat);
-                const lng = parseFloat(mapElement.dataset.lng);
-                // Inicializar mapa...
-            }
-        });
-    </script>
-    --}}
-@endpush
 </x-app-layout>

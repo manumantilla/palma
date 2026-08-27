@@ -22,3 +22,14 @@ Route::prefix('grafo')->group(function () {
 });
 // routes/api.php
 Route::get('/grafo/extent', [ArbolGrafoController::class, 'extent']);
+
+
+use App\Http\Controllers\RecepcionCampoController;
+
+Route::middleware('auth:sanctum')->prefix('v1/cosecha')->group(function () {
+    // Descarga de catálogos comprimidos en JSON
+    Route::get('/sesion/{sesion_cosecha_id}/datos-offline', [RecepcionCampoController::class, 'prepararOffline']);
+    
+    // Ingesta idempotente en segundo plano
+    Route::post('/sincronizar-batch', [RecepcionCampoController::class, 'store']);
+});

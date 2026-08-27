@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('mermas', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('operario_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignUuid('recepcion_campo_id')->nullable()->constrained('recepciones_campo')->onDelete('set null');
             $table->foreignUuid('contenedor_id')->nullable()->constrained('contenedores')->onDelete('set null');
-            $table->dateTime('fecha_registro')->useCurrent();
+            $table->date('fecha_registro');
             $table->decimal('kilos_merma', 10, 2);
             $table->enum('motivo', [
                     'daño_mecanico',      // Golpes, magulladuras, cortes

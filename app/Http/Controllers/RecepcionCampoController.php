@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\RecepcionCampo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Models\SesionCosecha;
+use App\Models\Trabajador;
+use App\Models\LoteZonaManejo;
+use App\Models\Arbol;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class RecepcionCampoController extends Controller
@@ -45,47 +50,69 @@ class RecepcionCampoController extends Controller
     }
 
     /**
-     * Sincroniza o almacena las recepciones creadas en el cliente offline.
-     * Soporta tanto la creación unitaria como el envío masivo al recuperar señal.
+     * Muestra la vista con todo el paquete de datos necesario para almacenar en LocalStorage/IndexedDB.
+     */
+    public function prepararOffline($sesion)
+    {
+        $sesion = SesionCosecha::with(['lote', 'cicloProductivo'])->findOrFail($sesion);
+
+        // Carga de catálogo liviano para trabajo en campo sin internet
+        $trabajadores = Trabajador::where('activo', true)
+            ->select('id', 'nombre', 'apellido', 'documento_identidad')
+            ->get();
+
+        $zonas = LoteZonaManejo::where('lote_id', $sesion->lote_id)
+            ->select('id', 'nombre', 'codigo')
+            ->get();
+
+        $arboles = Arbol::where('lote_id', $sesion->lote_id)
+            ->select('id', 'codigo', 'lote_zona_id')
+            ->get();
+
+        return view('cosecha.preparar_offline', compact('sesion', 'trabajadores', 'zonas', 'arboles'));
+    }
+
+    /**
+     * Procesa la sincronización de recepciones y redirige con mensajes de estado.
      */
     public function store(Request $request)
     {
-        // Soportamos que nos envíen una sola recepción o un array de ellas (Bulk Sync)
         $isBatch = $request->has('recepciones') && is_array($request->input('recepciones'));
-        $dataToValidate = $isBatch ? $request->input('recepciones') : [$request->all()];
+        $rawCollection = $isBatch ? $request->input('recepciones') : [$request->all()];
 
         $validatedData = [];
         $errors = [];
 
-        // Validamos cada registro individualmente
-        foreach ($dataToValidate as $index => $item) {
+        foreach ($rawCollection as $index => $item) {
             $validator = Validator::make($item, [
-                'id' => 'required|uuid', // El UUID DEBE venir generado por el cliente offline
+                'id' => 'required|uuid',
                 'sesion_cosecha_id' => 'required|exists:sesiones_cosecha,id',
                 'lote_zona_id' => 'nullable|exists:lotes_zonas_manejo,id',
                 'trabajador_id' => 'required|exists:trabajadores,id',
                 'arbol_id' => 'nullable|exists:arboles,id',
                 'peso_bruto' => 'required|numeric|min:0.01',
                 'tara_costal' => 'required|numeric|min:0',
-                'peso_neto' => 'required|numeric|min:0', // Calculado en front, verificado aquí
-                'hora_pesaje' => 'required|date_format:Y-m-d H:i:s',
+                'peso_neto' => 'required|numeric|min:0',
+                'peso_merma_campo' => 'nullable|numeric|min:0', // Lógica de mermas agregada
+                'hora_pesaje' => 'required|date',
                 'costal_codigo' => 'nullable|string|max:100',
                 'numero_corte' => 'nullable|integer|min:1',
-                'client_updated_at' => 'required|date_format:Y-m-d H:i:s',
+                'latitude' => 'nullable|numeric',
+                'longitude' => 'nullable|numeric',
+                'foto_base64' => 'nullable|string',
+                'client_updated_at' => 'required|date',
             ]);
 
             if ($validator->fails()) {
-                $errors[$index] = $validator->errors();
+                $errors[] = "Fila #" . ($index + 1) . ": " . implode(', ', $validator->errors()->all());
                 continue;
             }
 
-            // Validación lógica de negocio: Peso Neto Real
             $datos = $validator->validated();
-            $pesoNetoReal = $datos['peso_bruto'] - $datos['tara_costal'];
-            
-            // Tolerancia pequeña por redondeos en JS del celular/dispositivo (ej: 0.05 kg)
-            if (abs($datos['peso_neto'] - $pesoNetoReal) > 0.05) {
-                $errors[$index] = ["peso_neto" => ["El peso neto enviado ({$datos['peso_neto']}) no coincide con el cálculo bruto - tara."]];
+
+            // Verificación matemática de peso neto
+            if (abs($datos['peso_neto'] - ($datos['peso_bruto'] - $datos['tara_costal'])) > 0.05) {
+                $errors[] = "Fila #" . ($index + 1) . ": El peso neto no coincide con Bruto - Tara.";
                 continue;
             }
 
@@ -93,22 +120,34 @@ class RecepcionCampoController extends Controller
         }
 
         if (!empty($errors)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Errores de validación en los datos enviados.',
-                'errors' => $errors
-            ], 422);
+            return redirect()->back()
+                ->withInput()
+                ->with('error_batch', $errors);
         }
 
-        // Procesamos la inserción/actualización idempotente mediante una transacción
         DB::beginTransaction();
         try {
-            $sincronizadosIds = [];
+            $procesados = 0;
 
             foreach ($validatedData as $item) {
-                // Usamos updateOrCreate para que sea idempotente (si la sincronización falla a mitad de camino y reintentan)
-                $recepcion = RecepcionCampo::updateOrCreate(
-                    ['id' => $item['id']], // Busca por el UUID del cliente
+                // Procesamiento de foto tomada offline en Base64
+                $rutaFoto = null;
+                if (!empty($item['foto_base64'])) {
+                    $imageName = 'recepcion_' . $item['id'] . '_' . time() . '.jpg';
+                    $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $item['foto_base64']));
+                    Storage::disk('public')->put('cosechas/' . $imageName, $imageData);
+                    $rutaFoto = 'cosechas/' . $imageName;
+                }
+
+                // Generación de punto geométrico PostGIS si existen coordenadas
+                $geometriaPoint = null;
+                if (isset($item['latitude']) && isset($item['longitude'])) {
+                    $geometriaPoint = DB::raw("ST_SetSRID(ST_MakePoint({$item['longitude']}, {$item['latitude']}), 4326)");
+                }
+
+                // Inserción idempotente
+                RecepcionCampo::updateOrCreate(
+                    ['id' => $item['id']],
                     [
                         'sesion_cosecha_id' => $item['sesion_cosecha_id'],
                         'lote_zona_id'      => $item['lote_zona_id'],
@@ -117,32 +156,28 @@ class RecepcionCampoController extends Controller
                         'peso_bruto'        => $item['peso_bruto'],
                         'tara_costal'       => $item['tara_costal'],
                         'peso_neto'         => $item['peso_neto'],
+                        'peso_merma_campo'  => $item['peso_merma_campo'] ?? 0,
                         'hora_pesaje'       => $item['hora_pesaje'],
                         'costal_codigo'     => $item['costal_codigo'],
                         'numero_corte'      => $item['numero_corte'],
+                        'foto_evidencia'    => $rutaFoto ?? DB::raw('foto_evidencia'),
+                        'ubicacion_gps'     => $geometriaPoint,
                         'client_updated_at' => $item['client_updated_at'],
-                        'synced_at'         => now(), // Marcamos la hora exacta de llegada al servidor
+                        'synced_at'         => now(),
                     ]
                 );
-
-                $sincronizadosIds[] = $recepcion->id;
+                $procesados++;
             }
 
             DB::commit();
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Sincronización exitosa.',
-                'synced_ids' => $sincronizadosIds
-            ], 200);
+            return redirect()->route('cosecha.preparar_offline', $validatedData[0]['sesion_cosecha_id'])
+                ->with('success', "¡Sincronización exitosa! Se guardaron {$procesados} pesajes correctamente.");
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'status' => 'critical_error',
-                'message' => 'Error al guardar los registros en el servidor.',
-                'error' => $e->getMessage()
-            ], 500);
+            return redirect()->back()
+                ->with('error', 'Error grave al guardar en servidor: ' . $e->getMessage());
         }
     }
 }
