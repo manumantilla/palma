@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer('duracion_dias_desde_inicio')->nullable(); // días desde siembra (transitorio) o desde brotación (perenne)
             $table->integer('duracion_dias_estimada'); // cuánto dura esta etapa
             $table->text('descripcion')->nullable();
-            $table->timestamps();
+            $table->timestamps();   
         });
         Schema::create('labores_plantilla', function (Blueprint $table) {
             $table->id();

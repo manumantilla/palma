@@ -43,4 +43,13 @@ class TipoEvento extends Model
     {
         return $this->hasMany(LaborPlantilla::class, 'tipo_evento_id');
     }
+    public function recomendaciones(): HasMany
+    {
+        return $this->hasMany(FenologiaRecomendacion::class, 'tipo_evento_id');
+    }
+
+    public function eventosCampo(): HasMany
+    {
+        return $this->hasMany(EventoCampo::class, 'tipo_evento_id');
+    }
 }

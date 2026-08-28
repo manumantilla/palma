@@ -63,11 +63,24 @@ return new class extends Migration
             $table->geometry('geometria_zona_momento', 'POLYGON', 4326)->nullable();
             $table->timestamps();
         });
+        Schema::create('ciclo_etapas_historial', function (Blueprint $table){
+            $table->id();
+            $table->foreignId('ciclo_productivo_id')->constrained('ciclos_productivos')->onDelete('cascade');
+            $table->foreignId('fenologia_etapa_id')->constrained('fenologia_etapas')->onDelete('cascade');
+            $table->date('fecha_inicio_estimada');
+            $table->date('fecha_inicio_real')->nullable();
+            $table->date('fecha_fin_estimada');
+            $table->date('fecha_fin_real')->nullable();
+            $table->enum('estado', ['pendiente', 'en_progreso', 'completada', 'omitida'])->default('pendiente');
+            $table->timestamps();
+        });
     }
 
 
     public function down(): void
     {
         Schema::dropIfExists('ciclos_productivos');
+        Schema::dropIfExists('ciclo_productivo_zona_manejo');
+        Schema::dropIfExists('ciclo_etapas_historial'); 
     }
 };

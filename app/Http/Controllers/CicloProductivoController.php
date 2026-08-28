@@ -12,8 +12,17 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
+//Service
+use App\Services\CicloProductivoService;
+
 class CicloProductivoController extends Controller
 {
+    protected CicloProductivoService $cicloService;
+
+    public function __construct(CicloProductivoService $cicloService)
+    {
+        $this->cicloService = $cicloService;
+    }
     /**
      * Despliega el listado aplicando filtros avanzados de ingeniería agronómica
      */
@@ -107,12 +116,8 @@ class CicloProductivoController extends Controller
         $validated['es_organico_certificado'] = $request->has('es_organico_certificado');
 
         try {
-            DB::beginTransaction();
 
-            // Los campos monetarios nacen en cero y las plantas_por_hectarea_real se autocalculan en el modelo
-            CicloProductivo::create($validated);
-
-            DB::commit();
+            $ciclo = $this->cicloService->crearCicloConCronograma($validated);
 
             return redirect()->route('ciclos-productivos.index')
                 ->with('success', 'Campaña y ciclo productivo aperturado con éxito.');
@@ -129,6 +134,23 @@ class CicloProductivoController extends Controller
                 ->withErrors(['database_error' => 'Ocurrió un error interno en el servidor. No se pudo guardar el ciclo productivo.'])
                 ->withInput();
         }
+    }
+
+    public function cambiarEtapa(Request $request, $cicloId)
+    {
+        $validados = $request->validate([
+            'ciclo_etapa_historial_id' => 'required|exists:ciclo_etapas_historial,id',
+            'fecha_inicio_real'        => 'required|date',
+        ]);
+
+        $etapa = $this->cicloService->avanzarEtapa(
+            $cicloId, 
+            $validados['ciclo_etapa_historial_id'], 
+            $validados['fecha_inicio_real']
+        );
+
+        return redirect()->route('ciclos-productivos.show', $cicloId)
+            ->with('success', "Etapa '{$etapa->etapa->nombre}' iniciada correctamente el {$etapa->fecha_inicio_real->format('d/m/Y')}.");
     }
 
     public function obtenerGrafoYEstadisticas(CicloProductivo $cicloProductivo): JsonResponse
