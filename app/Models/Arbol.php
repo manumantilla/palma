@@ -166,4 +166,7 @@ class Arbol extends Model
         )->withPivot(['distancia_metros', 'probabilidad_contagio_base', 'tipo_contacto'])
         ->withTimestamps();
     }
+
+    // Relacion con Fenologia
+    
 }

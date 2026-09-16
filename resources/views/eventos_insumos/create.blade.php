@@ -36,7 +36,8 @@
         </div>
     @endif
 
-    <form action="{{ route('eventos_campo.insumos.store', $evento->id) }}" method="POST">
+    <!-- Formulario con validación previa -->
+    <form @submit.prevent="validateAndSubmit()" action="{{ route('eventos_campo.insumos.store', $evento->id) }}" method="POST">
         @csrf
 
         <div class="space-y-6">
@@ -250,7 +251,6 @@
             insumosAgregados: [],
 
             init() {
-                // Iniciar con un item de insumo por defecto
                 this.addInsumo();
             },
 
@@ -270,10 +270,15 @@
             },
 
             onInsumoChange(iIndex) {
-                // Al cambiar el insumo resetear sus lotes asociados
-                this.insumosAgregados[iIndex].lotes = [];
-                // Agregar automáticamente el primer lote disponible si existe
-                this.addLote(iIndex);
+                const insumoRow = this.insumosAgregados[iIndex];
+                insumoRow.lotes = [];
+                const lotesDisp = this.getLotesDisponibles(insumoRow.insumo_id);
+                if (lotesDisp.length > 0) {
+                    this.addLote(iIndex);
+                    const loteRow = insumoRow.lotes[0];
+                    loteRow.lote_insumo_id = lotesDisp[0].id;
+                    this.onLoteChange(iIndex, 0);
+                }
             },
 
             getInsumoNombre(insumoId) {
@@ -290,9 +295,7 @@
             addLote(iIndex) {
                 const insumoId = this.insumosAgregados[iIndex].insumo_id;
                 const lotesDisp = this.getLotesDisponibles(insumoId);
-                
                 if (lotesDisp.length === 0) return;
-
                 this.insumosAgregados[iIndex].lotes.push({
                     lote_insumo_id: '',
                     cantidad: '',
@@ -309,11 +312,8 @@
                 const loteId = this.insumosAgregados[iIndex].lotes[lIndex].lote_insumo_id;
                 const insumoId = this.insumosAgregados[iIndex].insumo_id;
                 const lotesDisp = this.getLotesDisponibles(insumoId);
-                
                 const loteEncontrado = lotesDisp.find(l => l.id == loteId);
-
                 if (loteEncontrado) {
-                    // Mapeo con el campo corregido `cantidad_actual`
                     this.insumosAgregados[iIndex].lotes[lIndex].costo_unitario = parseFloat(loteEncontrado.costo_unitario) || 0;
                     this.insumosAgregados[iIndex].lotes[lIndex].stock_max = parseFloat(loteEncontrado.cantidad_actual) || 0;
                 } else {
@@ -345,6 +345,39 @@
                     currency: 'COP',
                     minimumFractionDigits: 2
                 }).format(amount || 0);
+            },
+
+            // Función de validación antes de enviar
+            validateAndSubmit() {
+                let valid = true;
+                for (let ins of this.insumosAgregados) {
+                    if (!ins.insumo_id) {
+                        alert('Selecciona un insumo en todas las filas.');
+                        valid = false;
+                        break;
+                    }
+                    if (ins.lotes.length === 0) {
+                        alert(`El insumo "${this.getInsumoNombre(ins.insumo_id)}" no tiene lotes asignados.`);
+                        valid = false;
+                        break;
+                    }
+                    for (let lote of ins.lotes) {
+                        if (!lote.lote_insumo_id || !lote.cantidad || parseFloat(lote.cantidad) <= 0) {
+                            alert(`Cantidad inválida en el lote del insumo "${this.getInsumoNombre(ins.insumo_id)}".`);
+                            valid = false;
+                            break;
+                        }
+                        if (parseFloat(lote.cantidad) > parseFloat(lote.stock_max)) {
+                            alert(`La cantidad extraída (${lote.cantidad}) excede el stock disponible (${lote.stock_max}) para el lote seleccionado.`);
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (!valid) break;
+                }
+                if (valid) {
+                    this.$el.submit();
+                }
             }
         }
     }

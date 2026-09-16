@@ -54,9 +54,7 @@
                 <a href="{{ route('ordenes_cosecha.edit', $ordenesCosecha) }}" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-full shadow-md transition-all duration-200 flex items-center gap-2 text-sm font-medium">
                     <i class="fas fa-edit"></i> Editar orden
                 </a>
-                <a href="{{ route('sesiones_cosecha.create', $ordenesCosecha) }}" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-full shadow-md transition-all duration-200 flex items-center gap-2 text-sm font-medium">
-                    <i class="fas fa-edit"></i> Crear Sesion Cosecha
-                </a>
+               
                 <form action="{{ route('ordenes_cosecha.destroy', $ordenesCosecha) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de eliminar esta orden?')">
                     @csrf
                     @method('DELETE')

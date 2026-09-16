@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class SesionCosecha extends Model
 {
     use HasFactory;
+    use HasUuids; 
     protected $table = 'sesiones_cosecha';
 
     protected $fillable = [
@@ -38,19 +39,25 @@ class SesionCosecha extends Model
     {
         return $this->hasOneThrough(
             CicloProductivo::class,
-            SesionCosecha::class,
-            'id',
-            'id',
-            'sesion_cosecha_id',
-            'orden_cosecha_id'
+            OrdenCosecha::class,
+            'id',                  
+            'id',                  
+            'orden_cosecha_id',    
+            'ciclo_productivo_id'  
         );
     }
 
-    // Manera mas limpia 
-    // public function getCicloProductivoAttribute()
-    // {
-    //     return $this->sesionCosecha?->ordenCosecha?->cicloProductivo;
-    // }
+    public function lote()
+    {
+        return $this->hasOneThrough(
+            Lote::class,
+            OrdenCosecha::class,
+            'id',              
+            'id',               
+            'orden_cosecha_id',
+            'lote_cultivo_id'   
+        );
+    }
 
     public function ordenCosecha(): BelongsTo
     {

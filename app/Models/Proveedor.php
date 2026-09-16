@@ -1,30 +1,25 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Proveedor extends Model
 {
-       protected $table = 'proveedores';
-    
+    use SoftDeletes;
+
+    protected $table = 'proveedores';
+
     protected $fillable = [
-        'nombre',
-        'nit',
-        'telefono',
-        'email',
-        'direccion',
-        'tiene_credito',
-        'cuente_banco_1',
-        'cuente_banco_2',
+        'nombre', 'nit', 'categoria_principal', 'activo',
+        'contacto_principal', 'telefono', 'email', 'direccion',
+        'tiene_credito', 'dias_plazo', 'limite_credito',
+        'banco_1', 'cuenta_bancaria_1', 'banco_2', 'cuenta_bancaria_2', 'notas'
     ];
-    
-    protected $casts = [
-        'tiene_credito' => 'boolean',
-    ];
-    
-    public function compras(): HasMany
+
+    public function lotesInsumos(): HasMany
     {
-        return $this->hasMany(Compra::class, 'proveedor_id');
+        return $this->hasMany(LoteInsumo::class, 'proveedor_id');
     }
 }

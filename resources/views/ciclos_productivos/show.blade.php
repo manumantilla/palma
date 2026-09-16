@@ -7,8 +7,8 @@
             <div class="p-6 sm:p-8 relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
                     <div class="flex items-center gap-3">
-                        <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-amber-300 uppercase tracking-widest">
-                            Campañaa: {{ $cicloProductivo->nombre_campana ?? 'Sin Nombre' }}
+                        <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-lg font-bold text-amber-300 uppercase tracking-widest">
+                            Campaña: {{ $cicloProductivo->nombre_campana ?? 'Sin Nombre' }}
                         </span>
                         <span class="text-xs text-stone-200 font-medium">| ID #{{ $cicloProductivo->id }}</span>
                     </div>
@@ -205,9 +205,10 @@
                     <a href="{{ route('ordenes_cosecha.create', ['ciclo' => $cicloProductivo->id ]) }}" class="px-3 py-2 border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 rounded-xl text-center font-semibold text-xs transition-colors shadow-sm">
                         Crear Nueva Orden de Cosecha
                     </a>
-                    <a href="{{ route('.create', ['ciclo' => $cicloProductivo->id ]) }}" class="px-3 py-2 border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 rounded-xl text-center font-semibold text-xs transition-colors shadow-sm">
-                        Arboles
+                    <a href="{{ route('eventos_campo.create_cultivo', ['ciclo' => $cicloProductivo->id ]) }}" class="px-3 py-2 border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 rounded-xl text-center font-semibold text-xs transition-colors shadow-sm">
+                        Crear Nuevo Evento 
                     </a>
+            
                         <button type="button" class="px-3 py-2 border border-stone-300 bg-white text-amber-700 hover:bg-amber-50 rounded-xl text-center font-bold text-xs transition-colors shadow-sm">
                             📝 Editar Ciclo
                         </button>

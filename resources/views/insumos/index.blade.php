@@ -21,6 +21,11 @@
                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
                             <i class="fas fa-plus mr-2"></i> Nuevo Insumo
                         </a>
+                           <a href="{{ route('lotes-insumo.create') }}" 
+                           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                            <i class="fas fa-plus mr-2"></i> Nuevo Lote de Insumo
+                        </a>
+
                     </div>
                     
                     <!-- Filtros -->

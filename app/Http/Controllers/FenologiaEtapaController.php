@@ -1,85 +1,109 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Cultivo;
 use App\Models\FenologiaEtapa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class FenologiaEtapaController extends Controller
 {
-    /**
-     * Muestra el formulario para crear una etapa vinculada a un cultivo.
-     */
-    public function create(Request $request)
+    public function index()
     {
-        // Forzamos a que venga un cultivo_id válido por la URL
-        $cultivo = Cultivo::findOrFail($request->get('cultivo_id'));
-
-        return view('fenologia_etapas.form', compact('cultivo'));
+        try {
+            $etapas = FenologiaEtapa::orderBy('orden', 'asc')->get();
+            return view('fenologia_etapa.index', compact('etapas'));
+        } catch (Exception $e) {
+            Log::error('Error al listar etapas fenológicas: ' . $e->getMessage());
+            return redirect()->route('dashboard')->with('error', 'Ocurrió un error al cargar las etapas.');
+        }
     }
 
-    /**
-     * Guarda la nueva etapa fenológica.
-     */
+    public function create()
+    {
+        return view('fenologia_etapa.create');
+    }
+
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'cultivo_id'                 => 'required|exists:cultivos,id',
-            'nombre'                     => 'required|string|max:255',
-            'orden'                      => 'required|integer|min:1',
-            'duracion_dias_desde_inicio' => 'nullable|integer|min:0',
-            'duracion_dias_estimada'     => 'required|integer|min:1',
-            'descripcion'                => 'nullable|string',
-        ]);
+        try {
+            $validated = $request->validate([
+                'cultivo_id' => 'required|exists:cultivos,id',
+                'nombre' => 'required|string|max:255',
+                'orden' => 'required|integer',
+                'duracion_dias_desde_inicio' => 'nullable|integer',
+                'duracion_dias_estimada' => 'required|integer',
+                'descripcion' => 'nullable|string',
+            ]);
 
-        FenologiaEtapa::create($validated);
+            $etapa = FenologiaEtapa::create($validated);
+            Log::info("Etapa fenológica creada exitosamente: ID {$etapa->id}");
 
-        // Redirige directo al detalle del cultivo, directo a la pestaña que corresponde
-        return redirect()->route('cultivos.show', $validated['cultivo_id'])
-            ->with('success', '¡Etapa fenológica agregada con éxito!');
+            return redirect()->route('fenologia-etapa.index')->with('success', 'Etapa creada correctamente.');
+        } catch (Exception $e) {
+            Log::error('Error al crear etapa fenológica: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'No se pudo crear la etapa. Verifique los datos.');
+        }
     }
 
-    /**
-     * Muestra el formulario para editar.
-     */
-    public function edit(FenologiaEtapa $fenologiaEtapa)
+    public function show($id)
     {
-        $cultivo = $fenologiaEtapa->cultivo;
-        return view('fenologia_etapas.form', [
-            'etapa'   => $fenologiaEtapa,
-            'cultivo' => $cultivo
-        ]);
+        try {
+            $etapa = FenologiaEtapa::findOrFail($id);
+            return view('fenologia_etapa.show', compact('etapa'));
+        } catch (Exception $e) {
+            Log::error("Error al buscar etapa fenológica ID {$id}: " . $e->getMessage());
+            return redirect()->route('fenologia-etapa.index')->with('error', 'Etapa no encontrada.');
+        }
     }
 
-    /**
-     * Actualiza la etapa.
-     */
-    public function update(Request $request, FenologiaEtapa $fenologiaEtapa)
+    public function edit($id)
     {
-        $validated = $request->validate([
-            'nombre'                     => 'required|string|max:255',
-            'orden'                      => 'required|integer|min:1',
-            'duracion_dias_desde_inicio' => 'nullable|integer|min:0',
-            'duracion_dias_estimada'     => 'required|integer|min:1',
-            'descripcion'                => 'nullable|string',
-        ]);
-
-        $fenologiaEtapa->update($validated);
-
-        return redirect()->route('cultivos.show', $fenologiaEtapa->cultivo_id)
-            ->with('success', '¡Etapa fenológica actualizada!');
+        try {
+            $etapa = FenologiaEtapa::findOrFail($id);
+            return view('fenologia_etapa.edit', compact('etapa'));
+        } catch (Exception $e) {
+            Log::error("Error al buscar etapa fenológica para edición ID {$id}: " . $e->getMessage());
+            return redirect()->route('fenologia-etapa.index')->with('error', 'Etapa no encontrada.');
+        }
     }
 
-    /**
-     * Elimina la etapa.
-     */
-    public function destroy(FenologiaEtapa $fenologiaEtapa)
+    public function update(Request $request, $id)
     {
-        $cultivoId = $fenologiaEtapa->cultivo_id;
-        $fenologiaEtapa->delete();
+        try {
+            $validated = $request->validate([
+                'cultivo_id' => 'required|exists:cultivos,id',
+                'nombre' => 'required|string|max:255',
+                'orden' => 'required|integer',
+                'duracion_dias_desde_inicio' => 'nullable|integer',
+                'duracion_dias_estimada' => 'required|integer',
+                'descripcion' => 'nullable|string',
+            ]);
 
-        return redirect()->route('cultivos.show', $cultivoId)
-            ->with('success', 'Etapa eliminada correctamente.');
+            $etapa = FenologiaEtapa::findOrFail($id);
+            $etapa->update($validated);
+            
+            Log::info("Etapa fenológica actualizada exitosamente: ID {$etapa->id}");
+
+            return redirect()->route('fenologia-etapa.index')->with('success', 'Etapa actualizada correctamente.');
+        } catch (Exception $e) {
+            Log::error("Error al actualizar etapa fenológica ID {$id}: " . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'No se pudo actualizar la etapa.');
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $etapa = FenologiaEtapa::findOrFail($id);
+            $etapa->delete();
+            
+            Log::info("Etapa fenológica eliminada: ID {$id}");
+
+            return redirect()->route('fenologia-etapa.index')->with('success', 'Etapa eliminada correctamente.');
+        } catch (Exception $e) {
+            Log::error("Error al eliminar etapa fenológica ID {$id}: " . $e->getMessage());
+            return redirect()->route('fenologia-etapa.index')->with('error', 'No se pudo eliminar la etapa.');
+        }
     }
 }

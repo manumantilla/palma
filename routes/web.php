@@ -1,8 +1,5 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
-
-// --- IMPORTACIONES DE CONTROLADORES ---
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ArbolApiController;
 use App\Http\Controllers\CultivoController;
@@ -10,6 +7,8 @@ use App\Http\Controllers\RecepcionCampoController;
 use App\Http\Controllers\SesionCosechaController;
 use App\Http\Controllers\FenologiaEtapaController;
 use App\Http\Controllers\TipoEventoController;
+use App\Http\Controllers\CicloEtapaHistorialController;
+use App\Http\Controllers\FenologiaRecomendacionController;
 use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\GastoController;
@@ -18,12 +17,13 @@ use App\Http\Controllers\CicloProductivoController;
 use App\Http\Controllers\CategoriaInsumoController;
 use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\LoteInsumoController;
+use App\Http\Controllers\EventoInsumoController;
+use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\LoteController;
 use App\Http\Controllers\OrdenCosechaController;
 use App\Http\Controllers\ArbolController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ArbolGrafoController;
-
 use App\Http\Controllers\LoteZonaManejoController;
 // --- RUTAS PÚBLICAS ---
 Route::get('/', function () {
@@ -38,7 +38,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     // Catálogos y Recursos Básicos
     Route::resource('cultivos', CultivoController::class);
-    Route::resource('fenologia-etapas', FenologiaEtapaController::class)->except(['index', 'show']);
     Route::resource('clientes', ClienteController::class);
     Route::resource('trabajadores', TrabajadorController::class);
     Route::resource('bitacoras', BitacoraController::class);
@@ -63,6 +62,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::resource('insumos', InsumoController::class);
     Route::resource('lotes-insumo', LoteInsumoController::class);
     Route::resource('lote-zonas-manejo', LoteZonaManejoController::class);
+    Route::get('/{evento}/insumos/create', [EventoInsumoController::class, 'create'])->name('eventos_campo.insumos.create');
+    // POST /eventos-campo/{evento}/insumos
+    Route::post('/{evento}/insumos', [EventoInsumoController::class, 'store'])
+        ->name('eventos_campo.insumos.store');
     // Gastos
     Route::resource('gastos', GastoController::class)->except(['create', 'show']);
 
@@ -73,8 +76,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     
     Route::prefix('cosecha')->name('cosecha.')->group(function () {
         Route::get('/sesiones/{sesion}/preparar-offline', [RecepcionCampoController::class, 'prepararOffline'])->name('preparar_offline');
-        Route::post('/recepcion/store', [RecepcionCampoController::class, 'store'])->name('recepcion.store');
+        Route::post('/recepcion/store', [RecepcionCampoController::class, 'store'])->name('store');
     });
+
+    Route::get('/recepcion/{sesionCosecha}/create', [RecepcionCampoController::class, 'create'])->name('cosecha.create');
 
     // Lotes GIS
     Route::resource('lotes-gis', LoteController::class)->except(['edit', 'update', 'destroy']);
@@ -101,4 +106,46 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     
     Route::get('/ciclos/{ciclo}/nuevo-evento', [EventoController::class, 'createConCultivo'])->name('eventos_campo.create_cultivo');
     Route::post('/ciclos/{ciclo}/evento', [EventoController::class, 'storeWithCultivo'])->name('eventos_campo.store_cultivo');
+
+
+    Route::prefix('fenologia-etapa')->name('fenologia-etapa.')->group(function () {
+        Route::get('/lista', [FenologiaEtapaController::class, 'index'])->name('index');
+        Route::get('/crear', [FenologiaEtapaController::class, 'create'])->name('create');
+        Route::post('/guardar', [FenologiaEtapaController::class, 'store'])->name('store');
+        Route::get('/detalle/{id}', [FenologiaEtapaController::class, 'show'])->name('show');
+        Route::get('/editar/{id}', [FenologiaEtapaController::class, 'edit'])->name('edit');
+        Route::put('/actualizar/{id}', [FenologiaEtapaController::class, 'update'])->name('update');
+        Route::delete('/eliminar/{id}', [FenologiaEtapaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('ciclo-etapa-historial')->name('ciclo-etapa-historial.')->group(function () {
+        Route::get('/lista', [CicloEtapaHistorialController::class, 'index'])->name('index');
+        Route::get('/crear', [CicloEtapaHistorialController::class, 'create'])->name('create');
+        Route::post('/guardar', [CicloEtapaHistorialController::class, 'store'])->name('store');
+        Route::get('/detalle/{id}', [CicloEtapaHistorialController::class, 'show'])->name('show');
+        Route::get('/editar/{id}', [CicloEtapaHistorialController::class, 'edit'])->name('edit');
+        Route::put('/actualizar/{id}', [CicloEtapaHistorialController::class, 'update'])->name('update');
+        Route::delete('/eliminar/{id}', [CicloEtapaHistorialController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('fenologia-recomendacion')->name('fenologia-recomendacion.')->group(function () {
+        Route::get('/lista', [FenologiaRecomendacionController::class, 'index'])->name('index');
+        Route::get('/crear', [FenologiaRecomendacionController::class, 'create'])->name('create');
+        Route::post('/guardar', [FenologiaRecomendacionController::class, 'store'])->name('store');
+        Route::get('/detalle/{id}', [FenologiaRecomendacionController::class, 'show'])->name('show');
+        Route::get('/editar/{id}', [FenologiaRecomendacionController::class, 'edit'])->name('edit');
+        Route::put('/actualizar/{id}', [FenologiaRecomendacionController::class, 'update'])->name('update');
+        Route::delete('/eliminar/{id}', [FenologiaRecomendacionController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('proveedor')->name('proveedor.')->group(function () {
+        Route::get('/lista', [ProveedorController::class, 'index'])->name('index');
+        Route::get('/crear', [ProveedorController::class, 'create'])->name('create');
+        Route::post('/guardar', [ProveedorController::class, 'store'])->name('store');
+        Route::get('/detalle/{id}', [ProveedorController::class, 'show'])->name('show');
+        Route::get('/editar/{id}', [ProveedorController::class, 'edit'])->name('edit');
+        Route::put('/actualizar/{id}', [ProveedorController::class, 'update'])->name('update');
+        Route::delete('/eliminar/{id}', [ProveedorController::class, 'destroy'])->name('destroy');
+    });
+
 });

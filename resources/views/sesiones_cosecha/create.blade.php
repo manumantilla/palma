@@ -64,7 +64,7 @@
                                 <option value="">Seleccione un evento</option>
                                 @foreach($eventos as $evento)
                                     <option value="{{ $evento->id }}" {{ old('evento_campo_id') == $evento->id ? 'selected' : '' }}>
-                                        {{ $evento->nombre }} - {{ $evento->ubicacion ?? 'N/A' }}
+                                        {{ $evento->id }} - {{ $evento->tipo_evento_id ?? 'N/A' }}
                                     </option>
                                 @endforeach
                             </select>

@@ -12,20 +12,20 @@ class EventoInsumoController extends Controller
     /**
      * Muestra la vista para registrar el consumo de insumos de un evento
      */
-    public function create(EventoCampo $evento)
-    {
-        // Traemos los insumos que tienen stock disponible en el Kardex (lotes_insumos)
-        // Agrupamos o listamos los lotes de insumos activos con su stock > 0
-        $insumosConLotes = Insumo::whereHas('lotes', function($query) {
-                $query->where('cantidad_actual', '>', 0);
-            })
-            ->with(['lotes' => function($query) {
-                $query->where('cantidad_actual', '>', 0)->select('id', 'insumo_id', 'codigo_lote', 'cantidad_actual', 'costo_unitario');
-            }])
-            ->get();
+        public function create(EventoCampo $evento)
+        {
+            // Traemos los insumos que tienen stock disponible en el Kardex (lotes_insumos)
+            // Agrupamos o listamos los lotes de insumos activos con su stock > 0
+            $insumosConLotes = Insumo::whereHas('lotes', function($query) {
+                    $query->where('cantidad_actual', '>', 0);
+                })
+                ->with(['lotes' => function($query) {
+                    $query->where('cantidad_actual', '>', 0)->select('id', 'insumo_id', 'codigo_lote', 'cantidad_actual', 'costo_unitario');
+                }])
+                ->get();
 
-        return view('eventos_insumos.create', compact('evento', 'insumosConLotes'));
-    }
+            return view('eventos_insumos.create', compact('evento', 'insumosConLotes'));
+        }
 
     /**
      * Almacena el consumo de insumos y descuenta del Kardex por lotes

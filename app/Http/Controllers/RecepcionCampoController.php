@@ -34,19 +34,52 @@ class RecepcionCampoController extends Controller
         }
     }
 
-    public function create(Request $request, $sesion_cosecha_id)
+/**
+ * Muestra el formulario para registrar recepciones de cosecha en campo.
+ */
+ /**
+ * Muestra el formulario de recepción de cosecha para una sesión específica por ID (UUID).
+ */
+    public function create($id)
     {
-        // 1. Validamos que la sesión de cosecha exista y esté activa antes de permitir registrar datos
-        $sesion = SesionCosecha::with(['lote', 'cicloProductivo'])->findOrFail($sesion_cosecha_id);
-        $trabajadores = Trabajador::where('activo', true)->get();
+        try {
+            // 1. Buscar la sesión requerida o lanzar 404 si no existe
+            $sesionSeleccionada = SesionCosecha::with(['ordenCosecha', 'eventoCampo'])->findOrFail($id);
 
-        // 2. Aquí cargarías la información necesaria para los selectores del frontend (UI local/caché)
-        // Por ejemplo: Trabajadores activos, zonas del lote de la sesión, etc.
-        return response()->json([
-            'status' => 'success',
-            'sesion_cosecha' => $sesion,
-            'mensaje' => 'Sesión lista para captura de pesajes offline.'
-        ]);
+            // 2. Cargar el listado de sesiones abiertas para alternar rápidamente
+            $sesiones = SesionCosecha::where('estado', 'abierta')
+                ->orderBy('fecha', 'desc')
+                ->get();
+
+            // 3. Determinar el lote asociado (desde la sesión o su orden)
+            $loteId = $sesionSeleccionada->lote?->id;
+            
+            // 4. Cargar catálogos filtrados para trabajo en campo
+            $trabajadores = Trabajador::where('activo', true)->get();
+
+            $zonas = $loteId 
+                ? LoteZonaManejo::where('lote_id', $loteId)->select('id', 'nombre_zona', 'codigo_zona')->get() 
+                : collect();
+
+            $arboles = $loteId 
+                ? Arbol::where('lote_id', $loteId)->select('id', 'codigo_unico')->get() 
+                : collect();
+
+            return view('cosecha.create', compact(
+                'sesiones', 
+                'sesionSeleccionada', 
+                'trabajadores', 
+                'zonas', 
+                'arboles'
+            ));
+
+        } catch (\Exception $e) {
+            Log::error("Error al cargar la vista de recepción de cosecha para la sesión ID {$id}: " . $e->getMessage());
+
+            return redirect()
+                ->route('sesiones-cosecha.index')
+                ->with('error', 'No se encontró la sesión de cosecha o no se pudieron cargar los datos.');
+        }
     }
 
     /**
@@ -58,15 +91,14 @@ class RecepcionCampoController extends Controller
 
         // Carga de catálogo liviano para trabajo en campo sin internet
         $trabajadores = Trabajador::where('activo', true)
-            ->select('id', 'nombre', 'apellido', 'documento_identidad')
             ->get();
 
         $zonas = LoteZonaManejo::where('lote_id', $sesion->lote_id)
-            ->select('id', 'nombre', 'codigo')
+            ->select('id', 'nombre_zona', 'codigo_zona')
             ->get();
 
         $arboles = Arbol::where('lote_id', $sesion->lote_id)
-            ->select('id', 'codigo', 'lote_zona_id')
+            ->select('id', 'codigo_unico')
             ->get();
 
         return view('cosecha.preparar_offline', compact('sesion', 'trabajadores', 'zonas', 'arboles'));

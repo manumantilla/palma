@@ -39,23 +39,23 @@ class EventoController extends Controller
     /**
      * READ (Show): Ver el detalle de un evento específico
      */
-public function show($id)
-{
-    $evento = EventoCampo::with([
-        'tipoEvento', 
-        'cicloProductivo', 
-        'lote', 
-        'zona', 
-        'eventoArboles.arbol', // Carga árboles intervenidos
-        'eventoInsumos.insumo', // Carga los insumos
-        'eventoInsumos.lotes'   // Carga los lotes del Kardex usados
-    ])->findOrFail($id);
+    public function show($id)
+    {
+        $evento = EventoCampo::with([
+            'tipoEvento', 
+            'cicloProductivo', 
+            'lote', 
+            'zona', 
+            'eventoArboles.arbol', // Carga árboles intervenidos
+            'eventoInsumos.insumo', // Carga los insumos
+            'eventoInsumos.lotes'   // Carga los lotes del Kardex usados
+        ])->findOrFail($id);
 
-    // Si usas la relación de gastos que teníamos en el store:
-    // $evento->load('gastos'); 
+        // Si usas la relación de gastos que teníamos en el store:
+        // $evento->load('gastos'); 
 
-    return view('eventos_campo.show', compact('evento'));
-}
+        return view('eventos_campo.show', compact('evento'));
+    }
 
     /**
      * Mostrar formulario para Evento General (Fase 1: SIN RELACIÓN A CULTIVO)

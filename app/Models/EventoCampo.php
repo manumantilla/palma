@@ -24,19 +24,20 @@ class EventoCampo extends Model
         'tipo_evento_id',
         'fecha_programada',
         'fecha_ejecucion',
-        'latitud',
-        'longitud',
+        'coordenada_gps',
         'estado',
         'observaciones',
     ];
-
     protected $casts = [
-        'fecha_programada' => 'datetime',
-        'fecha_ejecucion'  => 'datetime',
-        'hora_inicio'      => 'datetime:H:i', // Parsea a objeto Carbon
-        'hora_fin'         => 'datetime:H:i',
-        'latitud'          => 'decimal:8',
-        'longitud'         => 'decimal:8',
+        'hora_inicio'       => 'datetime:H:i:s',
+        'hora_fin'          => 'datetime:H:i:s',
+        'fecha_programada'  => 'datetime',
+        'fecha_ejecucion'   => 'datetime',
+        'coordenada_gps'    => 'string', // or use a custom geometry cast
+        'estado'            => 'string',
+        'deleted_at'        => 'datetime',
+        'created_at'        => 'datetime',
+        'updated_at'        => 'datetime',
     ];
 
     // ==========================================
@@ -81,6 +82,11 @@ class EventoCampo extends Model
     public function eventoInsumos(): HasMany
     {
         return $this->hasMany(EventoInsumo::class, 'evento_campo_id');
+    }
+
+    public function eventoArboles()
+    {
+        return $this->hasMany(EventoArbol::class, 'evento_campo_id');
     }
 
     public function eventoManoObra(): HasMany

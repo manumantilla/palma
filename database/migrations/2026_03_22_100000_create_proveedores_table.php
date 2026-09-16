@@ -11,16 +11,36 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proveedores', function (Blueprint $table) {
+    Schema::create('proveedores', function (Blueprint $table) {
             $table->id();
+            
+            // Información General
             $table->string('nombre');
-            $table->string('nit');
-            $table->string('telefono');
-            $table->string('email');
-            $table->string('direccion');
+            $table->string('nit')->unique();
+            $table->string('categoria_principal')->nullable(); // Ej: Agroquímicos, Maquinaria, Empaques
+            $table->boolean('activo')->default(true);
+            
+            // Contacto
+            $table->string('contacto_principal')->nullable(); // Nombre del vendedor o asesor
+            $table->string('telefono')->nullable();
+            $table->string('email')->nullable()->unique();
+            $table->string('direccion')->nullable();
+            
+            // Condiciones Comerciales y Financieras
             $table->boolean('tiene_credito')->default(false);
-            $table->string('cuente_banco_1')->nullable();
-            $table->string('cuente_banco_2')->nullable();
+            $table->integer('dias_plazo')->default(0); // Días para pagar la factura (ej: 30, 60, 90)
+            $table->decimal('limite_credito', 15, 2)->nullable(); // Tope máximo de deuda permitida
+            
+            // Datos Bancarios (Corrigiendo el typo "cuente")
+            $table->string('banco_1')->nullable();
+            $table->string('cuenta_bancaria_1')->nullable();
+            $table->string('banco_2')->nullable();
+            $table->string('cuenta_bancaria_2')->nullable();
+            
+            $table->text('notas')->nullable();
+            
+            // Fundamental para no romper el historial de compras si dejas de usar un proveedor
+            $table->softDeletes();
             $table->timestamps();
         });
     }

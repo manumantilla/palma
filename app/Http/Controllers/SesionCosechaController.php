@@ -29,7 +29,7 @@ class SesionCosechaController extends Controller
         $sesiones = SesionCosecha::with([
             'ordenCosecha:id,variedad_requerida,lote_cultivo_id,cantidad_planificada_kg',
             'ordenCosecha.loteCultivo:id,nombre_lote',
-            'eventoCampo:id,fecha_programada,prioridad',
+            'eventoCampo:id,fecha_programada',
             'responsable:id,name',
         ])
         ->withCount('recepcionesCampo') // Asume relación hasMany en el modelo
@@ -49,7 +49,7 @@ class SesionCosechaController extends Controller
     public function create()
     {
         $ordenes = OrdenCosecha::where('estado', '!=', ['completada','cancelada'])->get();
-        $eventos = EventoCampo::where('estado', 'activo')->get();
+        $eventos = EventoCampo::where('estado', '!=', 'cancelado')->get();
         $responsables = User::all();
 
         return view('sesiones_cosecha.create', compact('ordenes', 'eventos', 'responsables'));
@@ -125,7 +125,7 @@ class SesionCosechaController extends Controller
                 'user_id' => auth()->id()
             ]);
 
-            return view('sesiones-cosecha.show', compact('sesion'));
+            return view('sesiones_cosecha.show', compact('sesion'));
 
         } catch (\Exception $e) {
             Log::error('Error al mostrar sesión de cosecha', [
