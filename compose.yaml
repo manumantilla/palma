@@ -48,6 +48,29 @@ services:
                 - '${DB_USERNAME}'
             retries: 3
             timeout: 5s
+    python.analytics:
+        build:
+            context: .
+            dockerfile: docker/python/Dockerfile
+        container_name: agro_python_analytics
+        restart: unless-stopped
+        ports:
+            - '${FORWARD_PYTHON_PORT:-8000}:8000'
+        volumes:
+            - './python_service:/var/www/python_service'
+        environment:
+            - ENVIRONMENT=development
+            - DEBUG=true
+            - DB_HOST=pgsql
+            - DB_PORT=5432
+            - DB_NAME=${DB_DATABASE:-laravel}
+            - DB_USERNAME=${DB_USERNAME:-sail}
+            - DB_PASSWORD=${DB_PASSWORD:-password}
+        networks:
+            - sail
+        depends_on:
+            pgsql:
+                condition:  service_healthy
 networks:
     sail:
         driver: bridge
