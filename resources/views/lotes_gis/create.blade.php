@@ -30,23 +30,22 @@
     const wktInput = document.getElementById('geometria_gps');
 
     window.initMap = function() {
-        // Capas base: Satelital y Calles
         const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
             attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
         });
 
-        const streets = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB'
+        const streets = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         });
 
-        // Inicializar mapa con la capa satelital por defecto
         const map = L.map('geometry-map', {
             center: [4.5709, -74.2973],
             zoom: 6,
-            layers: [satellite]
+            layers: [satellite] // Carga satelital por defecto
         });
 
-        // Control para cambiar entre capas
         const baseMaps = {
             "Vista Satelital": satellite,
             "Mapa de Calles": streets
@@ -71,7 +70,6 @@
         });
         map.addControl(drawControl);
 
-        // Actualizar el valor del input WKT
         function updateWktValue() {
             if (drawnLayer) {
                 const geoJson = drawnLayer.toGeoJSON().geometry;
@@ -81,7 +79,6 @@
             }
         }
 
-        // Evento: Al dibujar un nuevo polígono
         map.on(L.Draw.Event.CREATED, (e) => {
             if (drawnLayer) featureGroup.removeLayer(drawnLayer);
             drawnLayer = e.layer;
@@ -89,18 +86,15 @@
             updateWktValue();
         });
 
-        // Evento: Al editar el polígono existente
         map.on(L.Draw.Event.EDITED, (e) => {
             updateWktValue();
         });
 
-        // Evento: Al eliminar el polígono
         map.on(L.Draw.Event.DELETED, (e) => {
             drawnLayer = null;
             updateWktValue();
         });
 
-        // Recuperar y dibujar geometría previa (Old) si la validación falla
         const oldWkt = wktInput.value;
         if (oldWkt && oldWkt.startsWith('POLYGON((')) {
             try {
@@ -108,7 +102,7 @@
                 const pairs = coordsString.split(',');
                 const latLngs = pairs.map(pair => {
                     const [lng, lat] = pair.trim().split(' ').map(Number);
-                    return [lat, lng]; // Leaflet usa [Lat, Lng]
+                    return [lat, lng];
                 });
                 
                 drawnLayer = L.polygon(latLngs);
