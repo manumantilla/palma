@@ -21,8 +21,9 @@ class FenologiaRecomendacionController extends Controller
 
     public function create()
     {
-        
-        return view('fenologia_recomendacion.create');
+        $fenologiaEtapas = \App\Models\FenologiaEtapa::all();
+        $tiposEvento = \App\Models\TipoEvento::all();
+        return view('fenologia_recomendacion.create', compact('fenologiaEtapas', 'tiposEvento'));
     }
 
     public function store(Request $request)

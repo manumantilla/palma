@@ -130,4 +130,9 @@ class CicloProductivo extends Model
             default                   => 'Desconocido',
         };
     }
+
+    public function etapasHistorial()
+    {
+        return $this->hasMany(CicloEtapaHistorial::class, 'ciclo_productivo_id')->orderBy('fecha_inicio_estimada', 'asc');
+    }
 }

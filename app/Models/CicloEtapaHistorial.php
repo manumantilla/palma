@@ -18,6 +18,8 @@ class CicloEtapaHistorial extends Model
         'fecha_fin_estimada',
         'fecha_fin_real',
         'estado',
+        'motivo_desviacion',
+        'observaciones'
     ];
 
     protected $casts = [
@@ -32,7 +34,7 @@ class CicloEtapaHistorial extends Model
         return $this->belongsTo(CicloProductivo::class);
     }
 
-    public function etapa(): BelongsTo
+    public function fenologiaEtapa(): BelongsTo
     {
         return $this->belongsTo(FenologiaEtapa::class, 'fenologia_etapa_id');
     }

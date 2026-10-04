@@ -20,7 +20,7 @@
                                 <option value="">Seleccione un cultivo</option>
                                 @foreach($cultivos as $cultivo)
                                     <option value="{{ $cultivo->id }}" {{ old('cultivo_id') == $cultivo->id ? 'selected' : '' }}>
-                                        {{ $cultivo->nombre }}
+                                        {{ $cultivo->nombre_cultivo }}
                                     </option>
                                 @endforeach
                             </select>

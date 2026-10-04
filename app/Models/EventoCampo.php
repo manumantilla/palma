@@ -23,6 +23,7 @@ class EventoCampo extends Model
         'hora_fin',
         'tipo_evento_id',
         'fecha_programada',
+        'ciclo_etapa_id',
         'fecha_ejecucion',
         'coordenada_gps',
         'estado',
@@ -47,6 +48,11 @@ class EventoCampo extends Model
     public function cicloProductivo(): BelongsTo
     {
         return $this->belongsTo(CicloProductivo::class, 'ciclo_productivo_id');
+    }
+
+    public function cicloEtapa()
+    {
+        return $this->belongsTo(CicloEtapaHistorial::class, 'ciclo_etapa_id');
     }
 
     public function lote(): BelongsTo

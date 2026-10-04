@@ -55,7 +55,7 @@ services:
         container_name: agro_python_analytics
         restart: unless-stopped
         ports:
-            - '${FORWARD_PYTHON_PORT:-8000}:8000'
+            - '${FORWARD_PYTHON_PORT:-8081}:8000'
         volumes:
             - './python_service:/var/www/python_service'
         environment:

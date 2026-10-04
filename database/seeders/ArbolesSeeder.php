@@ -25,8 +25,8 @@ class ArbolesSeeder extends Seeder
         $faker = Faker::create('es_PE');
 
         // Configuración de la cuadrícula
-        $rows = 25;
-        $cols = 40;
+        $rows = 12;
+        $cols = 20;
         $total = $rows * $cols; // 1000
         $spacing_m = 3.0; // metros entre árboles
         // Aproximación: 1 grado ≈ 111320 m (en el ecuador), ajustamos para latitud -12°

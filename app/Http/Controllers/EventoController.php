@@ -135,7 +135,7 @@ class EventoController extends Controller
             'longitud'         => 'nullable|numeric',
             'estado'           => 'required|in:Pendiente,En Proceso,Completado,Cancelado',
             'observaciones'    => 'nullable|string',
-            
+            'ciclo_etapa_id'     => 'nullable|exists:ciclo_etapas_historial,id',
             // Input controlador del alcance (Punto 2.1)
             'alcance'          => 'nullable|in:global,lote_zona,arbol', 
         ]);
@@ -171,7 +171,7 @@ class EventoController extends Controller
                             'updated_at'      => now(),
                         ];
                     }, $arbolesIds);
-
+                //Asignar 
                     DB::table('evento_arbol')->insert($pivotData);
                 }
             }

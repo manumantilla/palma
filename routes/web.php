@@ -54,6 +54,18 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('ciclos-productivos/{cicloProductivo}/grafo-estadisticas', [CicloProductivoController::class, 'obtenerGrafoYEstadisticas'])
     ->name('ciclos-productivos.grafo-estadisticas');
 
+    //REGISTRA ETAPAS FENOLOGICAS A UN CULTIVO
+    Route::post('/ciclo-etapas/inicializar-plan', [CicloEtapaHistorialController::class, 'inicializarPlanFenologico'])
+        ->name('ciclo-etapas.inicializar-plan');
+        
+    Route::post('/ciclo-etapas/{id}/iniciar', [CicloEtapaHistorialController::class, 'iniciarEtapa'])
+        ->name('ciclo-etapas.iniciar');
+    Route::post('/ciclo-etapas/{id}/completar_etapa', [CicloEtapaHistorialController::class, 'completar'])
+        ->name('ciclo-etapas.completar');
+    Route::post('/ciclo-etapas/{id}/omitirEtapa', [CicloEtapaHistorialController::class, 'omitirEtapa'])
+        ->name('ciclo-etapas.omitir');
+        
+        
     
     Route::resource('tipos-evento', TipoEventoController::class);
     
@@ -98,6 +110,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/grafo', [ArbolGrafoController::class, 'index'])->name('grafo.index');
     Route::get('/ciclos/{ciclo}/grafo', [ArbolApiController::class, 'index'])->name('grafo.ciclo');
 
+    //IMPORTANTE
+    Route::get('/arboles/grafo/dashboard', [ArbolGrafoController::class, 'dashboard'])->name('arboles.grafo.dashboard');
+    Route::post('/arboles/grafo/simular', [ArbolGrafoController::class, 'simular'])->name('arboles.grafo.simular');
     // Eventos de Campo
     Route::get('/eventos-campo', [EventoController::class, 'index'])->name('eventos_campo.index');
     Route::get('/eventos-campo/nuevo-general', [EventoController::class, 'createGeneral'])->name('eventos_campo.create_general');
@@ -118,7 +133,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::delete('/eliminar/{id}', [FenologiaEtapaController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('ciclo-etapa-historial')->name('ciclo-etapa-historial.')->group(function () {
+    Route::prefix('ciclo-etapa-historial')->name('ciclo-etapas.')->group(function () {
         Route::get('/lista', [CicloEtapaHistorialController::class, 'index'])->name('index');
         Route::get('/crear', [CicloEtapaHistorialController::class, 'create'])->name('create');
         Route::post('/guardar', [CicloEtapaHistorialController::class, 'store'])->name('store');

@@ -3,10 +3,104 @@ namespace App\Http\Controllers;
 
 use App\Models\Arbol;
 use Illuminate\Http\Request;
+use App\Models\CicloProductivo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+//logs
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Client\ConnectionException;
 
 class ArbolGrafoController extends Controller
 {
+    public function dashboard()
+    {
+        $ciclos = CicloProductivo::select('id', 'nombre_campana')->get();
+        $arboles = Arbol::select('id', 'codigo_unico', 'ciclo_productivo_id')
+            ->whereNull('deleted_at')
+            ->limit(100)
+            ->get();
+
+        return view('arboles.grafo_dashboard', compact('ciclos', 'arboles'));
+    }
+
+public function simular(Request $request)
+{
+    $request->validate([
+        'ciclo_productivo_id' => 'required|integer',
+        'arbol_origen_id'     => 'required|integer',
+        'max_distancia_m'     => 'required|numeric|min:1|max:200',
+    ]);
+
+    $pythonUrl = rtrim(
+        config('services.python.url', 'http://python_service:8000'),
+        '/'
+    );
+
+    Log::info('SIMULACION INICIADA', [
+        'python_url' => $pythonUrl,
+        'payload' => $request->all(),
+    ]);
+
+    try {
+
+        Log::info('ANTES DE LLAMAR PYTHON');
+
+        $response = Http::timeout(15)
+            ->acceptJson()
+            ->post("{$pythonUrl}/api/v1/graphs/simulate-contagion", [
+                'ciclo_productivo_id' => (int) $request->ciclo_productivo_id,
+                'arbol_origen_id'     => (int) $request->arbol_origen_id,
+                'max_distancia_m'     => (float) $request->max_distancia_m,
+            ]);
+
+        Log::info('PYTHON RESPONDIO', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
+
+    } catch (ConnectionException $e) {
+
+        Log::error('PYTHON INACCESIBLE', [
+            'url' => $pythonUrl,
+            'error' => $e->getMessage(),
+        ]);
+
+        return response()->json([
+            'error' => 'No se pudo conectar con Python.',
+            'details' => $e->getMessage(),
+        ], 503);
+
+    } catch (\Throwable $e) {
+
+        Log::error('ERROR SIMULACION', [
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return response()->json([
+            'error' => 'Error inesperado en el servidor.',
+            'details' => $e->getMessage(),
+        ], 500);
+    }
+
+    if ($response->failed()) {
+
+        Log::error('PYTHON DEVOLVIO ERROR', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
+
+        return response()->json([
+            'error' => 'El motor de simulación devolvió un error.',
+            'status' => $response->status(),
+            'details' => $response->json() ?? $response->body(),
+        ], $response->status());
+    }
+
+    return response()->json($response->json());
+}
     /**
      * Vista principal del gemelo virtual (mapa + grafo).
      */
@@ -256,38 +350,38 @@ class ArbolGrafoController extends Controller
  *
  * GET /api/grafo/extent?lote_id=3
  */
-public function extent(Request $request)
-{
-    $request->validate([
-        'lote_id' => 'nullable|integer',
-    ]);
+    public function extent(Request $request)
+    {
+        $request->validate([
+            'lote_id' => 'nullable|integer',
+        ]);
 
-    $query = DB::table('arboles');
+        $query = DB::table('arboles');
 
-    if ($request->filled('lote_id')) {
-        $query->where('lote_id', $request->lote_id);
+        if ($request->filled('lote_id')) {
+            $query->where('lote_id', $request->lote_id);
+        }
+
+        $result = $query->select([
+            DB::raw('ST_XMin(ST_Extent(coordenada_precision)) as min_lng'),
+            DB::raw('ST_YMin(ST_Extent(coordenada_precision)) as min_lat'),
+            DB::raw('ST_XMax(ST_Extent(coordenada_precision)) as max_lng'),
+            DB::raw('ST_YMax(ST_Extent(coordenada_precision)) as max_lat'),
+        ])->first();
+
+        if (!$result || $result->min_lng === null) {
+            return response()->json(['error' => 'No hay árboles registrados'], 404);
+        }
+
+        return response()->json([
+            'min_lng' => (float) $result->min_lng,
+            'min_lat' => (float) $result->min_lat,
+            'max_lng' => (float) $result->max_lng,
+            'max_lat' => (float) $result->max_lat,
+            'centro' => [
+                'lat' => ((float) $result->min_lat + (float) $result->max_lat) / 2,
+                'lng' => ((float) $result->min_lng + (float) $result->max_lng) / 2,
+            ],
+        ]);
     }
-
-    $result = $query->select([
-        DB::raw('ST_XMin(ST_Extent(coordenada_precision)) as min_lng'),
-        DB::raw('ST_YMin(ST_Extent(coordenada_precision)) as min_lat'),
-        DB::raw('ST_XMax(ST_Extent(coordenada_precision)) as max_lng'),
-        DB::raw('ST_YMax(ST_Extent(coordenada_precision)) as max_lat'),
-    ])->first();
-
-    if (!$result || $result->min_lng === null) {
-        return response()->json(['error' => 'No hay árboles registrados'], 404);
-    }
-
-    return response()->json([
-        'min_lng' => (float) $result->min_lng,
-        'min_lat' => (float) $result->min_lat,
-        'max_lng' => (float) $result->max_lng,
-        'max_lat' => (float) $result->max_lat,
-        'centro' => [
-            'lat' => ((float) $result->min_lat + (float) $result->max_lat) / 2,
-            'lng' => ((float) $result->min_lng + (float) $result->max_lng) / 2,
-        ],
-    ]);
-}
 }

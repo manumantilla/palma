@@ -18,7 +18,7 @@
                             <select name="fenologia_etapa_id" id="fenologia_etapa_id" 
                                     class="mt-1 block w-full rounded-md border-green-300 shadow-sm focus:border-green-500 focus:ring-green-500 bg-white/80">
                                 <option value="">Seleccione una etapa</option>
-                                @foreach($etapas as $etapa)
+                                @foreach($fenologiaEtapas as $etapa)
                                     <option value="{{ $etapa->id }}" {{ old('fenologia_etapa_id') == $etapa->id ? 'selected' : '' }}>
                                         {{ $etapa->nombre }}
                                     </option>

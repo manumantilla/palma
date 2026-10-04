@@ -22,6 +22,7 @@ return new class extends Migration
         Schema::create('fenologia_etapas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cultivo_id')->constrained()->onDelete('cascade');
+            $table->string('bbch')->nullable();
             $table->string('nombre'); // "Floración", "Cuajado", "Maduración", etc.
             $table->integer('orden');  // orden de aparición
             $table->integer('duracion_dias_desde_inicio')->nullable(); // días desde siembra (transitorio) o desde brotación (perenne)

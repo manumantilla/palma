@@ -55,11 +55,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('ciclo_productivo_id')->constrained('ciclos_productivos')->onDelete('cascade');
             $table->foreignId('zona_id')->constrained('lotes_zonas_manejo')->onDelete('cascade');
-            
-            // --- CAMPOS DE CONGELACIÓN (SNAPSHOT) ---
-            $table->decimal('toneladas_producidas', 8, 2)->default(0.00); // Ej: 3.00 toneladas
-            $table->decimal('area_hectareas_momento', 8, 4)->nullable(); // Cuánto medía la zona en ESE ciclo
-            // Opcional (Toque Pro): Guardas el polígono exacto que se usó en ese ciclo por si se deforma el original
+            $table->decimal('toneladas_producidas', 8, 2)->default(0.00); 
+            $table->decimal('area_hectareas_momento', 8, 4)->nullable(); 
             $table->geometry('geometria_zona_momento', 'POLYGON', 4326)->nullable();
             $table->timestamps();
         });
@@ -72,6 +69,8 @@ return new class extends Migration
             $table->date('fecha_fin_estimada');
             $table->date('fecha_fin_real')->nullable();
             $table->enum('estado', ['pendiente', 'en_progreso', 'completada', 'omitida'])->default('pendiente');
+            $table->string('motivo_desviacion')->nullable();
+            $table->text('observaciones')->nullable();
             $table->timestamps();
         });
     }

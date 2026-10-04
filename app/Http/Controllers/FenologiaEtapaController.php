@@ -12,7 +12,7 @@ class FenologiaEtapaController extends Controller
     {
         try {
             $etapas = FenologiaEtapa::orderBy('orden', 'asc')->get();
-            return view('fenologia_etapa.index', compact('etapas'));
+            return view('fenologia-etapa.index', compact('etapas'));
         } catch (Exception $e) {
             Log::error('Error al listar etapas fenológicas: ' . $e->getMessage());
             return redirect()->route('dashboard')->with('error', 'Ocurrió un error al cargar las etapas.');
@@ -21,7 +21,8 @@ class FenologiaEtapaController extends Controller
 
     public function create()
     {
-        return view('fenologia_etapa.create');
+        $cultivos = \App\Models\Cultivo::all();
+        return view('fenologia-etapa.create', compact('cultivos'));
     }
 
     public function store(Request $request)
@@ -50,7 +51,7 @@ class FenologiaEtapaController extends Controller
     {
         try {
             $etapa = FenologiaEtapa::findOrFail($id);
-            return view('fenologia_etapa.show', compact('etapa'));
+            return view('fenologia-etapa.show', compact('etapa'));
         } catch (Exception $e) {
             Log::error("Error al buscar etapa fenológica ID {$id}: " . $e->getMessage());
             return redirect()->route('fenologia-etapa.index')->with('error', 'Etapa no encontrada.');

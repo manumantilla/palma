@@ -22,8 +22,8 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
-    'agro_analytics' => [
-        'url' => env('AGRO_ANALYTICS_URL', 'http://python.analytics:8000'),
+    'python' => [
+        'url' => env('PYTHON_URL', 'http://agro_python_analytics:8000'),
     ],
     
     'ses' => [
