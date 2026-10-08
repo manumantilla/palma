@@ -50,10 +50,7 @@ return new class extends Migration
             $table->index(['evento_campo_id', 'arbol_id']);
         });
 
-        $table->foreignId('ciclo_etapa_id')
-            ->nullable()
-            ->constrained('ciclo_etapas_historial')
-            ->onDelete('set null');
+
 
         Schema::create('evento_insumos', function(Blueprint $table){
             $table->id();
