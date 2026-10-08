@@ -12,8 +12,10 @@ return new class extends Migration
         Schema::create('evento_maquinaria', function (Blueprint $table) {
             $table->id();
             $table->foreignId('evento_id')->constrained('eventos_campo')->onDelete('cascade');
-            $table->foreignId('maquina_id')->constrained('maquinaria')->onDelete('set null');
-            $table->foreignId('trabajador_id')->constrained('users');
+            // restrict: maquina_id es NOT NULL y no se borra una máquina con historial de costos
+            $table->foreignId('maquina_id')->constrained('maquinaria')->restrictOnDelete();
+            // operario: el costo de mano de obra es del trabajador, no del usuario del sistema
+            $table->foreignId('trabajador_id')->constrained('trabajadores')->restrictOnDelete();
             $table->enum('estado',['planificada','en_ejecucion','terminada','cancelada'])->default('planificada');
             $table->decimal('horometro_inicial',12,2)->nullable();
             $table->decimal('horometro_final',12,2)->nullable();

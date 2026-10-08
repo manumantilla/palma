@@ -120,6 +120,7 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::dropIfExists('gastos_pagos');
         Schema::dropIfExists('gastos');
     }
 };

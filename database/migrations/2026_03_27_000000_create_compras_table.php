@@ -32,11 +32,19 @@ return new class extends Migration
             $table->string('departamento')->nullable();
             $table->geometry('ubicacion', 'POINT', 4326)->nullable();
             $table->integer('plazo_pago_dias')->default(0);
+            $table->date('fecha_vencimiento')->nullable(); // fecha + plazo_pago_dias (cuentas por pagar)
             $table->decimal('descuento_pronto_pago', 25,2)->nullable(); // porcentaje
             $table->string('numero_factura');
+            // Soporte DIAN: documento_soporte para compras a no obligados a facturar (campesinos)
+            $table->enum('tipo_soporte', ['factura_electronica', 'documento_soporte', 'cuenta_cobro', 'otro'])->default('factura_electronica');
+            $table->string('cufe', 120)->nullable();
             $table->decimal('subtotal', 12,2)->nullable(); // antes de IVA y descuentos
             $table->decimal('descuento_total', 12,2)->default(0);
             $table->decimal('iva_total', 12,2)->default(0);
+            // Retenciones practicadas al proveedor: neto a pagar = total - retenciones
+            $table->decimal('retefuente', 12, 2)->default(0);
+            $table->decimal('reteica', 12, 2)->default(0);
+            $table->decimal('reteiva', 12, 2)->default(0);
             $table->decimal('total', 12,2); // subtotal - descuento + iva
             $table->decimal('porcentaje_iva_general', 5,2)->nullable(); // si aplica a toda la factura
             $table->dateTime('fecha_pedido')->nullable();
@@ -44,6 +52,8 @@ return new class extends Migration
             $table->string('observaciones')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
+
+            $table->index(['estado_pago', 'fecha_vencimiento']);
         });
         Schema::create('compras_pagos', function (Blueprint $table) {
             $table->id();
@@ -63,6 +73,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('compras_pagos');
         Schema::dropIfExists('compras');
     }
 };

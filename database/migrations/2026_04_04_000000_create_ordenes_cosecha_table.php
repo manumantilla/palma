@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create('ordenes_cosecha', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cliente_id')->constrained('users')->onDelete('restrict');
+            $table->foreignId('cliente_id')->constrained('clientes')->restrictOnDelete();
             $table->foreignId('ciclo_productivo_id')->constrained('ciclos_productivos');
             $table->foreignId('lote_cultivo_id')->nullable()->constrained('lotes')->onDelete('restrict');
             $table->foreignId('lote_zona_id')->nullable()->constrained('lotes_zonas_manejo')->onDelete('set null');

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('sesion_id');
             $table->foreign('sesion_id')->references('id')->on('sesiones_cosecha')->onDelete('cascade');
-            $table->foreignId('cliente_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('cliente_id')->nullable()->constrained('clientes')->nullOnDelete();
             $table->foreignId('orden_pedido_id')->nullable()->constrained('ordenes_cosecha')->onDelete('set null');
             $table->enum('estado',['abierta','cerrada','despachada'])->default('abierta');
             $table->string('nombre');                            // Ej: "Tolva Extra Grande #1"{

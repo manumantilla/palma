@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('despacho_id')->constrained('despachos')->onDelete('cascade');
             $table->foreignId('despacho_item_id')->constrained('despacho_items')->onDelete('cascade');
             $table->dateTime('fecha_liquidacion');
+            $table->date('fecha_vencimiento')->nullable(); // antigüedad de cartera (0-30, 31-60, 61-90, +90)
             $table->string('numero_identificacion')->nullable();
             $table->decimal('precio_unitario_kg',12,2);
             $table->decimal('valor_bruto_venta',12,2);
@@ -24,6 +25,11 @@ return new class extends Migration
             $table->decimal('valor_flete_descontado', 12, 2)->default(0);  // flete prorrateado
             $table->decimal('otros_descuentos', 12, 2)->default(0);
             $table->text('detalle_otros_descuentos')->nullable();
+            // Lo que descuenta el comprador en Colombia
+            $table->decimal('retefuente', 12, 2)->default(0);
+            $table->decimal('reteica', 12, 2)->default(0);
+            // Palma: cuota de fomento palmero (Ley 138/94). Otros cultivos: su fondo parafiscal.
+            $table->decimal('cuota_fomento', 12, 2)->default(0);
             $table->decimal('valor_neto_item', 15, 2); 
             $table->enum('estado_pago', ['pendiente', 'parcial', 'pagado'])->default('pendiente');
             $table->decimal('valor_pagado', 15, 2)->default(0);
@@ -32,6 +38,8 @@ return new class extends Migration
             $table->enum('medio_pago', ['efectivo', 'transferencia', 'cheque', 'otro'])->nullable();
             $table->text('observaciones')->nullable();
             $table->timestamps();
+
+            $table->index(['estado_pago', 'fecha_vencimiento']);
         });
 
         //Pagos
@@ -69,8 +77,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('liquidaciones_despacho');
         Schema::dropIfExists('pagos_liquidacion');
-        
+        Schema::dropIfExists('liquidaciones_despacho');
     }
 };

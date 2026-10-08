@@ -27,8 +27,8 @@ return new class extends Migration
         $table->string('ciudad_destino')->nullable();
         $table->string('departamento_destino')->nullable();
 
-        // Actores comerciales
-        // $table->foreignId('cliente_id')->nullable()->constrained('users')->onDelete('set null');
+        // Actores comerciales (cartera por cliente y control de cupo_credito)
+        $table->foreignId('cliente_id')->nullable()->constrained('clientes')->restrictOnDelete();
         // $table->foreignId('comisionista_id')->nullable()->constrained('users')->onDelete('set null');
 
         // Tiempos logísticos
@@ -55,6 +55,8 @@ return new class extends Migration
         $table->decimal('precio_referencia_kg', 10, 2)->nullable(); 
         $table->text('observaciones')->nullable();
         $table->timestamps();
+
+        $table->index(['cliente_id', 'estado']);
     });
     }
 

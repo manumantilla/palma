@@ -72,7 +72,7 @@ return new class extends Migration
     public function down(): void
     {
 
-        Schema::dropIfExists('tipo_maquinaria');
         Schema::dropIfExists('maquinaria');
+        Schema::dropIfExists('tipo_maquinaria');
     }
 };

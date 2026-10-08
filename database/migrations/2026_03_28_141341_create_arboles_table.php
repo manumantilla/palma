@@ -19,12 +19,16 @@ return new class extends Migration
                 $table->integer('posicion_indice')->index();
                 $table->decimal('altitud', 8, 2)->nullable();
 
+                // Salud del árbol (no es fenología): la usan el grafo de contagio y python_service
                 $table->enum('estado_vital', ['excelente', 'con_estres', 'enfermo_critico', 'muerto', 'erradicado'])->default('excelente');
+                // DEPRECADO: reemplazado por fenologia_etapa_id. Se mantiene mientras se migran
+                // vistas, controladores, ArbolesSeeder y el grafo que aún lo leen.
                 $table->enum('etapa_biologica', ['vivero', 'establecimiento', 'desarrollo_inmaduro', 'produccion_madura', 'senescencia'])->default('establecimiento');
 
+                $table->foreignId('fenologia_etapa_id')->nullable()->constrained('fenologia_etapas')->nullOnDelete();
+                $table->foreignId('material_genetico_id')->nullable()->constrained('materiales_geneticos')->nullOnDelete();
                 $table->date('fecha_baja_muerte')->nullable();
-                $table->string('motivo_baja')->nullable(); // Ej: Ceratocystis fimbriata, Rayo, Mecanización
-                // GEO-REFERENCIACIÓN POSTGIS EXCLUSIVA: POINT SRID 4326
+                $table->string('motivo_baja')->nullable(); 
                 $table->geometry('coordenada_precision', 'GEOMETRY', 4326)->nullable();
                 $table->decimal('altitud_ortometrica_msnm', 6, 2)->nullable();
 
@@ -125,8 +129,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('arboles');
         Schema::dropIfExists('arboles_historial_fitosanitario');
         Schema::dropIfExists('arboles_metricas_historicas');
+        Schema::dropIfExists('arboles_red_vecindad');
+        Schema::dropIfExists('arboles');
     }
 };

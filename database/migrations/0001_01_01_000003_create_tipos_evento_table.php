@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -256,6 +257,12 @@ return new class extends Migration
             'periodo_carencia_dias' => 14,
         ],
     ]);
+
+        // Carencia (PHI) y reingreso (REI) solo tienen sentido cuando se aplica un producto;
+        // el valor real lo da el insumo (insumos.phi_dias / rei_horas).
+        DB::table('tipos_evento')
+            ->whereIn('nombre', ['Riego', 'Deshierbe', 'Poda', 'Tutorado', 'Cosecha', 'Recepción de cosecha', 'Transporte', 'Clasificación'])
+            ->update(['periodo_reingreso_horas' => null, 'periodo_carencia_dias' => null]);
     }
 
     /**
