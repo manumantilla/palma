@@ -134,4 +134,6 @@ return new class extends Migration
         Schema::dropIfExists($tableNames['roles']);
         Schema::dropIfExists($tableNames['permissions']);
     }
+
+    //Crear permisos apenas se corran las migraciones
 };

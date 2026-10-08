@@ -8,6 +8,7 @@ use App\Models\Proveedor;
 use App\Models\MovimientoStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Compra;  
 
 class LoteInsumoController extends Controller
 {
@@ -26,7 +27,8 @@ class LoteInsumoController extends Controller
     {
         $insumos = Insumo::where('estado', 'activo')->orderBy('nombre')->get();
         $proveedores = Proveedor::orderBy('nombre')->get(); // Asumiendo que existe la tabla proveedores
-        return view('lotes_insumo.create', compact('insumos', 'proveedores'));
+        $compras = Compra::all();
+        return view('lotes_insumo.create', compact('insumos', 'proveedores', 'compras'));
     }
 
     public function store(Request $request)

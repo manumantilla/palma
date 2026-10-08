@@ -25,6 +25,8 @@ use App\Http\Controllers\ArbolController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ArbolGrafoController;
 use App\Http\Controllers\LoteZonaManejoController;
+use App\Http\Controllers\CompraController;
+
 // --- RUTAS PÚBLICAS ---
 Route::get('/', function () {
     return view('welcome');
@@ -161,6 +163,15 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/editar/{id}', [ProveedorController::class, 'edit'])->name('edit');
         Route::put('/actualizar/{id}', [ProveedorController::class, 'update'])->name('update');
         Route::delete('/eliminar/{id}', [ProveedorController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('compras')->name('compras.')->group(function () {
+        Route::get('/lista', [CompraController::class, 'index'])->name('index');
+        Route::get('/crear', [CompraController::class, 'create'])->name('create');
+        Route::post('/guardar', [CompraController::class, 'store'])->name('store');
+        Route::get('/detalle/{id}', [CompraController::class, 'show'])->name('show');
+        Route::get('/editar/{id}', [CompraController::class, 'edit'])->name('edit');
+        Route::put('/actualizar/{id}', [CompraController::class, 'update'])->name('update');
+        Route::delete('/eliminar/{id}', [CompraController::class, 'destroy'])->name('destroy');
     });
 
 });

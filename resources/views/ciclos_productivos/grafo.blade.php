@@ -1,4 +1,3 @@
-{{-- resources/views/ciclos_productivos/grafo_dijkstra.blade.php --}}
 <x-app-layout>
 <style>
     /* ══════════════════════════════════════════════════════════════

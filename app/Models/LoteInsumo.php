@@ -8,8 +8,6 @@ class LoteInsumo extends Model
 {
     protected $table = 'lotes_insumos';
 
-    // Se deshabilita timestamps si la migración no tiene $table->timestamps()
-    public $timestamps = false; 
 
     protected $fillable = [
         'insumo_id',

@@ -18,8 +18,10 @@ class Settings(BaseSettings):
     @computed_field
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
-        return f"postgresql://{self.DB_USERNAME}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_DATABASE}"
-        
+        return (
+            f"postgresql+psycopg2://{self.DB_USERNAME}:{self.DB_PASSWORD}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_DATABASE}"
+        )
     class Config:
         env_file = ".env"
         case_sensitive = True

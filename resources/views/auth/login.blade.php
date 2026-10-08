@@ -333,7 +333,7 @@
 
         <!-- ====== Panel Izquierdo (Hero) ====== -->
         <div class="login-hero">
-            <div class="brand">AGRO<span>SYSTEM</span></div>
+            <div class="brand">AGRO<span>PALMA</span></div>
             <p class="tagline">Tecnología para una agricultura más rentable.</p>
             <ul class="feature-list">
                 <li>Producción</li>

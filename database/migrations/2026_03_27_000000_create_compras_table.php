@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('departamento')->nullable();
             $table->geometry('ubicacion', 'POINT', 4326)->nullable();
             $table->integer('plazo_pago_dias')->default(0);
-            $table->decimal('descuento_pronto_pago', 5,2)->nullable(); // porcentaje
+            $table->decimal('descuento_pronto_pago', 25,2)->nullable(); // porcentaje
             $table->string('numero_factura');
             $table->decimal('subtotal', 12,2)->nullable(); // antes de IVA y descuentos
             $table->decimal('descuento_total', 12,2)->default(0);

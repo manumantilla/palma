@@ -11,9 +11,7 @@ use Exception;
 
 class MermaController extends Controller
 {
-    /**
-     * Listar historial de mermas con filtros (Retorna Vista Blade)
-     */
+
     public function index(Request $request)
     {
         try {

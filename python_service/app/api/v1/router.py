@@ -6,7 +6,9 @@ from app.core.database import get_db
 from app.schemas.graph import SimulationRequest, SimulationResponse
 from app.algorithms.graphs.epidemiology import TreeEpidemiologyGraph
 
-api_router = APIRouter()   # renamed to match main.py's import
+api_router = APIRouter()  
+import time
+
 
 
 @api_router.post("/graphs/simulate-contagion", response_model=SimulationResponse)
@@ -14,6 +16,7 @@ def simulate_contagion(                       # ← sync, not async
     payload: SimulationRequest,
     db: Session = Depends(get_db),            # ← sync Session
 ):
+    t0 = time.perf_counter()
     sql_nodos = text("""
         SELECT id, codigo_unico, estado_vital,
                ST_X(coordenada_precision) AS lng,
@@ -23,6 +26,8 @@ def simulate_contagion(                       # ← sync, not async
     """)
     res_nodos = db.execute(sql_nodos, {"ciclo_id": payload.ciclo_productivo_id})  # no await
     nodes = [dict(row._mapping) for row in res_nodos.fetchall()]
+    t1 = time.perf_counter()
+    print(f"Query nodos: {(t1-t0)*1000:.0f} ms · {len(nodes)} nodos")
 
     if not nodes:
         raise HTTPException(status_code=404, detail="No hay árboles registrados para este ciclo.")
@@ -37,11 +42,19 @@ def simulate_contagion(                       # ← sync, not async
     res_aristas = db.execute(sql_aristas, {"ciclo_id": payload.ciclo_productivo_id})  # no await
     edges = [dict(row._mapping) for row in res_aristas.fetchall()]
 
+    t2 = time.perf_counter()
+    print(f" Query aristas: {(t2-t1)*1000:.0f} ms · {len(edges)} aristas")
+
     try:
         engine = TreeEpidemiologyGraph()
         engine.build_graph(nodes, edges)
+        t3 = time.perf_counter()
+        print(f"build_graph: {(t3-t2)*1000:.0f} ms")
         res = engine.run_simulation(payload.arbol_origen_id, payload.max_distancia_m)
+        t4 = time.perf_counter()
+        print(f"run_simulation: {(t4-t3)*1000:.0f} ms")
 
+        print(f" TOTAL: {(t4-t0)*1000:.0f} ms")
         return SimulationResponse(
             success=True,
             ciclo_productivo_id=payload.ciclo_productivo_id,

@@ -47,6 +47,20 @@
                             @error('proveedor_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
+                        
+                        <div>
+                            <label for="proveedor_id" class="block text-sm font-medium text-gray-700">Compra</label>
+                            <select id="proveedor_id" name="proveedor_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                <option value="">-- Seleccione una Compra --</option>
+                                @foreach($compras as $compra)
+                                    <option value="{{ $compra->id }}" {{ old('proveedor_id') == $compra->id ? 'selected' : '' }}>
+                                        {{ $compra->proveedor_id }} - {{ $compra->fecha }} - {{ $compra->numero_factura }} 
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('proveedor_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
                         <div>
                             <label for="codigo_lote" class="block text-sm font-medium text-gray-700">Código del Lote *</label>
                             <input type="text" name="codigo_lote" id="codigo_lote" value="{{ old('codigo_lote') }}" required placeholder="Ej: LOT-2026-XYZ" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
