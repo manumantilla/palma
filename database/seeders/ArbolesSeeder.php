@@ -5,22 +5,21 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
-use App\Models\Lote;
-use App\Models\CicloProductivo;
 
 class ArbolesSeeder extends Seeder
 {
+    use CreaLoteDemo;
+
 public function run()
 {
-    // Asegurar que existan lote y ciclo_productivo con ID = 1
-    $lote = Lote::firstOrCreate(
-        ['id' => 1],
-        ['nombre' => 'Lote Principal', 'descripcion' => 'Lote creado por seeder']
-    );
-    $ciclo = CicloProductivo::firstOrCreate(
-        ['id' => 1],
-        ['nombre' => 'Ciclo 2026', 'fecha_inicio' => now()->subMonths(6), 'lote_id' => $lote->id]
-    );
+    // Lote y ciclo demo (se crean si no existen; antes asumía lote_id = 1)
+    $lote = $this->loteDemo();
+    $ciclo = $this->cicloDemo($lote);
+
+    if (DB::table('arboles')->where('ciclo_productivo_id', $ciclo->id)->exists()) {
+        $this->command->info('El ciclo demo ya tiene árboles; no se vuelven a sembrar.');
+        return;
+    }
 
     $faker = Faker::create('es_PE');
 

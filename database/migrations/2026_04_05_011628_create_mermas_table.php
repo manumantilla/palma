@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('recepcion_campo_id')->nullable()->constrained('recepciones_campo')->onDelete('set null');
             $table->foreignUuid('contenedor_id')->nullable()->constrained('contenedores')->onDelete('set null');
+            $table->foreignId('operario_id')->nullable()->constrained('users')->nullOnDelete(); // quién la registró
             $table->date('fecha_registro');
             $table->decimal('kilos_merma', 10, 2);
             $table->enum('motivo', [
@@ -34,6 +35,7 @@ return new class extends Migration
             // METADATOS DE SINCRONIZACIÓN
             $table->timestamp('client_updated_at')->nullable();
             $table->timestamp('synced_at')->nullable();
+            $table->softDeletes(); // anulaciones sincronizables desde el celular
             $table->timestamps();
         });
     }

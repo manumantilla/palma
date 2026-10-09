@@ -15,7 +15,7 @@ class CicloProductivo extends Model
 
     protected $fillable = [
         
-        'lote_id', 'cultivo_id', 'estado', 'tipo', 'nombre_campana',
+        'lote_id', 'cultivo_id', 'material_genetico_id', 'estado', 'tipo', 'nombre_campana', 'arreglo_espacial',
         'fecha_inicio', 'fecha_estimada_cosecha', 'fecha_real_inicio_cosecha',
         'fecha_estimada_fin_cosecha', 'fecha_real_fin_cosecha', 'fecha_finalizacion_ciclo',
         'modalidad_siembra', 'distancia_entre_hileras_metros', 'distancia_entre_plantas_metros',
@@ -55,7 +55,12 @@ class CicloProductivo extends Model
     //Nombre cultivo
     public function nombreCultivo()
     {
-        return $this->cultivo ? $this->cultivo->nombre : 'n/a';
+        return $this->cultivo ? $this->cultivo->nombre_cultivo : 'n/a';
+    }
+
+    public function materialGenetico(): BelongsTo
+    {
+        return $this->belongsTo(MaterialGenetico::class, 'material_genetico_id');
     }
 
     public function proveedorMaterial(): BelongsTo
@@ -83,8 +88,12 @@ class CicloProductivo extends Model
          * Fórmula: 10,000 m² / (Distancia Hileras * Distancia Plantas)
          */
         static::saving(function ($ciclo) {
-            if ($ciclo->distancia_entre_hileras_metros > 0 && $ciclo->distancia_entre_plantas_metros > 0) {
-                $marco_plantacion = $ciclo->distancia_entre_hileras_metros * $ciclo->distancia_entre_plantas_metros;
+            $plantas = (float) $ciclo->distancia_entre_plantas_metros;
+            if ($ciclo->arreglo_espacial === 'tresbolillo' && $plantas > 0) {
+                // Triángulo equilátero (palma): la distancia entre hileras es d · sen(60°)
+                $ciclo->plantas_por_hectarea_real = 10000 / ($plantas * $plantas * 0.866);
+            } elseif ($ciclo->distancia_entre_hileras_metros > 0 && $plantas > 0) {
+                $marco_plantacion = $ciclo->distancia_entre_hileras_metros * $plantas;
                 $ciclo->plantas_por_hectarea_real = 10000 / $marco_plantacion;
             } else {
                 $ciclo->plantas_por_hectarea_real = 0.00;
@@ -118,16 +127,14 @@ class CicloProductivo extends Model
      */
     public function getEstadoBadgeTextoAttribute(): string
     {
+        // Estado administrativo; la etapa agronómica sale de etapasHistorial()
         return match ($this->estado) {
-            'preparacion_suelo'       => 'Preparación de Suelo',
-            'siembra_establecimiento' => 'Siembra / Establecimiento',
-            'desarrollo_vegetativo'   => 'Desarrollo Vegetativo',
-            'floracion_llenado'       => 'Floración y Llenado',
-            'cosecha_activa'          => 'Cosecha Activa 🚜',
-            'recaso_invernal_poda'    => 'Receso / Poda',
-            'concluido'               => 'Ciclo Concluido ✅',
-            'siniestrado_perdida'     => 'Pérdida por Siniestro 🚨',
-            default                   => 'Desconocido',
+            'planificado' => 'Planificado',
+            'activo'      => 'Activo',
+            'en_receso'   => 'En receso',
+            'concluido'   => 'Ciclo Concluido ✅',
+            'siniestrado' => 'Pérdida por Siniestro 🚨',
+            default       => 'Desconocido',
         };
     }
 

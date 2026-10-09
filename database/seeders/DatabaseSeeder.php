@@ -20,6 +20,11 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        $this->call(FenologiaSeeder::class);
+        $this->call([
+            RolesAndPermissionsSeeder::class,
+            FenologiaSeeder::class,
+            LotesZonasManejoSeeder::class,
+            ArbolesSeeder::class,
+        ]);
     }
 }

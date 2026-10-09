@@ -18,6 +18,11 @@ class FenologiaSeeder extends Seeder
         $palma = DB::table('cultivos')->where('nombre_cultivo', 'Palma de Aceite')->value('id');
         $maiz  = DB::table('cultivos')->where('nombre_cultivo', 'Maíz')->value('id');
 
+        if (DB::table('fenologia_etapas')->whereIn('cultivo_id', [$palma, $maiz])->exists()) {
+            $this->command?->info('La fenología de referencia ya está cargada; no se vuelve a sembrar.');
+            return;
+        }
+
         DB::table('materiales_geneticos')->insert([
             ['cultivo_id' => $palma, 'nombre' => 'E. guineensis Ténera (DxP)', 'tipo' => 'variedad', 'caracteristicas' => json_encode(['polinizacion' => 'natural']), 'created_at' => $now, 'updated_at' => $now],
             ['cultivo_id' => $palma, 'nombre' => 'Híbrido OxG',                'tipo' => 'hibrido',  'caracteristicas' => json_encode(['polinizacion' => 'asistida', 'tolerancia' => ['pudricion_cogollo']]), 'created_at' => $now, 'updated_at' => $now],

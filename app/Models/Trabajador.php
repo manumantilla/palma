@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class Trabajador extends Model
 {
@@ -43,6 +44,8 @@ class Trabajador extends Model
         'habilidades'      => 'array', // Castea automáticamente el JSON a un array de PHP
         'activo'           => 'boolean',
         'ultima_ubicacion_at' => 'datetime',
+        'salario_base'     => 'decimal:2',
+        'ubicacion_actual' => Point::class, // columna geography(point, 4326)
     ];
 
     /**

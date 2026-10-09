@@ -13,10 +13,16 @@ class CicloEtapaHistorial extends Model
     protected $fillable = [
         'ciclo_productivo_id',
         'fenologia_etapa_id',
+        'historial_padre_id',
+        'zona_id',
+        'numero_repeticion',
         'fecha_inicio_estimada',
         'fecha_inicio_real',
         'fecha_fin_estimada',
         'fecha_fin_real',
+        'fuente_estimacion',
+        'grados_dia_acumulados',
+        'porcentaje_avance',
         'estado',
         'motivo_desviacion',
         'observaciones'
@@ -27,6 +33,9 @@ class CicloEtapaHistorial extends Model
         'fecha_inicio_real' => 'date',
         'fecha_fin_estimada' => 'date',
         'fecha_fin_real' => 'date',
+        'numero_repeticion' => 'integer',
+        'grados_dia_acumulados' => 'decimal:1',
+        'porcentaje_avance' => 'decimal:2',
     ];
 
     public function cicloProductivo(): BelongsTo
@@ -37,6 +46,17 @@ class CicloEtapaHistorial extends Model
     public function fenologiaEtapa(): BelongsTo
     {
         return $this->belongsTo(FenologiaEtapa::class, 'fenologia_etapa_id');
+    }
+
+    /** Fase de vida que contiene a esta cohorte (perennes). */
+    public function padre(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'historial_padre_id');
+    }
+
+    public function zona(): BelongsTo
+    {
+        return $this->belongsTo(LoteZonaManejo::class, 'zona_id');
     }
 
     // Calcula el número de días de desfase respecto a la estimación

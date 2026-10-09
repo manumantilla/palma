@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Insumo;
 use App\Models\CategoriaInsumo;
 use App\Models\Proveedor;
-
+use App\Models\UnidadMedida;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class InsumoController extends Controller
 {
@@ -85,7 +86,7 @@ class InsumoController extends Controller
             'rei_horas'                  => 'nullable|integer|min:0',
             'phi_dias'                   => 'nullable|integer|min:0',
             'clasificacion_toxicologica' => 'nullable|in:Ia,Ib,II,III,IV',
-            'equipo_proteccion'          => 'nullable|array', // Llega como array desde los checkboxes
+            'equipo_proteccion'          => 'nullable|string|max:255', // texto libre del formulario
             'franja_color'               => 'nullable|in:rojo,amarillo,azul,verde',
             'almacenamiento_temp_min'    => 'nullable|numeric',
             'almacenamiento_temp_max'    => 'nullable|numeric',
@@ -102,6 +103,8 @@ class InsumoController extends Controller
             'componentes.*.unidad'       => 'required_with:componentes|string|max:20',
             'componentes.*.concentracion'=> 'required_with:componentes|numeric|min:0',
         ]);
+
+        $validated = $this->normalizarUnidad($validated);
 
         // Usamos una transacción DB por si fallan los componentes, no quede el insumo flotando solo
         DB::transaction(function () use ($validated) {
@@ -150,7 +153,7 @@ class InsumoController extends Controller
             'rei_horas'                  => 'nullable|integer|min:0',
             'phi_dias'                   => 'nullable|integer|min:0',
             'clasificacion_toxicologica' => 'nullable|in:Ia,Ib,II,III,IV',
-            'equipo_proteccion'          => 'nullable|array',
+            'equipo_proteccion'          => 'nullable|string|max:255',
             'franja_color'               => 'nullable|in:rojo,amarillo,azul,verde',
             'almacenamiento_temp_min'    => 'nullable|numeric',
             'almacenamiento_temp_max'    => 'nullable|numeric',
@@ -166,6 +169,8 @@ class InsumoController extends Controller
             'componentes.*.unidad'       => 'required_with:componentes|string|max:20',
             'componentes.*.concentracion'=> 'required_with:componentes|numeric|min:0',
         ]);
+
+        $validated = $this->normalizarUnidad($validated);
 
         DB::transaction(function () use ($insumo, $validated) {
             $insumo->update($validated);
@@ -185,5 +190,27 @@ class InsumoController extends Controller
         });
 
         return redirect()->route('insumos.index')->with('success', 'Datos del insumo actualizados.');
+    }
+
+    /**
+     * El formulario envía la unidad como código (kg / l / unidad), pero la tabla guarda
+     * unidad_base_id -> unidades_medida, donde también vive el factor de conversión.
+     */
+    private function normalizarUnidad(array $validated): array
+    {
+        $abreviatura = Insumo::ABREVIATURA_POR_CODIGO[$validated['unidad_base']] ?? $validated['unidad_base'];
+        $unidadId = UnidadMedida::where('abreviatura', $abreviatura)->value('id');
+
+        if (! $unidadId) {
+            throw ValidationException::withMessages([
+                'unidad_base' => "La unidad '{$validated['unidad_base']}' no está registrada en unidades de medida.",
+            ]);
+        }
+
+        $validated['unidad_base_id'] = $unidadId;
+        $validated['unidad_uso_id'] ??= $unidadId;
+        unset($validated['unidad_base'], $validated['factor_conversion']);
+
+        return $validated;
     }
 }

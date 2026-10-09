@@ -14,6 +14,7 @@ class EventoManoObra extends Model
     protected $fillable = [
         'evento_campo_id',
         'sesion_id',
+        'ciclo_id',
         'tipo_labor',
         'trabajador_id',
         'nombre_trabajador',
@@ -65,6 +66,14 @@ class EventoManoObra extends Model
     public function sesionCosecha(): BelongsTo
     {
         return $this->belongsTo(SesionCosecha::class, 'sesion_id');
+    }
+
+    /**
+     * Ciclo productivo al que se carga el jornal (null = labor general de la finca).
+     */
+    public function ciclo(): BelongsTo
+    {
+        return $this->belongsTo(CicloProductivo::class, 'ciclo_id');
     }
 
     /**

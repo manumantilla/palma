@@ -76,7 +76,7 @@ class Contenedor extends Model
 
     public function cliente(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'cliente_id');
+        return $this->belongsTo(Cliente::class, 'cliente_id');
     }
 
     public function ordenPedido(): BelongsTo

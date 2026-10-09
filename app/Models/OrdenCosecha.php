@@ -32,20 +32,21 @@ class OrdenCosecha extends Model
     ];
 
     protected $casts = [
-        'fecha_programada' => 'date',
-        'fecha_entrega'    => 'date',
-        'fecha_inicio'     => 'date',
-        'fecha_fin'        => 'date',
+        'fecha_programada'        => 'date',
+        'fecha_entrega'           => 'date',
+        'fecha_inicio'            => 'date',
+        'fecha_fin'               => 'date',
+        'cantidad_solicitada_kg'  => 'decimal:2',
+        'cantidad_planificada_kg' => 'decimal:2',
+        'cantidad_recolectada_kg' => 'decimal:2',
     ];
 
-
-
     /**
-     * Relación con el Cliente (Usuario)
+     * Cliente comercial (tabla clientes; ya no es un usuario del sistema).
      */
     public function cliente(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'cliente_id');
+        return $this->belongsTo(Cliente::class, 'cliente_id');
     }
 
     /**

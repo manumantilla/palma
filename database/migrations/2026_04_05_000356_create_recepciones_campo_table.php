@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('peso_neto', 10, 2); 
 
             $table->timestamp('hora_pesaje')->useCurrent();
+            $table->geometry('ubicacion_gps', 'POINT', 4326)->nullable(); // dónde se pesó (GPS del celular)
             $table->string('foto_evidencia')->nullable();
             $table->enum('metodo_pesaje', ['balanza_electronica', 'balanza_mecanica', 'estimado'])->default('balanza_electronica');
             // Trazabilidad
@@ -54,6 +55,7 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::dropIfExists('recepcion_arboles');
         Schema::dropIfExists('recepciones_campo');
     }
 };

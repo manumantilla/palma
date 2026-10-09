@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\LoteZonaManejo;
+use MatanYadaev\EloquentSpatial\Objects\Geometry;
 class EventoCampo extends Model
 {
     use HasFactory, SoftDeletes;
@@ -22,7 +23,11 @@ class EventoCampo extends Model
         'hora_inicio',
         'hora_fin',
         'tipo_evento_id',
+        'origen',
+        'origen_id',
+        'numero_repeticion',
         'fecha_programada',
+        'fecha_limite',
         'ciclo_etapa_id',
         'fecha_ejecucion',
         'coordenada_gps',
@@ -33,8 +38,11 @@ class EventoCampo extends Model
         'hora_inicio'       => 'datetime:H:i:s',
         'hora_fin'          => 'datetime:H:i:s',
         'fecha_programada'  => 'datetime',
+        'fecha_limite'      => 'datetime',
         'fecha_ejecucion'   => 'datetime',
-        'coordenada_gps'    => 'string', // or use a custom geometry cast
+        'numero_repeticion' => 'integer',
+        // Columna GEOMETRY genérica (SRID 4326)
+        'coordenada_gps'    => Geometry::class,
         'estado'            => 'string',
         'deleted_at'        => 'datetime',
         'created_at'        => 'datetime',

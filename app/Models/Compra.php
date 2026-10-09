@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class Compra extends Model
 {
@@ -37,7 +38,8 @@ class Compra extends Model
         'factura_pdf_path', 'ciudad', 'departamento', 'plazo_pago_dias',
         'descuento_pronto_pago', 'numero_factura', 'subtotal', 'descuento_total',
         'iva_total', 'total', 'porcentaje_iva_general', 'fecha_pedido',
-        'estado_pago', 'observaciones', 'user_id',
+        'estado_pago', 'observaciones', 'user_id', 'ubicacion', 'fecha_vencimiento',
+        'tipo_soporte', 'cufe', 'retefuente', 'reteica', 'reteiva',
     ];
 
     // La geometría cruda (WKB) no se serializa; se expone como lat/lng.
@@ -55,6 +57,11 @@ class Compra extends Model
             'iva_total'              => 'decimal:2',
             'total'                  => 'decimal:2',
             'porcentaje_iva_general' => 'decimal:2',
+            'fecha_vencimiento'      => 'date',
+            'retefuente'             => 'decimal:2',
+            'reteica'                => 'decimal:2',
+            'reteiva'                => 'decimal:2',
+            'ubicacion'              => Point::class,
         ];
     }
 

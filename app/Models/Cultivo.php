@@ -15,8 +15,22 @@ class Cultivo extends Model
     protected $fillable = [
         'tipo',
         'nombre_cultivo',
+        'nombre_cientifico',
         'descripcion',
     ];
+
+    /**
+     * Alias de nombre_cultivo: varias vistas usan $cultivo->nombre.
+     */
+    public function getNombreAttribute(): ?string
+    {
+        return $this->nombre_cultivo;
+    }
+
+    public function materialesGeneticos(): HasMany
+    {
+        return $this->hasMany(MaterialGenetico::class, 'cultivo_id');
+    }
 
     /**
      * Obtener las etapas fenológicas asociadas al cultivo.

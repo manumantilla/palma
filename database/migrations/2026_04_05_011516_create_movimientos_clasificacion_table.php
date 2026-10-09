@@ -16,10 +16,13 @@ return new class extends Migration
             
             $table->foreignUuid('recepcion_campo_id')->constrained('recepciones_campo')->onDelete('cascade');
             $table->foreignUuid('contenedor_id')->constrained('contenedores')->onDelete('cascade');
+            $table->foreignId('operario_id')->nullable()->constrained('users')->nullOnDelete(); // quién clasificó
+            $table->dateTime('fecha_movimiento')->useCurrent();
             $table->decimal('kilos_asignados', 10, 2);
             $table->text('observaciones')->nullable();
             $table->timestamp('client_updated_at')->nullable();
             $table->timestamp('synced_at')->nullable();
+            $table->softDeletes(); // anulaciones sincronizables desde el celular
             $table->timestamps();
         });
     }

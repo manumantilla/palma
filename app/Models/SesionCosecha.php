@@ -24,10 +24,16 @@ class SesionCosecha extends Model
         'hora_inicio',
         'hora_fin',
         'total_recolectado_kg',
+        'client_updated_at',
+        'synced_at',
     ];
 
     protected $casts = [
-        'fecha' => 'date',
+        'fecha'                => 'date',
+        'meta_kg_dia'          => 'decimal:2',
+        'total_recolectado_kg' => 'decimal:2',
+        'client_updated_at'    => 'datetime',
+        'synced_at'            => 'datetime',
     ];
 
     /*

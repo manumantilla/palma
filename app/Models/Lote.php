@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use MatanYadaev\EloquentSpatial\Objects\MultiPolygon;
 
 class Lote extends Model
 {
@@ -30,6 +31,7 @@ class Lote extends Model
         'ph_suelo'                      => 'decimal:2',
         'tiene_riego_instalado'         => 'boolean',
         'activo'                        => 'boolean',
+        'geometria_gps'                 => MultiPolygon::class,
     ];
 
     // --- RELACIONES ---

@@ -64,28 +64,19 @@
                         class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         required
                     >
-                        <option value="preparacion_suelo" {{ old('estado', 'preparacion_suelo') == 'preparacion_suelo' ? 'selected' : '' }}>
-                            Preparación de suelo
+                        <option value="planificado" {{ old('estado', 'planificado') == 'planificado' ? 'selected' : '' }}>
+                            Planificado
                         </option>
-                        <option value="siembra_establecimiento" {{ old('estado') == 'siembra_establecimiento' ? 'selected' : '' }}>
-                            Siembra / Establecimiento
+                        <option value="activo" {{ old('estado') == 'activo' ? 'selected' : '' }}>
+                            Activo
                         </option>
-                        <option value="desarrollo_vegetativo" {{ old('estado') == 'desarrollo_vegetativo' ? 'selected' : '' }}>
-                            Desarrollo vegetativo
-                        </option>
-                        <option value="floracion_llenado" {{ old('estado') == 'floracion_llenado' ? 'selected' : '' }}>
-                            Floración / Llenado
-                        </option>
-                        <option value="cosecha_activa" {{ old('estado') == 'cosecha_activa' ? 'selected' : '' }}>
-                            Cosecha activa
-                        </option>
-                        <option value="receso_invernal_poda" {{ old('estado') == 'receso_invernal_poda' ? 'selected' : '' }}>
-                            Receso invernal / Poda
+                        <option value="en_receso" {{ old('estado') == 'en_receso' ? 'selected' : '' }}>
+                            En receso
                         </option>
                         <option value="concluido" {{ old('estado') == 'concluido' ? 'selected' : '' }}>
                             Concluido
                         </option>
-                        <option value="siniestrado_perdida" {{ old('estado') == 'siniestrado_perdida' ? 'selected' : '' }}>
+                        <option value="siniestrado" {{ old('estado') == 'siniestrado' ? 'selected' : '' }}>
                             Siniestrado / Pérdida
                         </option>
                     </select>

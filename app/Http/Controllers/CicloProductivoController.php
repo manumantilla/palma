@@ -96,7 +96,7 @@ class CicloProductivoController extends Controller
         $validated = $request->validate([
             'lote_id'                             => 'required|exists:lotes,id',
             'cultivo_id'                          => 'required|exists:cultivos,id',
-            'estado'                              => 'nullable|in:preparacion_suelo,siembra_establecimiento,desarrollo_vegetativo,floracion_llenado,cosecha_activa,receso_invernal_poda,concluido,siniestrado_perdida',
+            'estado'                              => 'nullable|in:planificado,activo,en_receso,concluido,siniestrado',
             'tipo'                                => 'required|in:perenne,transitorio',
             'nombre_campana'                      => 'required|string|max:150',
             'fecha_inicio'                        => 'required|date',
@@ -273,7 +273,7 @@ class CicloProductivoController extends Controller
     public function update(Request $request, CicloProductivo $cicloProductivo)
     {
         $validated = $request->validate([
-            'estado'                     => 'required|in:preparacion_suelo,siembra_establecimiento,desarrollo_vegetativo,floracion_llenado,cosecha_activa,receso_invernal_poda,concluido,siniestrado_perdida',
+            'estado'                     => 'required|in:planificado,activo,en_receso,concluido,siniestrado',
             'fecha_real_inicio_cosecha'  => 'nullable|date',
             'fecha_real_fin_cosecha'      => 'nullable|date|after_or_equal:fecha_real_inicio_cosecha',
             'fecha_finalizacion_ciclo'   => 'nullable|date|after_or_equal:fecha_inicio',

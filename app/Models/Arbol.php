@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use MatanYadaev\EloquentSpatial\Objects\Geometry;
 
 class Arbol extends Model
 {
@@ -20,8 +22,9 @@ class Arbol extends Model
         'fila_indice', 'posicion_indice', 'altitud', 'estado_vital', 'etapa_biologica',
         'fecha_baja_muerte', 'motivo_baja', 'altitud_ortometrica_msnm', 'fecha_siembra',
         'fecha_primera_cosecha', 'variedad', 'fecha_muerte', 'causa_muerte',
-        'es_reemplazo', 'fecha_reemplazo', 'produccion_acumulada_kg', 
-        'ciclos_productivos_count', 'observaciones'
+        'es_reemplazo', 'fecha_reemplazo', 'produccion_acumulada_kg',
+        'ciclos_productivos_count', 'observaciones',
+        'fenologia_etapa_id', 'material_genetico_id', 'coordenada_precision',
     ];
 
     protected $casts = [
@@ -37,6 +40,8 @@ class Arbol extends Model
         'es_reemplazo'              => 'boolean',
         'produccion_acumulada_kg'   => 'decimal:2',
         'ciclos_productivos_count'  => 'integer',
+        // La columna es GEOMETRY genérica (SRID 4326); el mutator de abajo acepta WKT 'POINT(lng lat)'
+        'coordenada_precision'      => Geometry::class,
     ];
 
     // --- RELACIONES ---
@@ -168,5 +173,25 @@ class Arbol extends Model
     }
 
     // Relacion con Fenologia
-    
+
+    public function fenologiaEtapa(): BelongsTo
+    {
+        return $this->belongsTo(FenologiaEtapa::class, 'fenologia_etapa_id');
+    }
+
+    public function materialGenetico(): BelongsTo
+    {
+        return $this->belongsTo(MaterialGenetico::class, 'material_genetico_id');
+    }
+
+    /**
+     * Pesajes de cosecha en los que se registró este árbol (pivote recepcion_arboles).
+     */
+    public function recepciones(): BelongsToMany
+    {
+        return $this->belongsToMany(RecepcionCampo::class, 'recepcion_arboles', 'arbol_id', 'recepcion_campo_id')
+            ->using(RecepcionArbol::class)
+            ->withPivot('id', 'peso_estimado_kg')
+            ->withTimestamps();
+    }
 }

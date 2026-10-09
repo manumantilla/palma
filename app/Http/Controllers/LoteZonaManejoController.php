@@ -7,6 +7,7 @@ use App\Models\LoteZonaManejo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
 class LoteZonaManejoController extends Controller
 {
@@ -43,9 +44,7 @@ class LoteZonaManejoController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                LoteZonaManejo::create($request->only([
-                    'lote_id', 'nombre_zona', 'codigo_zona', 'area_hectareas', 'geometria_zona'
-                ]));
+                LoteZonaManejo::create($this->datosZona($request));
             });
 
             return redirect()->route('lote-zonas-manejo.index')
@@ -94,9 +93,7 @@ class LoteZonaManejoController extends Controller
 
         try {
             DB::transaction(function () use ($request, $loteZonaManejo) {
-                $loteZonaManejo->update($request->only([
-                    'lote_id', 'nombre_zona', 'codigo_zona', 'area_hectareas', 'geometria_zona'
-                ]));
+                $loteZonaManejo->update($this->datosZona($request));
             });
 
             return redirect()->route('lote-zonas-manejo.index')
@@ -106,6 +103,21 @@ class LoteZonaManejoController extends Controller
                 ->withInput()
                 ->with('error', 'Error al actualizar la zona: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Datos de la zona listos para Eloquent. El WKT del formulario se convierte a
+     * Polygon con SRID 4326 (la columna lo exige); si no viene, no se toca la geometría.
+     */
+    private function datosZona(Request $request): array
+    {
+        $datos = $request->only(['lote_id', 'nombre_zona', 'codigo_zona', 'area_hectareas']);
+
+        if ($request->filled('geometria_zona')) {
+            $datos['geometria_zona'] = Polygon::fromWkt($request->input('geometria_zona'), 4326);
+        }
+
+        return $datos;
     }
 
     /**

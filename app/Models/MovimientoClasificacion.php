@@ -28,7 +28,7 @@ class MovimientoClasificacion extends Model
     ];
 
     protected $casts = [
-        'fecha_movimiento'  => 'date',
+        'fecha_movimiento'  => 'datetime', // el formulario envía fecha y hora
         'kilos_asignados'   => 'decimal:2',
         'client_updated_at' => 'datetime',
         'synced_at'         => 'datetime',

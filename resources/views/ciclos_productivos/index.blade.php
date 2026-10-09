@@ -33,7 +33,7 @@
                 <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Estado del Ciclo</label>
                 <select name="estado" class="w-full rounded-lg border-gray-300 shadow-sm text-sm focus:ring-green-500">
                     <option value="">Todos los estados</option>
-                    @foreach(['preparacion_suelo' => 'Preparación de Suelo', 'siembra_establecimiento' => 'Siembra/Establecimiento', 'desarrollo_vegetativo' => 'Desarrollo Vegetativo', 'floracion_llenado' => 'Floración/Llenado', 'cosecha_activa' => 'Cosecha Activa', 'receso_invernal_poda' => 'Receso/Poda', 'concluido' => 'Concluido', 'siniestrado_perdida' => 'Siniestrado/Pérdida'] as $key => $value)
+                    @foreach(['planificado' => 'Planificado', 'activo' => 'Activo', 'en_receso' => 'En receso', 'concluido' => 'Concluido', 'siniestrado' => 'Siniestrado/Pérdida'] as $key => $value)
                         <option value="{{ $key }}" {{ request('estado') == $key ? 'selected' : '' }}>{{ $value }}</option>
                     @endforeach
                 </select>
@@ -106,19 +106,16 @@
                                 <span class="text-xs text-gray-400">Lote: <strong>{{ $ciclo->lote->nombre_lote }}</strong> ({{ $ciclo->lote->codigo_lote }})</span>
                             </td>
                             <td class="px-6 py-4 text-gray-900 font-medium">
-                                {{ $ciclo->cultivo->nombre }}
+                                {{ $ciclo->cultivo->nombre_cultivo }}
                             </td>
                             <td class="px-6 py-4">
                                 @php
                                     $statusColors = [
-                                        'preparacion_suelo' => 'bg-amber-50 text-amber-800 border-amber-200',
-                                        'siembra_establecimiento' => 'bg-lime-50 text-lime-800 border-lime-200',
-                                        'desarrollo_vegetativo' => 'bg-green-50 text-green-800 border-green-200',
-                                        'floracion_llenado' => 'bg-fuchsia-50 text-fuchsia-800 border-fuchsia-200',
-                                        'cosecha_activa' => 'bg-emerald-600 text-white border-transparent',
-                                        'receso_invernal_poda' => 'bg-blue-50 text-blue-800 border-blue-200',
+                                        'planificado' => 'bg-amber-50 text-amber-800 border-amber-200',
+                                        'activo' => 'bg-emerald-600 text-white border-transparent',
+                                        'en_receso' => 'bg-blue-50 text-blue-800 border-blue-200',
                                         'concluido' => 'bg-gray-100 text-gray-700 border-gray-300',
-                                        'siniestrado_perdida' => 'bg-red-50 text-red-800 border-red-200',
+                                        'siniestrado' => 'bg-red-50 text-red-800 border-red-200',
                                     ];
                                     $color = $statusColors[$ciclo->estado] ?? 'bg-gray-50 text-gray-600';
                                 @endphp

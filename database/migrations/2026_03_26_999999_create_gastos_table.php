@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -103,6 +104,11 @@ return new class extends Migration
             $table->index('activo_amortizable_id');
             $table->index('fecha_vencimiento');
         });
+
+        // La FK compuesta usa MATCH SIMPLE: si ciclo_productivo_id es NULL no se valida.
+        // Sin este CHECK se podría guardar una etapa sin su ciclo.
+        DB::statement('ALTER TABLE gastos ADD CONSTRAINT gastos_etapa_requiere_ciclo_chk
+            CHECK (ciclo_etapa_id IS NULL OR ciclo_productivo_id IS NOT NULL)');
 
         Schema::create('gastos_pagos', function (Blueprint $table) {
             $table->id();
