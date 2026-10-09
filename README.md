@@ -7,14 +7,13 @@
 ![Python](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 
-PALMA es mi proyecto de grado de Ingeniería de Sistemas en la Universidad Autónoma de Bucaramanga (UNAB).
+PALMA es nuestro proyecto de grado de Ingeniería de Sistemas en la Universidad Autónoma de Bucaramanga (UNAB).
 Es una plataforma para administrar una finca de principio a fin: los lotes y cada planta, lo que se le
 aplica, cuánto cuesta producir, cuánto se cosecha y a quién se le vende.
 
 Arrancó pensada para palma de aceite (de ahí el nombre), pero el modelo de datos sirve para cualquier
 cultivo perenne o transitorio: café, cacao, plátano, aguacate, maíz, arroz, frutales, etc. Todo está
-planteado desde la realidad colombiana: registro ICA de insumos, facturación electrónica y documento
-soporte de la DIAN, retenciones en UVT, PUC, fondos parafiscales y fincas en veredas sin señal.
+planteado desde la realidad colombiana: registro ICA de insumos.
 
 ---
 
