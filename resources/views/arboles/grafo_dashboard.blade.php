@@ -1208,7 +1208,11 @@
 
 <script>
     
-  const API_URL_DEFAULT = "http://localhost:8081/api/v1/graphs/simulate-contagion";
+  // El navegador habla solo con Laravel; Laravel llama a FastAPI desde el servidor
+  // (ArbolGrafoController@simular usando services.python.url / PYTHON_URL).
+  // Así funciona igual en local y en la nube, sin exponer el puerto de Python ni pelear con CORS.
+  const API_URL_DEFAULT = @json(route('arboles.grafo.simular'));
+  const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content;
 
   /* ═══════════════════════════════════════════════════════════════
     ESTADO GLOBAL
@@ -1250,12 +1254,6 @@
     document.getElementById('sidebar').innerHTML = `
       <div class="ctrl">
         <div class="ctrl-title">⚙️ PARÁMETROS</div>
-
-        <div class="field">
-          <label>API ENDPOINT</label>
-          <input id="f-api" type="text" value="${STATE.apiUrl}"/>
-          <small>URL del endpoint FastAPI</small>
-        </div>
 
         <div class="field">
           <label>CICLO PRODUCTIVO ID</label>
@@ -1328,21 +1326,24 @@
   ═══════════════════════════════════════════════════════════════ */
   async function runSimulation(){
     const btn = document.getElementById('btn-run');
-    const apiUrl = document.getElementById('f-api').value.trim();
+    const apiUrl = STATE.apiUrl;
     const payload = {
       ciclo_productivo_id: parseInt(document.getElementById('f-ciclo').value, 10),
       arbol_origen_id:     parseInt(document.getElementById('f-origen').value, 10),
       max_distancia_m:     parseFloat(document.getElementById('f-dist').value)
     };
-    STATE.apiUrl = apiUrl;
-
     btn.disabled = true;
     btn.innerHTML = '<span class="loader"></span> CALCULANDO...';
 
     try {
       const res = await fetch(apiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': CSRF_TOKEN,
+          'X-Requested-With': 'XMLHttpRequest',
+        },
         body: JSON.stringify(payload)
       });
 
