@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 //logs
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Str;
 
 class ArbolGrafoController extends Controller
 {
@@ -36,14 +37,9 @@ public function simular(Request $request)
         '/'
     );
 
-    Log::info('SIMULACION INICIADA', [
-        'python_url' => $pythonUrl,
-        'payload' => $request->all(),
-    ]);
+    $inicio = microtime(true);
 
     try {
-
-        Log::info('ANTES DE LLAMAR PYTHON');
 
         $response = Http::timeout(15)
             ->acceptJson()
@@ -53,9 +49,13 @@ public function simular(Request $request)
                 'max_distancia_m'     => (float) $request->max_distancia_m,
             ]);
 
-        Log::info('PYTHON RESPONDIO', [
+        // Nunca loguear el body completo: con miles de nodos/aristas pesa megas y
+        // en Laravel Cloud el log va por socket ("Write timed-out").
+        Log::info('Simulación de contagio', [
+            'ciclo_productivo_id' => (int) $request->ciclo_productivo_id,
             'status' => $response->status(),
-            'body' => $response->body(),
+            'bytes' => strlen($response->body()),
+            'ms' => (int) ((microtime(true) - $inicio) * 1000),
         ]);
 
     } catch (ConnectionException $e) {
@@ -76,7 +76,6 @@ public function simular(Request $request)
             'error' => $e->getMessage(),
             'file' => $e->getFile(),
             'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString(),
         ]);
 
         return response()->json([
@@ -89,7 +88,7 @@ public function simular(Request $request)
 
         Log::error('PYTHON DEVOLVIO ERROR', [
             'status' => $response->status(),
-            'body' => $response->body(),
+            'body' => Str::limit($response->body(), 500),
         ]);
 
         return response()->json([
