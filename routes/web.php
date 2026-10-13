@@ -26,6 +26,7 @@ use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ArbolGrafoController;
 use App\Http\Controllers\LoteZonaManejoController;
 use App\Http\Controllers\CompraController;
+use App\Models\User;
 
 // --- RUTAS PÚBLICAS ---
 Route::get('/', function () {
@@ -172,6 +173,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/editar/{id}', [CompraController::class, 'edit'])->name('edit');
         Route::put('/actualizar/{id}', [CompraController::class, 'update'])->name('update');
         Route::delete('/eliminar/{id}', [CompraController::class, 'destroy'])->name('destroy');
+    });
+
+    // --- ADMINISTRACIÓN (solo Super Admin) ---
+    // El componente vuelve a verificar el rol en cada clic (boot()), porque las peticiones
+    // de Livewire van a /livewire/update y no pasan por este middleware.
+    Route::middleware('role:' . User::SUPER_ADMIN)->prefix('admin')->name('admin.')->group(function () {
+        Route::view('/permisos', 'admin.permisos')->name('permisos');
     });
 
 });
