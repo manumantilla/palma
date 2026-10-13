@@ -5,28 +5,61 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use LogicException;
 
+/**
+ * Renglón del kardex. Solo lo crea App\Services\InventarioService, que es quien bloquea el lote,
+ * valida y actualiza cantidad_actual. Este modelo ya no modifica el inventario por su cuenta.
+ */
 class MovimientoStock extends Model
 {
-    protected $table = 'movimientos_stock';
-    
     use HasFactory;
+
+    protected $table = 'movimientos_stock';
+
+    public const ENTRADAS = ['entrada_saldo_inicial', 'entrada_compra', 'entrada_devolucion', 'ajuste_entrada'];
+
+    public const SALIDAS = [
+        'salida_aplicacion', 'salida_devolucion_prov',
+        'ajuste_salida_merma', 'ajuste_salida_vencido', 'ajuste_salida_hurto',
+    ];
 
     protected $fillable = [
         'lote_insumo_id',
         'tipo_movimiento',
         'cantidad',
+        'costo_unitario',
+        'valor_total',
+        'stock_resultante',
+        'saldo_valor',
         'movimientoable_id',
         'movimientoable_type',
-        'stock_resultante',
+        'fecha_movimiento',
         'observacion',
         'user_id',
     ];
 
     protected $casts = [
-        'cantidad' => 'decimal:2',
-        'stock_resultante' => 'decimal:2'
+        'cantidad'         => 'decimal:4',
+        'costo_unitario'   => 'decimal:4',
+        'valor_total'      => 'decimal:2',
+        'stock_resultante' => 'decimal:4',
+        'saldo_valor'      => 'decimal:2',
+        'fecha_movimiento' => 'date',
     ];
+
+    protected static function booted(): void
+    {
+        // Libro de solo inserción: un error se corrige con un movimiento contrario, nunca editando
+        static::updating(fn () => throw new LogicException('Un movimiento de kardex no se modifica; registre un ajuste.'));
+        static::deleting(fn () => throw new LogicException('Un movimiento de kardex no se elimina; registre un ajuste.'));
+    }
+
+    public static function esEntrada(string $tipo): bool
+    {
+        return in_array($tipo, self::ENTRADAS, true);
+    }
 
     //Relacion con el lote de insumo especifico afectado
     public function loteInsumo(): BelongsTo
@@ -35,29 +68,29 @@ class MovimientoStock extends Model
     }
 
     //El usuario u operario que realizo el movimiento
-    public function usuario()
+    public function usuario(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
     //Relacion polimorfica inversa
-    public function movimientoable()
+    public function movimientoable(): MorphTo
     {
         return $this->morphTo();
     }
 
     // ACCESSORS - FORMATO PARA LA VISTA
-    public function getCantidadFormateadaAttribute()
+    public function getCantidadFormateadaAttribute(): string
     {
-        $entradas = ['entrada_compra', 'entrada_devolucion', 'ajuste_entrada'];
-        $signo = in_array($this->tipo_movimiento, $entradas) ? '+' : '-';
-        return $signo . ' ' . number_format($this->cantidad, 2);
+        $signo = self::esEntrada($this->tipo_movimiento) ? '+' : '-';
+        return $signo . ' ' . number_format((float) $this->cantidad, 2);
     }
 
     // etiqueta amigable
-    public function getTipoMovimientoTextoAttribute()
+    public function getTipoMovimientoTextoAttribute(): string
     {
         return match($this->tipo_movimiento){
+            'entrada_saldo_inicial'  => 'Saldo Inicial',
             'entrada_compra'         => 'Compra a Proveedor',
             'entrada_devolucion'     => 'Reingreso/Devolución de Campo',
             'ajuste_entrada'         => 'Ajuste de Inventario (Sobrante)',
@@ -69,25 +102,4 @@ class MovimientoStock extends Model
             default                  => 'Movimiento Desconocido',
         };
     }
-    
-    //Trigger logico de laravel 
-
-    protected static function booted()
-    {
-        static::creating(function ($movimiento) {
-            $lote = LoteInsumo::findOrFail($movimiento->lote_insumo_id);
-            $tiposEntrada = ['entrada_compra', 'entrada_devolucion', 'ajuste_entrada'];
-
-            if(in_array($movimiento->tipo_movimiento, $tiposEntrada)){
-                //Suman stock
-                $lote->cantidad_actual += $movimiento->cantidad;
-            } else {
-                $lote->cantidad_actual -= $movimiento->cantidad;
-            }
-
-            $lote->save();
-            $movimiento->stock_resultante = $lote->cantidad_actual;
-        });
-    }
-
 }

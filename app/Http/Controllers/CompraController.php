@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InventarioException;
 use App\Models\Compra;
-use App\Models\LoteInsumo;
-use App\Models\MovimientoStock;
 use App\Models\Proveedor;
 use App\Models\CicloProductivo;
 use App\Models\Insumo;
+use App\Services\InventarioService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -33,7 +33,7 @@ class CompraController extends Controller
         return view('compras.create', compact('proveedores', 'ciclos', 'insumos'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, InventarioService $inventario)
     {
         $validated = $request->validate([
             'proveedor_id'           => 'required|exists:proveedores,id',
@@ -53,77 +53,67 @@ class CompraController extends Controller
             'items.*.fecha_vencimiento' => 'nullable|date',
         ]);
 
-        DB::transaction(function () use ($validated, $request) {
-            // 1. Calcular subtotales e impuestos
-            $subtotal = 0;
-            foreach ($validated['items'] as $item) {
-                $subtotal += $item['cantidad'] * $item['costo_unitario'];
-            }
+        try {
+            DB::transaction(function () use ($validated, $inventario) {
+                // 1. Calcular subtotales e impuestos
+                $subtotal = 0;
+                foreach ($validated['items'] as $item) {
+                    $subtotal += $item['cantidad'] * $item['costo_unitario'];
+                }
 
-            $porcentajeIva = $validated['porcentaje_iva_general'] ?? 0;
-            $ivaTotal = $subtotal * ($porcentajeIva / 100);
-            $total = $subtotal + $ivaTotal;
+                $porcentajeIva = $validated['porcentaje_iva_general'] ?? 0;
+                $ivaTotal = $subtotal * ($porcentajeIva / 100);
+                $total = $subtotal + $ivaTotal;
 
-            // 2. Crear Registro de Compra
-            $compra = Compra::create([
-                'proveedor_id'           => $validated['proveedor_id'],
-                'fecha'                  => $validated['fecha'],
-                'tipo'                   => $validated['tipo'],
-                'ciclo_productivo_id'    => $validated['ciclo_productivo_id'] ?? null,
-                'estado'                 => 'recibida_total', // Directo a stock
-                'numero_factura'         => $validated['numero_factura'] ?? null,
-                'plazo_pago_dias'        => $validated['plazo_pago_dias'] ?? 0,
-                'descuento_pronto_pago'  => $validated['descuento_pronto_pago'] ?? 0,
-                'subtotal'               => $subtotal,
-                'descuento_total'        => 0,
-                'iva_total'              => $ivaTotal,
-                'total'                  => $total,
-                'porcentaje_iva_general' => $porcentajeIva,
-                'estado_pago'            => 'pendiente',
-                'observaciones'          => $validated['observaciones'] ?? null,
-                'user_id'                => auth()->id(),
-            ]);
-
-            // 3. Procesar Ítems, Lotes KARDEX y Movimientos de Inventario
-            foreach ($validated['items'] as $itemData) {
-                $compra->items()->create([
-                    'insumo_id'      => $itemData['insumo_id'] ?? null,
-                    'cantidad'       => $itemData['cantidad'],
-                    'costo_unitario' => $itemData['costo_unitario'],
-                    'subtotal'       => $itemData['cantidad'] * $itemData['costo_unitario'],
+                // 2. Crear Registro de Compra
+                $compra = Compra::create([
+                    'proveedor_id'           => $validated['proveedor_id'],
+                    'fecha'                  => $validated['fecha'],
+                    'tipo'                   => $validated['tipo'],
+                    'ciclo_productivo_id'    => $validated['ciclo_productivo_id'] ?? null,
+                    'estado'                 => 'recibida_total', // Directo a stock
+                    'numero_factura'         => $validated['numero_factura'] ?? null,
+                    'plazo_pago_dias'        => $validated['plazo_pago_dias'] ?? 0,
+                    'descuento_pronto_pago'  => $validated['descuento_pronto_pago'] ?? 0,
+                    'subtotal'               => $subtotal,
+                    'descuento_total'        => 0,
+                    'iva_total'              => $ivaTotal,
+                    'total'                  => $total,
+                    'porcentaje_iva_general' => $porcentajeIva,
+                    'estado_pago'            => 'pendiente',
+                    'observaciones'          => $validated['observaciones'] ?? null,
+                    'user_id'                => auth()->id(),
                 ]);
 
-                // Generar Lote y Movimiento KARDEX únicamente si es compra de insumos
-                if ($compra->tipo === 'insumos') {
-                    $codigoLote = $itemData['codigo_lote'] ?? 'LOT-' . strtoupper(Str::random(8));
-
-                    // A) Crear Lote Insumo
-                    $lote = LoteInsumo::create([
-                        'insumo_id'         => $itemData['insumo_id'],
-                        'proveedor_id'      => $compra->proveedor_id,
-                        'compra_id'         => $compra->id,
-                        'codigo_lote'       => $codigoLote,
+                // 3. Ítems y, si son insumos, su lote en bodega
+                foreach ($validated['items'] as $itemData) {
+                    $item = $compra->items()->create([
+                        'insumo_id'         => $itemData['insumo_id'] ?? null,
+                        'cantidad'          => $itemData['cantidad'],
+                        'precio_unitario'   => $itemData['costo_unitario'],
+                        'subtotal'          => $itemData['cantidad'] * $itemData['costo_unitario'],
                         'fecha_vencimiento' => $itemData['fecha_vencimiento'] ?? null,
-                        'fecha_ingreso'     => $compra->fecha,
-                        'cantidad_inicial'  => $itemData['cantidad'],
-                        'cantidad_actual'   => 0, // Evento booted() de MovimientoStock actualizará a la cantidad real
-                        'costo_unitario'    => $itemData['costo_unitario'],
-                        'estado'            => 'activo',
                     ]);
 
-                    // B) Registrar Entrada en MovimientoStock (KARDEX)
-                    MovimientoStock::create([
-                        'lote_insumo_id'      => $lote->id,
-                        'tipo_movimiento'     => 'entrada_compra',
-                        'cantidad'            => $itemData['cantidad'],
-                        'movimientoable_id'   => $compra->id,
-                        'movimientoable_type' => Compra::class,
-                        'observacion'         => "Entrada por compra Factura #" . ($compra->numero_factura ?? 'S/N'),
-                        'user_id'             => $compra->user_id,
-                    ]);
+                    // El servicio crea el lote en 0 y la entrada del kardex le pone el saldo
+                    if ($compra->tipo === 'insumos') {
+                        $inventario->ingresarLote([
+                            'insumo_id'         => $item->insumo_id,
+                            'proveedor_id'      => $compra->proveedor_id,
+                            'compra_id'         => $compra->id,
+                            'compra_item_id'    => $item->id,
+                            'codigo_lote'       => $itemData['codigo_lote'] ?? 'LOT-' . strtoupper(Str::random(8)),
+                            'fecha_vencimiento' => $item->fecha_vencimiento,
+                            'fecha_ingreso'     => $compra->fecha,
+                            'cantidad'          => $item->cantidad,
+                            'costo_unitario'    => $item->precio_unitario,
+                        ], 'entrada_compra', $item, 'Entrada por compra Factura #' . ($compra->numero_factura ?? 'S/N'), $compra->user_id);
+                    }
                 }
-            }
-        });
+            });
+        } catch (InventarioException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()
             ->route('compras.index')

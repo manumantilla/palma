@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('cantidad', 12,2);
             $table->decimal('precio_unitario', 12,2);
             $table->decimal('subtotal',12,2);
-            $table->date('fecha_vencimiento');
+            $table->date('fecha_vencimiento')->nullable(); // solo insumos que vencen; un servicio o una herramienta no
             $table->timestamps();
         });
     }

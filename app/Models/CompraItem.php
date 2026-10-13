@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class CompraItem extends Model
@@ -40,11 +41,17 @@ class CompraItem extends Model
         return $this->morphMany(MovimientoStock::class, 'movimientoable');
     }
 
+    /** Lotes de bodega que se crearon al recibir este ítem. */
+    public function lotes(): HasMany
+    {
+        return $this->hasMany(LoteInsumo::class, 'compra_item_id');
+    }
+
     /** Cantidad ya ingresada a inventario. */
     public function cantidadRecibida(): float
     {
         return (float) $this->movimientosStock()
-            ->where('tipo_movimiento', 'entrada')
+            ->where('tipo_movimiento', 'entrada_compra')
             ->sum('cantidad');
     }
 

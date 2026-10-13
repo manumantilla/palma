@@ -70,12 +70,14 @@ return new class extends Migration
         Schema::create('evento_insumos', function(Blueprint $table){
             $table->id();
             $table->foreignId('evento_campo_id')->constrained('eventos_campo')->onDelete('cascade');
-            $table->foreignId('insumo_id')->constrained('insumos')->onDelete('cascade');
-            $table->decimal('cantidad',12,2);
+            // restrict: el historial de aplicaciones es el registro de BPA/GlobalG.A.P., no se borra con el insumo
+            $table->foreignId('insumo_id')->constrained('insumos')->restrictOnDelete();
+            $table->decimal('cantidad', 14, 4); // tal como la reportó el campo, en unidad_id
+            $table->foreignId('unidad_id')->constrained('unidades_medida')->restrictOnDelete();
+            $table->decimal('cantidad_base', 14, 4); // convertida a la unidad base del insumo (la que descuenta el kardex)
             $table->decimal('area_aplicada',10,2)->nullable(); // siempre en HA, si la aplicacion es por abrbol tiene que quedar null
-            $table->enum('metodo_aplicacion', ['terrestre', 'foliar', 'dron', 'fertirriego', 'drench'])->default('terrestre');  
-            $table->enum('unidad_medida',['kg', 'litros', 'unidades']);
-            $table->decimal('costo_total', 12,2)->nullable();
+            $table->enum('metodo_aplicacion', ['terrestre', 'foliar', 'dron', 'fertirriego', 'drench'])->default('terrestre');
+            $table->decimal('costo_total', 14,2)->nullable();
             $table->text('observaciones')->nullable();
             $table->timestamps();
         });
@@ -84,8 +86,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('evento_insumo_id')->constrained('evento_insumos')->onDelete('cascade');
             $table->foreignId('lote_insumo_id')->constrained('lotes_insumos')->onDelete('restrict');
-            $table->decimal('cantidad', 12,2); // cantidad del insumo aplicada a ese lote específico
-            $table->decimal('precio',14,2);
+            $table->decimal('cantidad', 14,4); // sacada de ese lote, en la unidad del lote
+            $table->decimal('costo_unitario', 14,4); // costo del lote congelado al momento de aplicar
+            $table->decimal('costo_total', 14,2);
             $table->decimal('area_aplicada',10,2)->nullable();
             
             $table->timestamps();

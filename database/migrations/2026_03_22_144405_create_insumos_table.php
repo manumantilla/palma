@@ -29,7 +29,7 @@ return new class extends Migration
 
         Schema::create('insumos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('categoria_id')->constrained('categorias_insumo')->onDelete('cascade');
+            $table->foreignId('categoria_id')->constrained('categorias_insumo')->restrictOnDelete();
             $table->string('nombre');
             $table->string('registro_ica', 50)->nullable();
             $table->string('ingrediente_principal')->nullable();
