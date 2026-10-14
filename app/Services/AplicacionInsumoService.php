@@ -37,6 +37,14 @@ class AplicacionInsumoService
     {
         $userId ??= Auth::id();
 
+        // Que el herbicida no termine cargado a una labor de transporte o de poda
+        if (! $evento->tipoEvento->consume_insumos) {
+            throw new InventarioException("Una labor de {$evento->tipoEvento->nombre} no lleva insumos.");
+        }
+        if ($evento->estado === 'Cancelado') {
+            throw new InventarioException('La labor está cancelada; no se le registran insumos.');
+        }
+
         return DB::transaction(function () use ($evento, $datos, $userId) {
             $insumo = Insumo::with('unidadMedidaBase')->findOrFail($datos['insumo_id']);
             $unidad = UnidadMedida::findOrFail($datos['unidad_id']);

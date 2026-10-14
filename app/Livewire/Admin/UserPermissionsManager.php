@@ -165,14 +165,26 @@ class UserPermissionsManager extends Component
     public function usuario(): ?User
     {
         return $this->usuarioId
-            ? User::with(['roles.permissions:id,name', 'permissions:id,name'])->find($this->usuarioId)
+            ? User::with(['roles.permissions:id,name,guard_name', 'permissions:id,name,guard_name'])->find($this->usuarioId)
             : null;
     }
 
     #[Computed]
     public function roles(): Collection
     {
-        return Role::withCount('users')->with('permissions:id,name')->orderBy('name')->get();
+        // No se usa withCount('users'): Role::users() busca el modelo según el guard por defecto,
+        // y el middleware auth:sanctum lo cambia a 'sanctum', que no tiene provider (null) y revienta
+        // con "Class name must be a valid object or a string". Se cuenta directo en la tabla pivote.
+        $usuariosPorRol = DB::table(config('permission.table_names.model_has_roles'))
+            ->where('model_type', (new User)->getMorphClass())
+            ->selectRaw(app(PermissionRegistrar::class)->pivotRole . ' AS rol, COUNT(*) AS total')
+            ->groupBy('rol')
+            ->pluck('total', 'rol');
+
+        return Role::with('permissions:id,name,guard_name')
+            ->orderBy('name')
+            ->get()
+            ->each(fn (Role $rol) => $rol->users_count = (int) ($usuariosPorRol[$rol->id] ?? 0));
     }
 
     /**

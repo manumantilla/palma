@@ -23,6 +23,7 @@ use App\Http\Controllers\LoteController;
 use App\Http\Controllers\OrdenCosechaController;
 use App\Http\Controllers\ArbolController;
 use App\Http\Controllers\EventoController;
+use App\Http\Controllers\EventoManoObraController;
 use App\Http\Controllers\ArbolGrafoController;
 use App\Http\Controllers\LoteZonaManejoController;
 use App\Http\Controllers\CompraController;
@@ -121,7 +122,24 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/eventos-campo/nuevo-general', [EventoController::class, 'createGeneral'])->name('eventos_campo.create_general');
     Route::post('/eventos-campo/general', [EventoController::class, 'store'])->name('eventos_campo.store_general');
     Route::get('/eventos-campo/{evento}', [EventoController::class, 'show'])->name('eventos_campo.show');
-    
+    Route::put('/eventos-campo/{evento}', [EventoController::class, 'update'])->name('eventos_campo.update');
+    Route::delete('/eventos-campo/{evento}', [EventoController::class, 'destroy'])->name('eventos_campo.destroy');
+    Route::post('/eventos-campo/{evento}/completar', [EventoController::class, 'completar'])->name('eventos_campo.completar');
+    Route::post('/eventos-campo/{evento}/cancelar', [EventoController::class, 'cancelar'])->name('eventos_campo.cancelar');
+
+    // Mano de obra (jornales y destajos de cada labor)
+    Route::prefix('mano-obra')->name('mano-obra.')->group(function () {
+        Route::get('/', [EventoManoObraController::class, 'index'])->name('index');
+        Route::get('/crear', [EventoManoObraController::class, 'create'])->name('create');
+        Route::post('/', [EventoManoObraController::class, 'store'])->name('store');
+        Route::get('/kilos', [EventoManoObraController::class, 'kilos'])->name('kilos');
+        Route::post('/liquidar-semana', [EventoManoObraController::class, 'liquidarPagoSemanal'])->name('liquidar');
+        Route::get('/{manoObra}', [EventoManoObraController::class, 'show'])->whereNumber('manoObra')->name('show');
+        Route::get('/{manoObra}/editar', [EventoManoObraController::class, 'edit'])->whereNumber('manoObra')->name('edit');
+        Route::put('/{manoObra}', [EventoManoObraController::class, 'update'])->whereNumber('manoObra')->name('update');
+        Route::delete('/{manoObra}', [EventoManoObraController::class, 'destroy'])->whereNumber('manoObra')->name('destroy');
+    });
+
     Route::get('/ciclos/{ciclo}/nuevo-evento', [EventoController::class, 'createConCultivo'])->name('eventos_campo.create_cultivo');
     Route::post('/ciclos/{ciclo}/evento', [EventoController::class, 'storeWithCultivo'])->name('eventos_campo.store_cultivo');
 

@@ -108,6 +108,16 @@ class EventoCampo extends Model
         return $this->hasMany(EventoManoObra::class, 'evento_campo_id');
     }
 
+    public function eventoMaquinaria(): HasMany
+    {
+        return $this->hasMany(EventoMaquinaria::class, 'evento_campo_id');
+    }
+
+    public function sesionesCosecha(): HasMany
+    {
+        return $this->hasMany(SesionCosecha::class, 'evento_campo_id');
+    }
+
     // ==========================================
     // ACCESSORS PARA CÁLCULOS FINANCIEROS
     // ==========================================
@@ -120,10 +130,8 @@ class EventoCampo extends Model
 
     public function getCostoTotalManoObraAttribute(): float
     {
-        // Se calcula iterando en memoria la colección ya cargada (no genera queries)
-        return (float) $this->eventoManoObra->sum(function ($item) {
-            return $item->cantidad * $item->valor_unitario;
-        });
+        // costo_total es lo acordado con el trabajador (incluye ajustes a mano), no cantidad × valor
+        return (float) $this->eventoManoObra->sum('costo_total');
     }
 
     public function getCostoTotalEventoAttribute(): float

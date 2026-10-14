@@ -79,9 +79,8 @@
                                 @error('estado') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-green-500 focus:ring-green-500 @enderror">
                                 <option value="Pendiente" {{ old('estado') == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
                                 <option value="En Proceso" {{ old('estado') == 'En Proceso' ? 'selected' : '' }}>En Proceso</option>
-                                <option value="Completado" {{ old('estado') == 'Completado' ? 'selected' : '' }}>Completado</option>
-                                <option value="Cancelado" {{ old('estado') == 'Cancelado' ? 'selected' : '' }}>Cancelado</option>
                             </select>
+                            <p class="mt-1 text-xs text-gray-500">La labor se completa desde su detalle, cuando ya tenga sus jornales.</p>
                             @error('estado')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -224,11 +223,11 @@
                         </div>
 
                         <div>
-                            <label for="fecha_ejecucion" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Ejecución Real</label>
-                            <input type="date" id="fecha_ejecucion" name="fecha_ejecucion" value="{{ old('fecha_ejecucion') }}"
+                            <label for="fecha_limite" class="block text-sm font-medium text-gray-700 mb-1">Fecha Límite</label>
+                            <input type="date" id="fecha_limite" name="fecha_limite" value="{{ old('fecha_limite') }}"
                                 class="mt-1 block w-full rounded-lg shadow-sm sm:text-sm transition-colors duration-200
-                                @error('fecha_ejecucion') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-green-500 focus:ring-green-500 @enderror">
-                            @error('fecha_ejecucion')
+                                @error('fecha_limite') border-red-500 focus:border-red-500 focus:ring-red-500 @else border-gray-300 focus:border-green-500 focus:ring-green-500 @enderror">
+                            @error('fecha_limite')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>

@@ -10,7 +10,7 @@ class EventoMaquinaria extends Model
     protected $table = 'evento_maquinaria';
 
     protected $fillable = [
-        'evento_id',
+        'evento_campo_id',
         'maquina_id',
         'trabajador_id',
         'estado',
@@ -33,7 +33,7 @@ class EventoMaquinaria extends Model
 
     public function evento(): BelongsTo
     {
-        return $this->belongsTo(EventoCampo::class, 'evento_id');
+        return $this->belongsTo(EventoCampo::class, 'evento_campo_id');
     }
 
     public function maquina(): BelongsTo

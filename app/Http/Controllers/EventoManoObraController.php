@@ -1,298 +1,190 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\EventoManoObra;
+use App\Exceptions\EventoException;
+use App\Models\CicloProductivo;
 use App\Models\EventoCampo;
+use App\Models\EventoManoObra;
 use App\Models\SesionCosecha;
 use App\Models\Trabajador;
-use App\Models\CicloProductivo;
+use App\Services\EventoService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Exception;
 
+/**
+ * Jornales y destajos. Toda la lógica (costo, gasto, validaciones) vive en EventoService.
+ */
 class EventoManoObraController extends Controller
 {
+    public function __construct(private EventoService $eventos)
+    {
+    }
 
     public function index(Request $request)
     {
-        try {
-            $query = EventoManoObra::with(['eventoCampo.cicloProductivo', 'sesionCosecha', 'trabajador']);
+        $registros = EventoManoObra::with(['eventoCampo.cicloProductivo', 'eventoCampo.tipoEvento', 'trabajador'])
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = '%' . $request->input('search') . '%';
+                $query->where(fn ($q) => $q->where('nombre_trabajador', 'ilike', $search)->orWhere('cedula', 'ilike', $search));
+            })
+            ->when($request->filled('estado_pago'), fn ($q) => $q->where('estado_pago', $request->input('estado_pago')))
+            ->when($request->filled('tipo_labor'), fn ($q) => $q->porTipoLabor($request->input('tipo_labor')))
+            ->when($request->filled('ciclo_productivo_id'), fn ($q) => $q->porCicloProductivo($request->input('ciclo_productivo_id')))
+            ->when($request->filled('fecha_inicio') && $request->filled('fecha_fin'),
+                fn ($q) => $q->enRangoFechas($request->input('fecha_inicio'), $request->input('fecha_fin')))
+            ->orderByDesc('fecha_labor')
+            ->orderByDesc('id')
+            ->paginate(15)
+            ->withQueryString();
 
-            // 1. Filtro por Búsqueda (Trabajador o Cédula)
-            if ($request->filled('search')) {
-                $search = $request->input('search');
-                $query->where(function ($q) use ($search) {
-                    $q->where('nombre_trabajador', 'LIKE', "%{$search}%")
-                      ->orWhere('cedula', 'LIKE', "%{$search}%")
-                      ->orWhereHas('trabajador', function ($t) use ($search) {
-                          $t->where('nombre', 'LIKE', "%{$search}%")
-                            ->orWhere('apellido', 'LIKE', "%{$search}%");
-                      });
-                });
-            }
+        $ciclos = CicloProductivo::select('id', 'nombre_campana')->orderBy('nombre_campana')->get();
+        $trabajadores = Trabajador::select('id', 'nombres', 'apellidos', 'numero_documento')->orderBy('nombres')->get();
 
-            // 2. Filtro por Estado de Pago
-            if ($request->filled('estado_pago')) {
-                $query->where('estado_pago', $request->input('estado_pago'));
-            }
-
-            // 3. Filtro por Tipo de Labor
-            if ($request->filled('tipo_labor')) {
-                $query->porTipoLabor($request->input('tipo_labor'));
-            }
-
-            // 4. Filtro por Ciclo Productivo
-            if ($request->filled('ciclo_productivo_id')) {
-                $query->porCicloProductivo($request->input('ciclo_productivo_id'));
-            }
-
-            // 5. Filtro por Rango de Fechas
-            if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
-                $query->enRangoFechas($request->input('fecha_inicio'), $request->input('fecha_fin'));
-            }
-
-            // Ordenamiento por defecto: Más recientes primero
-            $registros = $query->latest()->paginate(15)->appends($request->all());
-
-            // Datos auxiliares para dropdowns de filtros en la vista
-            $ciclos = CicloProductivo::select('id', 'nombre')->get();
-
-            return view('mano_obra.index', compact('registros', 'ciclos'));
-
-        } catch (Exception $e) {
-            Log::error("Error al consultar el listado de mano de obra: {$e->getMessage()}", [
-                'request' => $request->all(),
-                'trace'   => $e->getTraceAsString()
-            ]);
-
-            return redirect()->back()->with('error', 'Ocurrió un error al cargar el registro de mano de obra.');
-        }
+        return view('mano_obra.index', compact('registros', 'ciclos', 'trabajadores'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        try {
-            $eventos = EventoCampo::select('id', 'tipo_evento_id', 'fecha_programada')->latest()->get();
-            $sesiones = SesionCosecha::where('estado', 'abierta')->get();
-            $trabajadores = Trabajador::select('id', 'nombre', 'apellido', 'cedula')->get();
-
-            return view('mano_obra.create', compact('eventos', 'sesiones', 'trabajadores'));
-
-        } catch (Exception $e) {
-            Log::error("Error al cargar formulario de mano de obra: {$e->getMessage()}");
-            return redirect()->route('mano-obra.index')->with('error', 'No se pudo abrir el formulario de registro.');
-        }
+        return view('mano_obra.create', $this->datosFormulario() + [
+            'eventoSeleccionado' => $request->integer('evento') ?: null,
+        ]);
     }
-
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'evento_campo_id'   => 'nullable|exists:eventos_campo,id',
-            'sesion_id'          => 'nullable|exists:sesiones_cosecha,id',
-            'trabajador_id'     => 'nullable|exists:trabajadores,id',
-            'nombre_trabajador' => 'required_without:trabajador_id|nullable|string|max:255',
-            'cedula'            => 'required|string|max:20',
-            'tipo_labor'        => 'required|in:jornal_dia_completo,jornal_medio_dia,hora_extra,destajo',
-            'cantidad'          => 'required|numeric|min:0.1',
-            'unidad_destajo'    => 'nullable|required_if:tipo_labor,destajo|string|max:30',
-            'valor_unitario'    => 'required|numeric|min:0',
-            'observaciones'     => 'nullable|string',
+        $validated = $request->validate($this->reglas() + [
+            'evento_campo_id' => 'required_without:sesion_id|nullable|exists:eventos_campo,id',
+            'sesion_id'       => 'nullable|exists:sesiones_cosecha,id',
         ]);
 
         try {
-            DB::transaction(function () use ($validated, &$registro) {
-                // Si el trabajador viene de la tabla trabajadores, autocompletamos el nombre
-                if (!empty($validated['trabajador_id'])) {
-                    $trabajador = Trabajador::find($validated['trabajador_id']);
-                    $validated['nombre_trabajador'] = $trabajador->nombre . ' ' . $trabajador->apellido;
-                    $validated['cedula'] = $trabajador->cedula ?? $validated['cedula'];
-                }
-
-                // El costo_total se calcula automáticamente en el evento 'saving' del modelo
-                $registro = EventoManoObra::create($validated);
-            });
-
-            Log::info("Registro de mano de obra #{$registro->id} creado exitosamente.", [
-                'usuario_id' => auth()->id(),
-                'registro'   => $registro->toArray()
-            ]);
-
-            return redirect()->route('mano-obra.index')
-                ->with('success', 'Registro de mano de obra guardado correctamente.');
-
-        } catch (Exception $e) {
-            Log::error("Error al guardar registro de mano de obra: {$e->getMessage()}", [
-                'input' => $request->all(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'No se pudo guardar el registro de mano de obra.');
-        }
-    }
-
-    public function show($id)
-    {
-        try {
-            $registro = EventoManoObra::with(['eventoCampo.cicloProductivo', 'sesionCosecha', 'trabajador'])
-                ->findOrFail($id);
-
-            return view('mano_obra.show', compact('registro'));
-
-        } catch (Exception $e) {
-            Log::error("Error al mostrar mano de obra #{$id}: {$e->getMessage()}");
-            return redirect()->route('mano-obra.index')->with('error', 'El registro solicitado no existe.');
-        }
-    }
-
-
-    public function edit($id)
-    {
-        try {
-            $registro = EventoManoObra::findOrFail($id);
-
-            if ($registro->estado_pago === 'pagado') {
-                return redirect()->route('mano-obra.index')
-                    ->with('error', 'No se puede editar un registro de mano de obra que ya fue PAGADO.');
+            if (! empty($validated['sesion_id'])) {
+                // Destajo de cosecha: el evento y los kilos salen de la sesión
+                $registro = $this->eventos->registrarDestajoCosecha(SesionCosecha::findOrFail($validated['sesion_id']), $validated);
+            } else {
+                $registro = $this->eventos->registrarManoObra(EventoCampo::findOrFail($validated['evento_campo_id']), $validated);
             }
-
-            $eventos = EventoCampo::select('id', 'tipo_evento_id', 'fecha_programada')->latest()->get();
-            $sesiones = SesionCosecha::where('estado', 'abierta')->get();
-            $trabajadores = Trabajador::select('id', 'nombre', 'apellido', 'cedula')->get();
-
-            return view('mano_obra.edit', compact('registro', 'eventos', 'sesiones', 'trabajadores'));
-
-        } catch (Exception $e) {
-            Log::error("Error al cargar edición de mano de obra #{$id}: {$e->getMessage()}");
-            return redirect()->route('mano-obra.index')->with('error', 'No se pudo cargar el registro para edición.');
+        } catch (EventoException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
         }
+
+        return redirect()->route('eventos_campo.show', $registro->evento_campo_id)
+            ->with('success', 'Mano de obra registrada.');
     }
 
+    public function show(EventoManoObra $manoObra)
+    {
+        $registro = $manoObra->load(['eventoCampo.cicloProductivo', 'eventoCampo.tipoEvento', 'sesionCosecha', 'trabajador']);
 
-    public function update(Request $request, $id)
+        return view('mano_obra.show', compact('registro'));
+    }
+
+    public function edit(EventoManoObra $manoObra)
+    {
+        if ($manoObra->estado_pago === 'pagado') {
+            return redirect()->route('mano-obra.index')->with('error', 'Un registro ya pagado no se edita.');
+        }
+
+        return view('mano_obra.edit', $this->datosFormulario() + ['registro' => $manoObra->load('eventoCampo.tipoEvento')]);
+    }
+
+    public function update(Request $request, EventoManoObra $manoObra)
+    {
+        $validated = $request->validate($this->reglas());
+
+        try {
+            $this->eventos->actualizarManoObra($manoObra, $validated);
+        } catch (EventoException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('mano-obra.index')->with('success', 'Registro actualizado.');
+    }
+
+    public function destroy(EventoManoObra $manoObra)
+    {
+        try {
+            $this->eventos->eliminarManoObra($manoObra);
+        } catch (EventoException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('mano-obra.index')->with('success', 'Registro eliminado; su costo quedó anulado.');
+    }
+
+    /** Lo que pesó un trabajador en una sesión, para precargar el destajo. */
+    public function kilos(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'evento_campo_id'   => 'nullable|exists:eventos_campo,id',
-            'sesion_id'          => 'nullable|exists:sesiones_cosecha,id',
-            'trabajador_id'     => 'nullable|exists:trabajadores,id',
-            'nombre_trabajador' => 'required_without:trabajador_id|nullable|string|max:255',
-            'cedula'            => 'required|string|max:20',
-            'tipo_labor'        => 'required|in:jornal_dia_completo,jornal_medio_dia,hora_extra,destajo',
-            'cantidad'          => 'required|numeric|min:0.1',
-            'unidad_destajo'    => 'nullable|required_if:tipo_labor,destajo|string|max:30',
-            'valor_unitario'    => 'required|numeric|min:0',
-            'observaciones'     => 'nullable|string',
+            'sesion'     => 'required|exists:sesiones_cosecha,id',
+            'trabajador' => 'required|exists:trabajadores,id',
         ]);
 
-        try {
-            DB::transaction(function () use ($validated, $id) {
-                $registro = EventoManoObra::findOrFail($id);
-
-                if ($registro->estado_pago === 'pagado') {
-                    throw new Exception("Intento de modificación sobre un registro liquidado.");
-                }
-
-                if (!empty($validated['trabajador_id'])) {
-                    $trabajador = Trabajador::find($validated['trabajador_id']);
-                    $validated['nombre_trabajador'] = $trabajador->nombre . ' ' . $trabajador->apellido;
-                    $validated['cedula'] = $trabajador->cedula ?? $validated['cedula'];
-                }
-
-                $registro->update($validated);
-            });
-
-            Log::info("Mano de obra #{$id} actualizada correctamente por usuario #".auth()->id());
-
-            return redirect()->route('mano-obra.index')
-                ->with('success', 'Registro de mano de obra actualizado correctamente.');
-
-        } catch (Exception $e) {
-            Log::error("Error al actualizar mano de obra #{$id}: {$e->getMessage()}", [
-                'input' => $request->all(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Ocurrió un error al actualizar el registro.');
-        }
-    }
-
-    public function destroy($id)
-    {
-        try {
-            DB::transaction(function () use ($id) {
-                $registro = EventoManoObra::findOrFail($id);
-
-                if ($registro->estado_pago === 'pagado') {
-                    throw new Exception("No es posible eliminar un registro que ya fue pagado.");
-                }
-
-                $registro->delete();
-            });
-
-            Log::info("Mano de obra #{$id} eliminada por usuario #".auth()->id());
-
-            return redirect()->route('mano-obra.index')
-                ->with('success', 'El registro de mano de obra fue eliminado con éxito.');
-
-        } catch (Exception $e) {
-            Log::error("Error al eliminar mano de obra #{$id}: {$e->getMessage()}");
-
-            return redirect()->route('mano-obra.index')
-                ->with('error', 'No se pudo eliminar el registro. ' . $e->getMessage());
-        }
+        return response()->json($this->eventos->kilosPesados(
+            SesionCosecha::findOrFail($validated['sesion']), (int) $validated['trabajador']
+        ));
     }
 
     /**
-     * Método Especial: Liquidación masiva de la semana para un trabajador (Sábados de Pago).
+     * Pago de la semana (o del rango que se indique) de un trabajador.
      */
     public function liquidarPagoSemanal(Request $request)
     {
-        $request->validate([
-            'cedula'       => 'required|string',
-            'fecha_pago'   => 'required|date',
+        $validated = $request->validate([
+            'trabajador_id' => 'nullable|required_without:cedula|exists:trabajadores,id',
+            'cedula'        => 'nullable|required_without:trabajador_id|string|max:30',
+            'desde'         => 'required|date',
+            'hasta'         => 'required|date|after_or_equal:desde',
+            'fecha_pago'    => 'required|date',
         ]);
 
         try {
-            $totalLiquidado = 0;
-            $cantidadRegistros = 0;
-
-            DB::transaction(function () use ($request, &$totalLiquidado, &$cantidadRegistros) {
-                $pendientes = EventoManoObra::delTrabajador($request->input('cedula'))
-                    ->pendientesDePago()
-                    ->get();
-
-                if ($pendientes->isEmpty()) {
-                    throw new Exception("No hay registros pendientes de pago para el trabajador indicado.");
-                }
-
-                $cantidadRegistros = $pendientes->count();
-                $totalLiquidado = $pendientes->sum('costo_total');
-
-                // Actualización masiva del estado de pago
-                EventoManoObra::whereIn('id', $pendientes->pluck('id'))
-                    ->update([
-                        'estado_pago' => 'pagado',
-                        'fecha_pago'  => $request->input('fecha_pago'),
-                    ]);
-            });
-
-            Log::info("Liquidación exitosa para trabajador CC: {$request->input('cedula')}. Total: ${$totalLiquidado}");
-
-            return redirect()->route('mano-obra.index')
-                ->with('success', "Liquidación completada. Se pagaron {$cantidadRegistros} labor(es) por un total de $" . number_format($totalLiquidado, 2) . " COP.");
-
-        } catch (Exception $e) {
-            Log::error("Error en liquidación masiva de pago: {$e->getMessage()}", [
-                'request' => $request->all()
-            ]);
-
-            return redirect()->back()
-                ->with('error', 'Error al procesar la liquidación: ' . $e->getMessage());
+            $resultado = $this->eventos->liquidar(
+                $validated['trabajador_id'] ?? null, $validated['cedula'] ?? null,
+                $validated['desde'], $validated['hasta'], $validated['fecha_pago']
+            );
+        } catch (EventoException $e) {
+            return back()->with('error', $e->getMessage());
         }
+
+        return redirect()->route('mano-obra.index')->with('success', sprintf(
+            'Liquidación lista: %d registro(s) por $%s.', $resultado['registros'], number_format($resultado['total'], 0, ',', '.')
+        ));
+    }
+
+    // ------------------------------------------------------------------
+
+    private function reglas(): array
+    {
+        return [
+            'trabajador_id'     => 'nullable|exists:trabajadores,id',
+            'nombre_trabajador' => 'required_without:trabajador_id|nullable|string|max:255',
+            'cedula'            => 'nullable|string|max:30',
+            'tipo_labor'        => 'required|in:' . implode(',', EventoManoObra::TIPOS_LABOR),
+            'fecha_labor'       => 'required|date|before_or_equal:today',
+            'cantidad'          => 'required|numeric|min:0.01',
+            'unidad_destajo'    => 'nullable|required_if:tipo_labor,destajo|string|max:30',
+            'valor_unitario'    => 'required|numeric|min:0',
+            'costo_total'       => 'nullable|numeric|min:0',
+            'area_ejecutada_ha' => 'nullable|numeric|min:0',
+            'arboles_atendidos' => 'nullable|integer|min:0',
+            'observaciones'     => 'nullable|string',
+        ];
+    }
+
+    private function datosFormulario(): array
+    {
+        return [
+            // Solo labores que llevan mano de obra y siguen abiertas
+            'eventos' => EventoCampo::with(['tipoEvento:id,nombre', 'lote:id,nombre_lote'])
+                ->whereHas('tipoEvento', fn ($q) => $q->where('consume_mano_obra', true))
+                ->whereIn('estado', ['Pendiente', 'En Proceso'])
+                ->orderByDesc('fecha_programada')
+                ->get(['id', 'tipo_evento_id', 'lote_id', 'fecha_programada']),
+            'sesiones' => SesionCosecha::where('estado', 'abierta')->orderByDesc('fecha')->get(['id', 'fecha', 'evento_campo_id']),
+            'trabajadores' => Trabajador::where('activo', true)
+                ->orderBy('nombres')
+                ->get(['id', 'nombres', 'apellidos', 'numero_documento']),
+        ];
     }
 }

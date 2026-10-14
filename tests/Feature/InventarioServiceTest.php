@@ -246,7 +246,8 @@ class InventarioServiceTest extends TestCase
         ]);
 
         return EventoCampo::create([
-            'ciclo_productivo_id' => $ciclo->id, 'lote_id' => $lote->id, 'tipo_evento_id' => 1,
+            'ciclo_productivo_id' => $ciclo->id, 'lote_id' => $lote->id,
+            'tipo_evento_id' => \App\Models\TipoEvento::where('nombre', 'Aplicación de fungicida')->value('id'),
             'fecha_programada' => '2026-10-10 06:00:00', 'fecha_ejecucion' => '2026-10-10 07:00:00',
         ]);
     }

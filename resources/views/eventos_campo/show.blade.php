@@ -40,11 +40,41 @@
                 Volver
             </a>
             
-            <a href="{{ route('eventos_campo.insumos.create', $evento->id) }}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors">
-                Asignar Insumos
-            </a>
+            @unless(in_array($evento->estado, ['Completado', 'Cancelado']))
+                @if($evento->tipoEvento?->consume_insumos)
+                    <a href="{{ route('eventos_campo.insumos.create', $evento->id) }}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors">
+                        Asignar Insumos
+                    </a>
+                @endif
+                @if($evento->tipoEvento?->consume_mano_obra)
+                    <a href="{{ route('mano-obra.create', ['evento' => $evento->id]) }}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors">
+                        Registrar Jornal
+                    </a>
+                @endif
+                <form method="POST" action="{{ route('eventos_campo.completar', $evento) }}">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors">
+                        Completar
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('eventos_campo.cancelar', $evento) }}" x-data
+                      @submit.prevent="const m = prompt('¿Por qué se cancela la labor?'); if (m) { $refs.motivo.value = m; $el.submit(); }">
+                    @csrf
+                    <input type="hidden" name="motivo" x-ref="motivo">
+                    <button type="submit" class="px-4 py-2 bg-white border border-red-200 hover:bg-red-50 text-red-700 text-sm font-semibold rounded-xl transition-colors">
+                        Cancelar labor
+                    </button>
+                </form>
+            @endunless
         </div>
     </div>
+
+    @if(session('error'))
+        <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">{{ session('error') }}</div>
+    @endif
+    @if(session('success'))
+        <div class="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800">{{ session('success') }}</div>
+    @endif
 
     <!-- Grid de Métricas Básicas -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -55,7 +85,7 @@
                 {{ $evento->lote->nombre_lote ?? 'Sin Lote' }}
             </div>
             <div class="text-xs text-emerald-700 font-semibold mt-1">
-                Zona: {{ $evento->zona->nombre ?? 'Toda la zona' }}
+                Zona: {{ $evento->zona->nombre_zona ?? 'Todo el lote' }}
             </div>
         </div>
 
@@ -85,14 +115,15 @@
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Coordenadas GPS</span>
             <div class="mt-2 text-slate-800 font-bold text-sm truncate">
-                @if($evento->latitud && $evento->longitud)
-                    <span>{{ $evento->latitud }}, {{ $evento->longitud }}</span>
+                @php $gps = $evento->coordenada_gps instanceof \MatanYadaev\EloquentSpatial\Objects\Point ? $evento->coordenada_gps : null; @endphp
+                @if($gps)
+                    <span>{{ $gps->latitude }}, {{ $gps->longitude }}</span>
                 @else
                     <span class="text-slate-400 font-normal">Sin GPS registrado</span>
                 @endif
             </div>
-            @if($evento->latitud && $evento->longitud)
-                <a href="https://maps.google.com/?q={{ $evento->latitud }},{{ $evento->longitud }}" target="_blank" class="text-xs text-blue-600 font-semibold hover:underline mt-1 inline-block">Ver en Google Maps &rarr;</a>
+            @if($gps)
+                <a href="https://maps.google.com/?q={{ $gps->latitude }},{{ $gps->longitude }}" target="_blank" rel="noopener" class="text-xs text-blue-600 font-semibold hover:underline mt-1 inline-block">Ver en Google Maps &rarr;</a>
             @endif
         </div>
     </div>
@@ -170,6 +201,64 @@
                             <td colspan="6" class="py-6 text-center text-slate-400 text-sm">
                                 No se han registrado consumo de insumos para este evento.
                             </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Mano de obra -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <h2 class="text-base font-extrabold text-slate-800">Mano de Obra</h2>
+            <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">
+                ${{ number_format($evento->costo_total_mano_obra, 0, ',', '.') }}
+            </span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-600 text-xs uppercase font-bold border-b border-slate-200">
+                        <th class="py-3 px-4">Día</th>
+                        <th class="py-3 px-4">Trabajador</th>
+                        <th class="py-3 px-4">Labor</th>
+                        <th class="py-3 px-4">Avance</th>
+                        <th class="py-3 px-4 text-right">Valor pagado</th>
+                        <th class="py-3 px-4">Pago</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse($evento->eventoManoObra->sortBy('fecha_labor') as $jornal)
+                        <tr class="hover:bg-slate-50/80">
+                            <td class="py-3 px-4 text-slate-600">{{ $jornal->fecha_labor->format('d/m/Y') }}</td>
+                            <td class="py-3 px-4 font-semibold text-slate-800">{{ $jornal->nombre_trabajador }}</td>
+                            <td class="py-3 px-4 text-slate-600">
+                                {{ rtrim(rtrim(number_format($jornal->cantidad, 2, ',', '.'), '0'), ',') }}
+                                {{ $jornal->tipo_labor === 'destajo' ? $jornal->unidad_destajo : str_replace('_', ' ', $jornal->tipo_labor) }}
+                            </td>
+                            <td class="py-3 px-4 text-slate-600">
+                                @if($jornal->area_ejecutada_ha) {{ $jornal->area_ejecutada_ha }} ha @endif
+                                @if($jornal->arboles_atendidos) {{ $jornal->arboles_atendidos }} árboles @endif
+                                @unless($jornal->area_ejecutada_ha || $jornal->arboles_atendidos) <span class="text-slate-400">—</span> @endunless
+                            </td>
+                            <td class="py-3 px-4 text-right font-bold text-slate-800">
+                                ${{ number_format($jornal->costo_total, 0, ',', '.') }}
+                                @if(abs($jornal->ajuste) >= 1)
+                                    <span class="block text-[11px] font-normal text-slate-400">
+                                        {{ $jornal->ajuste > 0 ? '+' : '−' }}${{ number_format(abs($jornal->ajuste), 0, ',', '.') }} sobre lo calculado
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="py-3 px-4">
+                                <span class="text-xs px-2 py-0.5 rounded-full {{ $jornal->estado_pago === 'pagado' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
+                                    {{ ucfirst($jornal->estado_pago) }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="py-6 text-center text-slate-400 text-sm">Aún no hay jornales registrados.</td>
                         </tr>
                     @endforelse
                 </tbody>

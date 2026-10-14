@@ -35,7 +35,7 @@
                         <div>
                             <label for="estado" class="block text-sm font-medium text-gray-700">Estado <span class="text-red-500">*</span></label>
                             <select name="estado" id="estado" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                @foreach(['Pendiente', 'En Proceso', 'Completado', 'Cancelado'] as $est)
+                                @foreach(['Pendiente', 'En Proceso'] as $est)
                                     <option value="{{ $est }}" {{ old('estado', 'Pendiente') == $est ? 'selected' : '' }}>{{ $est }}</option>
                                 @endforeach
                             </select>
@@ -71,9 +71,9 @@
                         </div>
 
                         <div class="md:col-span-2 lg:col-span-4">
-                            <label for="fecha_ejecucion" class="block text-sm font-medium text-gray-700">Fecha de Ejecución Real</label>
-                            <input type="date" name="fecha_ejecucion" id="fecha_ejecucion" value="{{ old('fecha_ejecucion') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                            @error('fecha_ejecucion') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            <label for="fecha_limite" class="block text-sm font-medium text-gray-700">Fecha Límite</label>
+                            <input type="date" name="fecha_limite" id="fecha_limite" value="{{ old('fecha_limite') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                            @error('fecha_limite') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
 

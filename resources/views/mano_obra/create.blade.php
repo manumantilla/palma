@@ -1,129 +1,73 @@
 <x-app-layout>
 <div class="card-agri p-6 max-w-4xl mx-auto">
-    <h2 class="text-2xl font-bold text-agri-green mb-6 flex items-center gap-2">
-        <i class="fas fa-user-plus text-3xl"></i>
-        Nuevo Registro de Mano de Obra
-    </h2>
+    <h2 class="text-2xl font-bold text-agri-green mb-6">Registrar mano de obra</h2>
 
-    <form action="{{ route('mano-obra.store') }}" method="POST">
+    @if(session('error'))
+        <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">{{ session('error') }}</div>
+    @endif
+    @if($errors->any())
+        <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+            @foreach($errors->all() as $error) <p>{{ $error }}</p> @endforeach
+        </div>
+    @endif
+
+    <form action="{{ route('mano-obra.store') }}" method="POST"
+          x-data="formManoObra({
+              modo: @js(old('sesion_id') ? 'destajo_cosecha' : 'labor'),
+              tipo: @js(old('tipo_labor', 'jornal_dia_completo')),
+              cantidad: @js((float) old('cantidad', 1)),
+              valor: @js((float) old('valor_unitario', 0)),
+              costo: @js(old('costo_total') !== null ? (float) old('costo_total') : null),
+              costoEditado: @js(old('costo_total') !== null),
+              trabajadorId: @js((string) old('trabajador_id', '')),
+              sesionId: @js((string) old('sesion_id', '')),
+          })">
         @csrf
+
+        {{-- ¿Labor normal o destajo de cosecha? --}}
+        <div class="mb-5 inline-flex rounded-lg border border-gray-200 p-1 bg-gray-50 text-sm">
+            <button type="button" @click="modo = 'labor'"
+                    :class="modo === 'labor' ? 'bg-white shadow text-gray-900' : 'text-gray-500'" class="px-4 py-1.5 rounded-md">
+                Jornal de una labor
+            </button>
+            <button type="button" @click="modo = 'destajo_cosecha'"
+                    :class="modo === 'destajo_cosecha' ? 'bg-white shadow text-gray-900' : 'text-gray-500'" class="px-4 py-1.5 rounded-md">
+                Destajo de cosecha
+            </button>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <!-- Trabajador existente -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Trabajador (opcional)</label>
-                <select name="trabajador_id" id="trabajador_id" class="input-agri">
-                    <option value="">Seleccionar trabajador registrado</option>
-                    @foreach($trabajadores as $t)
-                        <option value="{{ $t->id }}" {{ old('trabajador_id') == $t->id ? 'selected' : '' }}>
-                            {{ $t->nombre }} {{ $t->apellido }} - {{ $t->cedula }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Nombre del trabajador *</label>
-                <input type="text" name="nombre_trabajador" value="{{ old('nombre_trabajador') }}" placeholder="Nombre completo" class="input-agri" required />
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Cédula *</label>
-                <input type="text" name="cedula" value="{{ old('cedula') }}" placeholder="Número de cédula" class="input-agri" required />
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Tipo de Labor *</label>
-                <select name="tipo_labor" id="tipo_labor" class="input-agri" required>
-                    <option value="">Seleccionar</option>
-                    <option value="jornal_dia_completo" {{ old('tipo_labor') == 'jornal_dia_completo' ? 'selected' : '' }}>Jornal día completo</option>
-                    <option value="jornal_medio_dia" {{ old('tipo_labor') == 'jornal_medio_dia' ? 'selected' : '' }}>Jornal medio día</option>
-                    <option value="hora_extra" {{ old('tipo_labor') == 'hora_extra' ? 'selected' : '' }}>Hora extra</option>
-                    <option value="destajo" {{ old('tipo_labor') == 'destajo' ? 'selected' : '' }}>Destajo</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Cantidad *</label>
-                <input type="number" step="0.1" name="cantidad" value="{{ old('cantidad') }}" placeholder="Ej: 8" class="input-agri" required />
-            </div>
-            <div id="unidad_destajo_container" style="{{ old('tipo_labor') == 'destajo' ? '' : 'display:none' }}">
-                <label class="block text-sm font-medium text-gray-700">Unidad de Destajo *</label>
-                <input type="text" name="unidad_destajo" value="{{ old('unidad_destajo') }}" placeholder="Ej: cajas, kg, etc." class="input-agri" />
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Valor Unitario *</label>
-                <input type="number" step="0.01" name="valor_unitario" value="{{ old('valor_unitario') }}" placeholder="0.00" class="input-agri" required />
-            </div>
-            <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700">Evento de Campo (opcional)</label>
-                <select name="evento_campo_id" class="input-agri">
-                    <option value="">Sin evento</option>
+            <div class="md:col-span-2" x-show="modo === 'labor'">
+                <label class="block text-sm font-medium text-gray-700">Labor *</label>
+                <select name="evento_campo_id" class="input-agri" :disabled="modo !== 'labor'">
+                    <option value="">Seleccione la labor</option>
                     @foreach($eventos as $ev)
-                        <option value="{{ $ev->id }}" {{ old('evento_campo_id') == $ev->id ? 'selected' : '' }}>
-                            ID: {{ $ev->id }} - {{ $ev->fecha_programada }}
+                        <option value="{{ $ev->id }}" @selected(old('evento_campo_id', $eventoSeleccionado) == $ev->id)>
+                            #{{ $ev->id }} · {{ $ev->tipoEvento->nombre }} · {{ $ev->lote->nombre_lote ?? 'General' }} · {{ $ev->fecha_programada?->format('d/m/Y') }}
                         </option>
                     @endforeach
                 </select>
             </div>
-            <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700">Sesión de Cosecha (opcional)</label>
-                <select name="sesion_id" class="input-agri">
-                    <option value="">Sin sesión</option>
+
+            <div class="md:col-span-2" x-show="modo === 'destajo_cosecha'">
+                <label class="block text-sm font-medium text-gray-700">Sesión de cosecha *</label>
+                <select name="sesion_id" x-model="sesionId" class="input-agri" :disabled="modo !== 'destajo_cosecha'">
+                    <option value="">Seleccione la sesión</option>
                     @foreach($sesiones as $ses)
-                        <option value="{{ $ses->id }}" {{ old('sesion_id') == $ses->id ? 'selected' : '' }}>
-                            {{ $ses->nombre ?? 'Sesión #'.$ses->id }}
-                        </option>
+                        <option value="{{ $ses->id }}">{{ $ses->fecha?->format('d/m/Y') }} · labor #{{ $ses->evento_campo_id }}</option>
                     @endforeach
                 </select>
+                <p class="mt-1 text-xs text-gray-500">Elija también el trabajador: se mostrará lo que pesó en la báscula. Un recolector tiene un solo destajo por sesión.</p>
             </div>
-            <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700">Observaciones</label>
-                <textarea name="observaciones" rows="2" class="input-agri">{{ old('observaciones') }}</textarea>
-            </div>
+
+            @include('mano_obra._campos', ['registro' => null])
         </div>
 
         <div class="mt-6 flex justify-end gap-3">
-            <a href="{{ route('mano-obra.index') }}" class="btn-outline-agri px-5 py-2 rounded-lg">
-                Cancelar
-            </a>
-            <button type="submit" class="btn-agri px-6 py-2 rounded-lg shadow">
-                <i class="fas fa-save mr-2"></i> Guardar
-            </button>
+            <a href="{{ url()->previous() }}" class="btn-outline-agri px-5 py-2 rounded-lg">Cancelar</a>
+            <button type="submit" class="btn-agri px-6 py-2 rounded-lg shadow">Guardar</button>
         </div>
     </form>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tipoLabor = document.getElementById('tipo_labor');
-        const unidadContainer = document.getElementById('unidad_destajo_container');
-
-        function toggleUnidad() {
-            if (tipoLabor.value === 'destajo') {
-                unidadContainer.style.display = 'block';
-            } else {
-                unidadContainer.style.display = 'none';
-            }
-        }
-
-        tipoLabor.addEventListener('change', toggleUnidad);
-        // Inicializar
-        toggleUnidad();
-
-        // Auto completar nombre y cédula al seleccionar trabajador
-        const trabajadorSelect = document.getElementById('trabajador_id');
-        const nombreInput = document.querySelector('input[name="nombre_trabajador"]');
-        const cedulaInput = document.querySelector('input[name="cedula"]');
-
-        trabajadorSelect.addEventListener('change', function() {
-            const selected = this.options[this.selectedIndex];
-            if (this.value) {
-                // Obtener nombre y cédula del texto del option (formato: "Nombre Apellido - Cedula")
-                const text = selected.text;
-                const parts = text.split(' - ');
-                if (parts.length === 2) {
-                    nombreInput.value = parts[0];
-                    cedulaInput.value = parts[1];
-                }
-            } else {
-                // Si se selecciona "Seleccionar trabajador registrado", no limpiar campos manuales
-            }
-        });
-    });
-</script>
+@include('mano_obra._script')
 </x-app-layout>

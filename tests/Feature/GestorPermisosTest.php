@@ -148,6 +148,24 @@ class GestorPermisosTest extends TestCase
         $componente->set('search', 'pedro@')->assertSee('Pedro Ardila')->assertDontSee('Carmenza Rueda');
     }
 
+    public function test_funciona_con_el_guard_sanctum_que_deja_el_middleware(): void
+    {
+        $contador = User::factory()->create(['name' => 'Carmenza Rueda'])->assignRole('Contador');
+        $this->actingAs($this->admin);
+
+        // auth:sanctum hace shouldUse('sanctum') y el guard por defecto queda sin provider
+        auth()->shouldUse('sanctum');
+
+        Livewire::test(UserPermissionsManager::class)
+            ->call('seleccionar', $contador->id)
+            ->assertOk()
+            ->assertSee('Contador')
+            ->call('togglePermission', 'gestionar_kardex')
+            ->assertDispatched('toast', tipo: 'ok');
+
+        $this->assertTrue($contador->fresh()->hasDirectPermission('gestionar_kardex'));
+    }
+
     public function test_el_super_admin_pasa_cualquier_permiso_por_gate_before(): void
     {
         $this->assertTrue(Gate::forUser($this->admin)->allows('aprobar_ordenes_cosecha'));
